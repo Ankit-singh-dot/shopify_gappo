@@ -90,16 +90,44 @@ export function CartMain({layout, cart: originalCart}) {
 function CartEmpty({hidden = false}) {
   const {close} = useAside();
   return (
-    <div hidden={hidden}>
-      <br />
-      <p>
-        Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you
-        started!
+    <div hidden={hidden} className="py-14 px-6 flex flex-col items-center text-center font-montserrat my-auto">
+      {/* Official Gapoo Bear Mascot in warm golden badge */}
+      <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#fdf2d6] to-[#faecc9] border-2 border-[#f5cf80] p-3 flex items-center justify-center shadow-md mb-5 relative group hover:scale-105 transition-transform duration-300">
+        <img
+          src="/images/gapoo_bear_amber_badge.png"
+          alt="Gapoo Bear Logo"
+          className="w-full h-full object-contain drop-shadow-sm"
+        />
+      </div>
+
+      <h4 className="font-apricot text-2xl sm:text-3xl font-bold text-[#1a1612] mb-2">
+        Your Hive is Empty
+      </h4>
+      <p className="text-xs sm:text-sm text-[#736555] leading-relaxed max-w-xs mb-6">
+        Single-serve honey sticks are waiting for you — real minted goodness with zero sticky mess.
       </p>
-      <br />
-      <Link to="/collections" onClick={close} prefetch="viewport">
-        Continue shopping →
-      </Link>
+
+      {/* Action button linking directly to hero product showcase */}
+      <a
+        href="#buy-now"
+        onClick={close}
+        className="w-full py-3.5 px-6 rounded-full bg-[#18181b] hover:bg-[#27272a] text-white text-xs sm:text-sm font-bold tracking-wide shadow-md transition-all hover:scale-105 active:scale-95 text-center flex items-center justify-center gap-2 cursor-pointer no-underline"
+      >
+        <span className='text-amber-50'>Shop Minted Goodness</span>
+        <span className='text-amber-50'>&rarr;</span>
+      </a>
+
+      {/* Brand value props */}
+      <div className="mt-8 pt-6 border-t border-[#ede3d0] w-full grid grid-cols-2 gap-3 text-left">
+        <div className="flex items-center gap-2 text-[11px] text-[#736555]">
+          <span className="text-base">🚚</span>
+          <span>Free shipping over $25</span>
+        </div>
+        <div className="flex items-center gap-2 text-[11px] text-[#736555]">
+          <span className="text-base">🌿</span>
+          <span>Minted Goodness</span>
+        </div>
+      </div>
     </div>
   );
 }
