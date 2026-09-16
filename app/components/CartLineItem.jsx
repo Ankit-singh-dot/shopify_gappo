@@ -37,7 +37,7 @@ export function CartLineItem({layout, line, childrenMap}) {
           />
         )}
 
-        <div>
+        <div className="flex-1 min-w-0">
           <Link
             prefetch="intent"
             to={lineItemUrl}
@@ -46,21 +46,24 @@ export function CartLineItem({layout, line, childrenMap}) {
                 close();
               }
             }}
+            className="no-underline hover:text-[#c87a1e] transition-colors block"
           >
-            <p>
-              <strong>{product.title}</strong>
+            <p className="font-bold text-sm text-[#1a1612] leading-snug">
+              {product.title}
             </p>
           </Link>
-          <ProductPrice price={line?.cost?.totalAmount} />
-          <ul>
-            {selectedOptions.map((option) => (
-              <li key={option.name}>
-                <small>
+          <div className="text-xs font-bold text-[#b45309] mt-0.5">
+            <ProductPrice price={line?.cost?.totalAmount} />
+          </div>
+          {selectedOptions.length > 0 && (
+            <ul className="text-[11px] text-[#736555] mt-0.5 list-none p-0">
+              {selectedOptions.map((option) => (
+                <li key={option.name}>
                   {option.name}: {option.value}
-                </small>
-              </li>
-            ))}
-          </ul>
+                </li>
+              ))}
+            </ul>
+          )}
           <CartLineQuantity line={line} />
         </div>
       </div>
@@ -100,29 +103,41 @@ function CartLineQuantity({line}) {
 
   return (
     <div className="cart-line-quantity">
-      <small>Quantity: {quantity} &nbsp;&nbsp;</small>
-      <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
-        <button
-          aria-label="Decrease quantity"
-          disabled={quantity <= 1 || !!isOptimistic}
-          name="decrease-quantity"
-          value={prevQuantity}
-        >
-          <span>&#8722; </span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
-      <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
-        <button
-          aria-label="Increase quantity"
-          name="increase-quantity"
-          value={nextQuantity}
-          disabled={!!isOptimistic}
-        >
-          <span>&#43;</span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-[#736555] font-medium font-montserrat">Qty:</span>
+        <div className="inline-flex items-center gap-1.5 bg-[#faf6ee] p-0.5 rounded-full border border-[#e5d9c5]">
+          <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
+            <button
+              type="submit"
+              className="cart-line-qty-btn"
+              aria-label="Decrease quantity"
+              disabled={quantity <= 1 || !!isOptimistic}
+              name="decrease-quantity"
+              value={prevQuantity}
+            >
+              <span>&#8722;</span>
+            </button>
+          </CartLineUpdateButton>
+
+          <span className="text-xs font-bold text-[#1a1612] w-4 text-center font-montserrat">
+            {quantity}
+          </span>
+
+          <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
+            <button
+              type="submit"
+              className="cart-line-qty-btn"
+              aria-label="Increase quantity"
+              name="increase-quantity"
+              value={nextQuantity}
+              disabled={!!isOptimistic}
+            >
+              <span>&#43;</span>
+            </button>
+          </CartLineUpdateButton>
+        </div>
+      </div>
+
       <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} />
     </div>
   );
@@ -140,14 +155,33 @@ function CartLineQuantity({line}) {
 function CartLineRemoveButton({lineIds, disabled}) {
   return (
     <CartForm
-      fetcherKey={getUpdateKey(lineIds)}
       route="/cart"
       action={CartForm.ACTIONS.LinesRemove}
       inputs={{lineIds}}
     >
-      <button disabled={disabled} type="submit">
-        Remove
-      </button>
+      {(fetcher) => (
+        <button
+          disabled={disabled || fetcher.state !== 'idle'}
+          type="submit"
+          className="cart-line-remove-btn"
+          aria-label="Remove item"
+        >
+          <svg
+            className="w-3.5 h-3.5 text-current shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            />
+          </svg>
+          <span>{fetcher.state !== 'idle' ? 'Removing...' : 'Remove'}</span>
+        </button>
+      )}
     </CartForm>
   );
 }
