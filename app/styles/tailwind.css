@@ -1,6 +1,73 @@
-/**
- * Configure Tailwind v4 in this file using CSS variables and directives:
- * https://tailwindcss.com/docs/v4-beta#css-first-configuration
- */
-
 @import 'tailwindcss';
+
+@font-face {
+  font-family: 'Apricot';
+  src: url('/fonts/Apricot.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/montserrat-medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/montserrat-semibold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-serif: 'Apricot', Georgia, serif;
+  --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  --color-honey-bg: #fdfaf1;
+  --color-honey-accent: #f5a623;
+  --color-honey-amber: #d97706;
+  --color-honey-dark: #20140b;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-honey-bg);
+  color: #2b241d;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-apricot {
+  font-family: 'Apricot', Georgia, serif;
+}
+
+.font-montserrat {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+}
