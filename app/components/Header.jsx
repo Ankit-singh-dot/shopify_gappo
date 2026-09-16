@@ -1,5 +1,5 @@
 import {Suspense} from 'react';
-import {Await, NavLink, useAsyncValue} from 'react-router';
+import {Await, NavLink, useAsyncValue, Link} from 'react-router';
 import {useAnalytics, useOptimisticCart} from '@shopify/hydrogen';
 import {useAside} from '~/components/Aside';
 
@@ -7,19 +7,63 @@ import {useAside} from '~/components/Aside';
  * @param {HeaderProps}
  */
 export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
-  const {shop, menu} = header;
+  const {open} = useAside();
+
   return (
-    <header className="header">
-      <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
-        <strong>{shop.name}</strong>
-      </NavLink>
-      <HeaderMenu
-        menu={menu}
-        viewport="desktop"
-        primaryDomainUrl={header.shop.primaryDomain.url}
-        publicStoreDomain={publicStoreDomain}
-      />
-      <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
+    <header className="sticky top-0 z-40 bg-[#fdfaf1]/95 backdrop-blur-md border-b border-[#f2ebd9] transition-all">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+        {/* Logo with Gapoo Bear Mascot */}
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden shrink-0 shadow-sm transition-transform group-hover:scale-105">
+            <img
+              src="/images/gapoo_bear_amber_badge.png"
+              alt="Gapoo Bear Mascot"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <span className="font-apricot text-2xl sm:text-[28px] font-bold text-[#1a1612] tracking-tight group-hover:text-[#c87a1e] transition-colors leading-none">
+            Gapoo
+          </span>
+        </Link>
+
+        {/* Desktop Navigation matching the design */}
+        <nav className="hidden md:flex items-center space-x-8 font-medium text-sm text-[#4a4036]" role="navigation">
+          {[
+            {href: '#shop', label: 'Shop'},
+            {href: '#why-honey', label: 'Why honey'},
+            {href: '#how-to-use', label: 'How to use'},
+            {href: '#our-story', label: 'Our story'},
+          ].map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="relative py-1 text-[#4a4036] hover:text-[#18181b] transition-colors font-medium no-underline hover:no-underline group"
+              style={{textDecoration: 'none'}}
+            >
+              <span>{item.label}</span>
+              <span className="absolute bottom-0 left-0 w-0 h-[2.5px] bg-[#f5a623] transition-all duration-300 group-hover:w-full rounded-full pointer-events-none" />
+            </a>
+          ))}
+        </nav>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-4">
+          {/* Cart Pill Button matching PDF */}
+          <CartToggle cart={cart} />
+
+          {/* Mobile hamburger */}
+          <button
+            type="button"
+            className="md:hidden p-2 rounded-lg text-[#4a4036] hover:bg-stone-200/50 transition-colors"
+            onClick={() => open('mobile')}
+            aria-label="Open menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </header>
   );
 }
@@ -42,84 +86,20 @@ export function HeaderMenu({
   const {close} = useAside();
 
   return (
-    <nav className={className} role="navigation">
-      {viewport === 'mobile' && (
-        <NavLink
-          end
-          onClick={close}
-          prefetch="intent"
-          style={activeLinkStyle}
-          to="/"
-        >
-          Home
-        </NavLink>
-      )}
-      {(menu || FALLBACK_HEADER_MENU).items.map((item) => {
-        if (!item.url) return null;
-
-        // if the url is internal, we strip the domain
-        const url =
-          item.url.includes('myshopify.com') ||
-          item.url.includes(publicStoreDomain) ||
-          item.url.includes(primaryDomainUrl)
-            ? new URL(item.url).pathname
-            : item.url;
-        return (
-          <NavLink
-            className="header-menu-item"
-            end
-            key={item.id}
-            onClick={close}
-            prefetch="intent"
-            style={activeLinkStyle}
-            to={url}
-          >
-            {item.title}
-          </NavLink>
-        );
-      })}
+    <nav className="flex flex-col space-y-4 p-4 text-lg font-medium text-[#4a4036]" role="navigation">
+      <a href="#shop" onClick={close} className="hover:text-black no-underline hover:no-underline">
+        Shop
+      </a>
+      <a href="#why-honey" onClick={close} className="hover:text-black no-underline hover:no-underline">
+        Why honey
+      </a>
+      <a href="#how-to-use" onClick={close} className="hover:text-black no-underline hover:no-underline">
+        How to use
+      </a>
+      <a href="#our-story" onClick={close} className="hover:text-black no-underline hover:no-underline">
+        Our story
+      </a>
     </nav>
-  );
-}
-
-/**
- * @param {Pick<HeaderProps, 'isLoggedIn' | 'cart'>}
- */
-function HeaderCtas({isLoggedIn, cart}) {
-  return (
-    <nav className="header-ctas" role="navigation">
-      <HeaderMenuMobileToggle />
-      <NavLink prefetch="intent" to="/account" style={activeLinkStyle}>
-        <Suspense fallback="Sign in">
-          <Await resolve={isLoggedIn} errorElement="Sign in">
-            {(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}
-          </Await>
-        </Suspense>
-      </NavLink>
-      <SearchToggle />
-      <CartToggle cart={cart} />
-    </nav>
-  );
-}
-
-function HeaderMenuMobileToggle() {
-  const {open} = useAside();
-  return (
-    <button
-      className="header-menu-mobile-toggle reset"
-      onClick={() => open('mobile')}
-    >
-      <h3>☰</h3>
-    </button>
-  );
-}
-
-function SearchToggle() {
-  const {open} = useAside();
-  return (
-    <button className="reset" onClick={() => open('search')}>
-      Search
-    </button>
   );
 }
 
@@ -131,8 +111,8 @@ function CartBadge({count}) {
   const {publish, shop, cart, prevCart} = useAnalytics();
 
   return (
-    <a
-      href="/cart"
+    <button
+      type="button"
       onClick={(e) => {
         e.preventDefault();
         open('cart');
@@ -143,9 +123,13 @@ function CartBadge({count}) {
           url: window.location.href || '',
         });
       }}
+      className="inline-flex items-center gap-2 bg-[#18181b] hover:bg-[#27272a] text-white px-4 py-2 rounded-full text-xs font-semibold tracking-wide shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer"
     >
-      Cart <span aria-label={`(items: ${count})`}>{count}</span>
-    </a>
+      <span>Cart</span>
+      <span className="inline-flex items-center justify-center w-5 h-5 bg-[#f5a623] text-black font-bold text-[11px] rounded-full">
+        {count}
+      </span>
+    </button>
   );
 }
 
@@ -166,61 +150,6 @@ function CartBanner() {
   const originalCart = useAsyncValue();
   const cart = useOptimisticCart(originalCart);
   return <CartBadge count={cart?.totalQuantity ?? 0} />;
-}
-
-const FALLBACK_HEADER_MENU = {
-  id: 'gid://shopify/Menu/199655587896',
-  items: [
-    {
-      id: 'gid://shopify/MenuItem/461609500728',
-      resourceId: null,
-      tags: [],
-      title: 'Collections',
-      type: 'HTTP',
-      url: '/collections',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461609533496',
-      resourceId: null,
-      tags: [],
-      title: 'Blog',
-      type: 'HTTP',
-      url: '/blogs/journal',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461609566264',
-      resourceId: null,
-      tags: [],
-      title: 'Policies',
-      type: 'HTTP',
-      url: '/policies',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461609599032',
-      resourceId: 'gid://shopify/Page/92591030328',
-      tags: [],
-      title: 'About',
-      type: 'PAGE',
-      url: '/pages/about',
-      items: [],
-    },
-  ],
-};
-
-/**
- * @param {{
- *   isActive: boolean;
- *   isPending: boolean;
- * }}
- */
-function activeLinkStyle({isActive, isPending}) {
-  return {
-    fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'grey' : 'black',
-  };
 }
 
 /** @typedef {'desktop' | 'mobile'} Viewport */
