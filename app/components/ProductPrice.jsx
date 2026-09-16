@@ -7,17 +7,22 @@ import {Money} from '@shopify/hydrogen';
  * }}
  */
 export function ProductPrice({price, compareAtPrice}) {
+  const renderPrice = (moneyData) => {
+    if (!moneyData) return null;
+    return <span>₹{parseFloat(moneyData.amount).toFixed(2).replace(/\.00$/, '')}</span>;
+  };
+
   return (
     <div aria-label="Price" className="product-price" role="group">
       {compareAtPrice ? (
         <div className="product-price-on-sale">
-          {price ? <Money data={price} /> : null}
+          {price ? renderPrice(price) : null}
           <s>
-            <Money data={compareAtPrice} />
+            {renderPrice(compareAtPrice)}
           </s>
         </div>
       ) : price ? (
-        <Money data={price} />
+        renderPrice(price)
       ) : (
         <span>&nbsp;</span>
       )}

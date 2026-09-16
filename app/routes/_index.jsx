@@ -1,15 +1,15 @@
-import {useState} from 'react';
-import {Await, useLoaderData, Link} from 'react-router';
-import {Suspense} from 'react';
-import {CartForm} from '@shopify/hydrogen';
-import {useAside} from '~/components/Aside';
+import { useState } from 'react';
+import { Await, useLoaderData, Link } from 'react-router';
+import { Suspense } from 'react';
+import { CartForm } from '@shopify/hydrogen';
+import { useAside } from '~/components/Aside';
 
 /**
  * @type {Route.MetaFunction}
  */
 export const meta = () => {
   return [
-    {title: 'Gapoo | Honey, finally without the mess'},
+    { title: 'Gapoo | Honey, finally without the mess' },
     {
       name: 'description',
       content:
@@ -24,18 +24,18 @@ export const meta = () => {
 export async function loader(args) {
   const deferredData = loadDeferredData(args);
   const criticalData = await loadCriticalData(args);
-  return {...deferredData, ...criticalData};
+  return { ...deferredData, ...criticalData };
 }
 
 /**
  * Load critical data
  * @param {Route.LoaderArgs}
  */
-async function loadCriticalData({context}) {
-  const [{collections}, productsData] = await Promise.all([
+async function loadCriticalData({ context }) {
+  const [{ collections }, productsData] = await Promise.all([
     context.storefront
       .query(FEATURED_COLLECTION_QUERY)
-      .catch(() => ({collections: {nodes: []}})),
+      .catch(() => ({ collections: { nodes: [] } })),
     context.storefront
       .query(STORE_PRODUCTS_QUERY)
       .catch(() => null),
@@ -51,7 +51,7 @@ async function loadCriticalData({context}) {
  * Load deferred data
  * @param {Route.LoaderArgs}
  */
-function loadDeferredData({context}) {
+function loadDeferredData({ context }) {
   const recommendedProducts = context.storefront
     .query(RECOMMENDED_PRODUCTS_QUERY)
     .catch((error) => {
@@ -66,7 +66,7 @@ function loadDeferredData({context}) {
 
 export default function Homepage() {
   const data = useLoaderData();
-  const {open} = useAside();
+  const { open } = useAside();
   const [subscribed, setSubscribed] = useState(false);
   const [email, setEmail] = useState('');
   const storeProducts = data?.storeProducts || [];
@@ -193,24 +193,7 @@ export default function Homepage() {
               Gapoo honey sticks pack real honey infused with natural mint extract into a convenient tear-and-pour stick. No sticky jars. No spoons. Just snap, squeeze, and sip.
             </p>
 
-            {/* Packaging Feature Badges */}
-            <div className="grid grid-cols-3 gap-3 max-w-md pt-1 font-montserrat">
-              <div className="bg-white/85 rounded-xl p-2.5 border border-[#eee5d5] text-center shadow-2xs">
-                <span className="text-base block mb-0.5">🌿</span>
-                <span className="text-[11px] font-bold text-[#1a1612] block">Naturally</span>
-                <span className="text-[10px] text-[#736555]">Sweetened</span>
-              </div>
-              <div className="bg-white/85 rounded-xl p-2.5 border border-[#eee5d5] text-center shadow-2xs">
-                <span className="text-base block mb-0.5">🛡️</span>
-                <span className="text-[11px] font-bold text-[#1a1612] block">Natural</span>
-                <span className="text-[10px] text-[#736555]">Antioxidants</span>
-              </div>
-              <div className="bg-white/85 rounded-xl p-2.5 border border-[#eee5d5] text-center shadow-2xs">
-                <span className="text-base block mb-0.5">📦</span>
-                <span className="text-[11px] font-bold text-[#1a1612] block">Easy Single</span>
-                <span className="text-[10px] text-[#736555]">Serve (6g)</span>
-              </div>
-            </div>
+            {/* Packaging Feature Badges Removed */}
 
             {/* Hero Quick Purchase Action */}
             <div className="pt-2 font-montserrat flex flex-wrap items-center gap-4">
@@ -242,7 +225,7 @@ export default function Homepage() {
                       <span>
                         {fetcher.state !== 'idle'
                           ? 'Adding...'
-                          : `Add to Cart · $${(6.99 * selectedQty).toFixed(2)} / ₹${199 * selectedQty}`}
+                          : `Add to Cart · ₹${199 * selectedQty}`}
                       </span>
                       <span className="text-base leading-none">→</span>
                     </button>
@@ -254,7 +237,7 @@ export default function Homepage() {
                   onClick={() => open('cart')}
                   className="inline-flex items-center justify-center gap-2 bg-[#f5a623] hover:bg-[#e09419] text-[#1a1612] px-8 py-3.5 rounded-full text-sm font-bold tracking-wide shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 >
-                  <span>Add to Cart · $6.99 / ₹199</span>
+                  <span>Add to Cart · ₹199</span>
                   <span className="text-base leading-none">→</span>
                 </button>
               )}
@@ -274,90 +257,48 @@ export default function Homepage() {
                 <span className="font-semibold text-[#1a1612]">Snap · Squeeze · Sip</span>
               </div>
               <span className="text-[#d0c4b2]">|</span>
-              <div>10 Honey Sticks (60g Box)</div>
+              <div>10 Honey Sticks (12g Pack)</div>
               <span className="text-[#d0c4b2]">|</span>
-              <div>Free shipping over $25</div>
+              <div>Free shipping over ₹500</div>
             </div>
           </div>
 
           {/* Right Column: AI-Polished Premium Commercial Product Display WITH Top Add-to-Cart */}
           <div className="lg:col-span-6 relative flex flex-col items-center lg:items-end">
-            <div className="relative w-full max-w-lg lg:max-w-none rounded-[32px] bg-[#ede1d3] border border-[#ded0c0] shadow-2xl p-5 sm:p-7 flex flex-col overflow-hidden group">
-              
-              {/* Top Header Bar ON TOP of Display Image */}
-              <div className="flex items-center justify-between gap-3 pb-3 mb-3 border-b border-[#ded1c0] relative z-20 font-montserrat">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#10b981] animate-pulse" />
-                  <span className="text-xs font-bold text-[#1a1612] tracking-wide uppercase">
+            <div className="relative w-full max-w-lg lg:max-w-none rounded-[32px] bg-white border border-[#eae0d5] shadow-[0_20px_50px_rgba(0,0,0,0.08)] p-6 sm:p-8 flex flex-col overflow-hidden group">
+
+              {/* 1. Top Header Bar: Product Title & Price */}
+              <div className="flex items-center justify-between gap-3 pb-4 mb-4 border-b border-[#f4eee6] relative z-20 font-montserrat">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#10b981] animate-pulse shadow-[0_0_8px_#10b981]" />
+                  <span className="text-sm font-bold text-[#1a1612] tracking-wide uppercase">
                     Minted Goodness · 10 Sticks
                   </span>
                 </div>
                 <div className="flex items-baseline gap-1">
-                  <span className="font-apricot text-2xl font-bold text-[#1a1612]">$6.99</span>
-                  <span className="text-xs text-[#736555] font-semibold">/ ₹199</span>
+                  <span className="font-apricot text-3xl font-bold text-[#1a1612]">₹{199 * selectedQty}</span>
                 </div>
               </div>
 
-              {/* Realistic AI Studio Commercial Product Image */}
-              <div className="relative rounded-[22px] overflow-hidden bg-[#fdfaf1] aspect-[4/3] sm:aspect-[16/11] flex items-center justify-center p-1.5 shadow-inner">
-                <img
-                  src={heroImage}
-                  alt="Gapoo Minted Goodness 10 Honey Sticks Box and Sachets"
-                  className="w-full h-full object-cover rounded-[18px] transition-transform duration-700 group-hover:scale-105"
-                />
-
-                {/* Floating badge: 10 Sticks · 6g Each */}
-                <div className="absolute top-3.5 left-3.5 bg-black/75 backdrop-blur-md text-white text-[11px] font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
-                  <span>🌿</span>
-                  <span>10 Honey Sticks (6g Each)</span>
-                </div>
-
-                {/* Image angle switcher */}
-                <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-white/95 backdrop-blur-md p-1 rounded-full shadow-md border border-[#e8cd8c]/60">
-                  <button
-                    type="button"
-                    onClick={() => setHeroImage('/images/gapoo_minted_studio_hero.jpg')}
-                    className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
-                      heroImage === '/images/gapoo_minted_studio_hero.jpg'
-                        ? 'bg-[#18181b] text-white shadow-xs'
-                        : 'text-[#736555] hover:text-[#1a1612]'
-                    }`}
-                  >
-                    Studio Table
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setHeroImage('/images/gapoo_minted_clean_pack.jpg')}
-                    className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
-                      heroImage === '/images/gapoo_minted_clean_pack.jpg'
-                        ? 'bg-[#18181b] text-white shadow-xs'
-                        : 'text-[#736555] hover:text-[#1a1612]'
-                    }`}
-                  >
-                    Packshot
-                  </button>
-                </div>
-              </div>
-
-              {/* Functional Add to Cart Bar Right Under/On the Display Image */}
-              <div className="mt-4 pt-3.5 border-t border-[#ded1c0] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 relative z-20 font-montserrat">
+              {/* 2. Functional Add to Cart Bar ON TOP OF the Display Image */}
+              <div className="pb-4 mb-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 relative z-20 font-montserrat">
                 {/* Quantity Selector */}
-                <div className="flex items-center justify-between sm:justify-center border border-[#d6cbba] bg-white rounded-full px-3 py-1.5 shadow-2xs">
+                <div className="flex items-center justify-between sm:justify-center border border-[#e4d8c8] bg-[#fdfaf1] rounded-full px-4 py-2 shadow-inner">
                   <button
                     type="button"
                     onClick={() => setSelectedQty(Math.max(1, selectedQty - 1))}
-                    className="w-7 h-7 flex items-center justify-center text-[#736555] hover:text-[#1a1612] font-bold text-base cursor-pointer select-none"
+                    className="w-8 h-8 flex items-center justify-center text-[#736555] hover:text-[#1a1612] hover:bg-white rounded-full font-bold text-lg cursor-pointer select-none transition-colors"
                     aria-label="Decrease quantity"
                   >
                     -
                   </button>
-                  <span className="w-8 text-center font-bold text-sm text-[#1a1612]">
+                  <span className="w-10 text-center font-bold text-base text-[#1a1612]">
                     {selectedQty}
                   </span>
                   <button
                     type="button"
                     onClick={() => setSelectedQty(selectedQty + 1)}
-                    className="w-7 h-7 flex items-center justify-center text-[#736555] hover:text-[#1a1612] font-bold text-base cursor-pointer select-none"
+                    className="w-8 h-8 flex items-center justify-center text-[#736555] hover:text-[#1a1612] hover:bg-white rounded-full font-bold text-lg cursor-pointer select-none transition-colors"
                     aria-label="Increase quantity"
                   >
                     +
@@ -383,9 +324,9 @@ export default function Homepage() {
                         type="submit"
                         onClick={() => open('cart')}
                         disabled={fetcher.state !== 'idle'}
-                        className="flex-1 bg-[#18181b] hover:bg-[#27272a] active:scale-98 text-white px-6 py-3 rounded-full text-sm font-bold tracking-wide shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                        className="flex-1 w-full bg-gradient-to-r from-[#18181b] to-[#27272a] hover:from-[#27272a] hover:to-[#3f3f46] active:scale-[0.98] text-white px-8 py-3.5 rounded-full text-sm font-bold tracking-wide shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-60"
                       >
-                        <svg className="w-4 h-4 text-[#f5a623]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                        <svg className="w-5 h-5 text-[#f5a623]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                           <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
                           <line x1="3" y1="6" x2="21" y2="6" />
                           <path d="M16 10a4 4 0 01-8 0" />
@@ -393,7 +334,7 @@ export default function Homepage() {
                         <span>
                           {fetcher.state !== 'idle'
                             ? 'Adding to Cart...'
-                            : `Add to Cart · $${(6.99 * selectedQty).toFixed(2)}`}
+                            : `Add to Cart · ₹${199 * selectedQty}`}
                         </span>
                       </button>
                     )}
@@ -402,21 +343,49 @@ export default function Homepage() {
                   <button
                     type="button"
                     onClick={() => open('cart')}
-                    className="flex-1 bg-[#18181b] hover:bg-[#27272a] text-white px-6 py-3 rounded-full text-sm font-bold tracking-wide shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="flex-1 w-full bg-gradient-to-r from-[#18181b] to-[#27272a] hover:from-[#27272a] hover:to-[#3f3f46] text-white px-8 py-3.5 rounded-full text-sm font-bold tracking-wide shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3 cursor-pointer"
                   >
-                    <span>Add to Cart · $6.99</span>
+                    <span>Add to Cart · ₹199</span>
                   </button>
                 )}
               </div>
 
-              {/* Packaging Sub-strip */}
-              <div className="mt-3 flex items-center justify-between text-[11px] text-[#736555] font-montserrat pt-1 border-t border-[#ded1c0]/50">
-                <span>🌿 Naturally Sweetened</span>
-                <span>•</span>
-                <span>🛡️ Natural Antioxidants</span>
-                <span>•</span>
-                <span>📦 10 Single Serves</span>
+              {/* 3. Realistic AI Studio Commercial Product Display Image */}
+              <div className="relative rounded-[22px] overflow-hidden bg-[#fdfaf1] aspect-[4/3] sm:aspect-[16/11] flex items-center justify-center p-1.5 shadow-inner">
+                <img
+                  src={heroImage}
+                  alt="Gapoo Minted Goodness 10 Honey Sticks Box and Sachets"
+                  className="w-full h-full object-cover rounded-[18px] transition-transform duration-700 group-hover:scale-105"
+                />
+
+                {/* Floating badge removed */}
+
+                {/* Image angle switcher */}
+                <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-white/95 backdrop-blur-md p-1 rounded-full shadow-md border border-[#e8cd8c]/60">
+                  <button
+                    type="button"
+                    onClick={() => setHeroImage('/images/gapoo_minted_studio_hero.jpg')}
+                    className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all cursor-pointer ${heroImage === '/images/gapoo_minted_studio_hero.jpg'
+                      ? 'bg-[#18181b] text-white shadow-xs'
+                      : 'text-[#736555] hover:text-[#1a1612]'
+                      }`}
+                  >
+                    Studio Table
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setHeroImage('/images/gapoo_minted_clean_pack.jpg')}
+                    className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all cursor-pointer ${heroImage === '/images/gapoo_minted_clean_pack.jpg'
+                      ? 'bg-[#18181b] text-white shadow-xs'
+                      : 'text-[#736555] hover:text-[#1a1612]'
+                      }`}
+                  >
+                    Packshot
+                  </button>
+                </div>
               </div>
+
+              {/* Packaging Sub-strip removed */}
             </div>
           </div>
         </div>
@@ -528,7 +497,7 @@ export default function Homepage() {
           </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#c87a1e]" />
-            <span>10 Honey Sticks (6g Each) per Box</span>
+            <span>2 Honey Sticks (6g Each) per Pack</span>
           </div>
         </div>
       </section>
@@ -875,7 +844,7 @@ export default function Homepage() {
                       className="w-full h-auto object-contain filter invert brightness-90 contrast-125 transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
-                  
+
                   {/* Gapoo Bear Seal */}
                   <div className="flex items-center gap-3 bg-[#1c1108]/90 border border-[#4a3424] px-4 py-2 rounded-full font-montserrat">
                     <img

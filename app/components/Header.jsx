@@ -13,17 +13,14 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
     <header className="sticky top-0 z-40 bg-[#fdfaf1]/95 backdrop-blur-md border-b border-[#f2ebd9] transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
         {/* Logo with Gapoo Bear Mascot */}
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden shrink-0 shadow-sm transition-transform group-hover:scale-105">
+        <Link to="/" className="flex items-center group">
+          <div className="h-10 sm:h-12 w-auto transition-transform group-hover:scale-105">
             <img
-              src="/images/gapoo_bear_amber_badge.png"
-              alt="Gapoo Bear Mascot"
+              src="/images/logo-01-01.png"
+              alt="Gapoo Logo"
               className="w-full h-full object-contain"
             />
           </div>
-          <span className="font-apricot text-2xl sm:text-[28px] font-bold text-[#1a1612] tracking-tight group-hover:text-[#c87a1e] transition-colors leading-none">
-            Gapoo
-          </span>
         </Link>
 
         {/* Desktop Navigation matching the design */}

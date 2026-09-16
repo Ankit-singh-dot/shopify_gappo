@@ -21,7 +21,7 @@ export function CartSummary({cart, layout}) {
         <dt>Subtotal</dt>
         <dd>
           {cart?.cost?.subtotalAmount?.amount ? (
-            <Money data={cart?.cost?.subtotalAmount} />
+            <span>₹{parseFloat(cart.cost.subtotalAmount.amount).toFixed(2).replace(/\.00$/, '')}</span>
           ) : (
             '-'
           )}
@@ -229,7 +229,7 @@ function CartGiftCard({giftCardCodes, giftCardHeadingId, giftCardInputId}) {
               >
                 <code>***{giftCard.lastCharacters}</code>
                 &nbsp;
-                <Money data={giftCard.amountUsed} />
+                <span>₹{parseFloat(giftCard.amountUsed.amount).toFixed(2).replace(/\.00$/, '')}</span>
               </RemoveGiftCardForm>
             </dd>
           ))}

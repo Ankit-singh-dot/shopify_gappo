@@ -1,8 +1,8 @@
-import {useOptimisticCart} from '@shopify/hydrogen';
-import {Link} from 'react-router';
-import {useAside} from '~/components/Aside';
-import {CartLineItem} from '~/components/CartLineItem';
-import {CartSummary} from './CartSummary';
+import { useOptimisticCart } from '@shopify/hydrogen';
+import { Link } from 'react-router';
+import { useAside } from '~/components/Aside';
+import { CartLineItem } from '~/components/CartLineItem';
+import { CartSummary } from './CartSummary';
 /**
  * Returns a map of all line items and their children.
  * @param {CartLine[]} lines
@@ -31,7 +31,7 @@ function getLineItemChildrenMap(lines) {
  * It is used by both the /cart route and the cart aside dialog.
  * @param {CartMainProps}
  */
-export function CartMain({layout, cart: originalCart}) {
+export function CartMain({ layout, cart: originalCart }) {
   // The useOptimisticCart hook applies pending actions to the cart
   // so the user immediately sees feedback when they modify the cart.
   const cart = useOptimisticCart(originalCart);
@@ -87,8 +87,8 @@ export function CartMain({layout, cart: originalCart}) {
  *   layout?: CartMainProps['layout'];
  * }}
  */
-function CartEmpty({hidden = false}) {
-  const {close} = useAside();
+function CartEmpty({ hidden = false }) {
+  const { close } = useAside();
   return (
     <div hidden={hidden} className="py-14 px-6 flex flex-col items-center text-center font-montserrat my-auto">
       {/* Official Gapoo Bear Mascot in warm golden badge */}
@@ -121,7 +121,7 @@ function CartEmpty({hidden = false}) {
       <div className="mt-8 pt-6 border-t border-[#ede3d0] w-full grid grid-cols-2 gap-3 text-left">
         <div className="flex items-center gap-2 text-[11px] text-[#736555]">
           <span className="text-base">🚚</span>
-          <span>Free shipping over $25</span>
+          <span>Free shipping over ₹500</span>
         </div>
         <div className="flex items-center gap-2 text-[11px] text-[#736555]">
           <span className="text-base">🌿</span>
