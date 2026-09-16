@@ -49,11 +49,26 @@ function CartCheckoutActions({checkoutUrl}) {
   if (!checkoutUrl) return null;
 
   return (
-    <div>
-      <a href={checkoutUrl} target="_self">
-        <p>Continue to Checkout &rarr;</p>
+    <div className="mt-4">
+      <a
+        href={checkoutUrl}
+        target="_self"
+        className="w-full py-3.5 px-6 rounded-full bg-[#18181b] hover:bg-[#27272a] text-white text-sm font-bold tracking-wide shadow-md transition-all hover:scale-[1.02] active:scale-98 text-center flex items-center justify-center gap-2 cursor-pointer no-underline font-montserrat"
+      >
+        <span className="text-amber-50">Continue to Checkout</span>
+        <span className="text-amber-50">&rarr;</span>
       </a>
-      <br />
+      <div className="flex items-center justify-center gap-2 mt-3 text-[11px] text-[#736555] font-montserrat">
+        <span className="flex items-center gap-1">
+          <svg className="w-3 h-3 text-[#10b981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0110 0v4" />
+          </svg>
+          Secure Checkout
+        </span>
+        <span>•</span>
+        <span>Satisfaction Guaranteed</span>
+      </div>
     </div>
   );
 }
