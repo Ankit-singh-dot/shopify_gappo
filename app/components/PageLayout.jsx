@@ -4,6 +4,7 @@ import {Aside} from '~/components/Aside';
 import {Footer} from '~/components/Footer';
 import {Header, HeaderMenu} from '~/components/Header';
 import {CartMain} from '~/components/CartMain';
+import {FlyingBee} from '~/components/FlyingBee';
 import {
   SEARCH_ENDPOINT,
   SearchFormPredictive,
@@ -40,6 +41,7 @@ export function PageLayout({
         header={header}
         publicStoreDomain={publicStoreDomain}
       />
+      <FlyingBee />
     </Aside.Provider>
   );
 }
@@ -50,7 +52,14 @@ export function PageLayout({
 function CartAside({cart}) {
   return (
     <Aside type="cart" heading="CART">
-      <Suspense fallback={<p>Loading cart ...</p>}>
+      <Suspense
+        fallback={
+          <div className="py-16 flex flex-col items-center justify-center text-center font-montserrat">
+            <div className="w-10 h-10 border-2 border-[#f5a623] border-t-transparent rounded-full animate-spin mb-3" />
+            <p className="text-xs text-[#736555]">Loading your cart...</p>
+          </div>
+        }
+      >
         <Await resolve={cart}>
           {(cart) => {
             return <CartMain cart={cart} layout="aside" />;
