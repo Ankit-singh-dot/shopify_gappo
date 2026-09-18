@@ -1,20 +1,20 @@
-import {Suspense} from 'react';
-import {Await, NavLink, useAsyncValue, Link} from 'react-router';
-import {useAnalytics, useOptimisticCart} from '@shopify/hydrogen';
-import {useAside} from '~/components/Aside';
+import { Suspense } from 'react';
+import { Await, NavLink, useAsyncValue, Link } from 'react-router';
+import { useAnalytics, useOptimisticCart } from '@shopify/hydrogen';
+import { useAside } from '~/components/Aside';
 
 /**
  * @param {HeaderProps}
  */
-export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
-  const {open} = useAside();
+export function Header({ header, isLoggedIn, cart, publicStoreDomain }) {
+  const { open } = useAside();
 
   return (
     <header className="sticky top-0 z-40 bg-[#fdfaf1]/95 backdrop-blur-md border-b border-[#f2ebd9] transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         {/* Logo with Gapoo Bear Mascot */}
         <Link to="/" className="flex items-center group">
-          <div className="h-10 sm:h-12 w-auto transition-transform group-hover:scale-105">
+          <div className="h-16 sm:h-20 w-auto transition-transform group-hover:scale-105">
             <img
               src="/images/logo-01-01.png"
               alt="Gapoo Logo"
@@ -26,16 +26,16 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
         {/* Desktop Navigation matching the design */}
         <nav className="hidden md:flex items-center space-x-8 font-medium text-sm text-[#4a4036]" role="navigation">
           {[
-            {href: '#shop', label: 'Shop'},
-            {href: '#why-honey', label: 'Why honey'},
-            {href: '#how-to-use', label: 'How to use'},
-            {href: '#our-story', label: 'Our story'},
+            { href: '#shop', label: 'Shop' },
+            { href: '#why-honey', label: 'Why honey' },
+            { href: '#how-to-use', label: 'How to use' },
+            { href: '#our-story', label: 'Our story' },
           ].map((item) => (
             <a
               key={item.href}
               href={item.href}
               className="relative py-1 text-[#4a4036] hover:text-[#18181b] transition-colors font-medium no-underline hover:no-underline group"
-              style={{textDecoration: 'none'}}
+              style={{ textDecoration: 'none' }}
             >
               <span>{item.label}</span>
               <span className="absolute bottom-0 left-0 w-0 h-[2.5px] bg-[#f5a623] transition-all duration-300 group-hover:w-full rounded-full pointer-events-none" />
@@ -80,7 +80,7 @@ export function HeaderMenu({
   publicStoreDomain,
 }) {
   const className = `header-menu-${viewport}`;
-  const {close} = useAside();
+  const { close } = useAside();
 
   return (
     <nav className="flex flex-col space-y-4 p-4 text-lg font-medium text-[#4a4036]" role="navigation">
@@ -103,9 +103,9 @@ export function HeaderMenu({
 /**
  * @param {{count: number}}
  */
-function CartBadge({count}) {
-  const {open} = useAside();
-  const {publish, shop, cart, prevCart} = useAnalytics();
+function CartBadge({ count }) {
+  const { open } = useAside();
+  const { publish, shop, cart, prevCart } = useAnalytics();
 
   return (
     <button
@@ -133,7 +133,7 @@ function CartBadge({count}) {
 /**
  * @param {Pick<HeaderProps, 'cart'>}
  */
-function CartToggle({cart}) {
+function CartToggle({ cart }) {
   return (
     <Suspense fallback={<CartBadge count={0} />}>
       <Await resolve={cart}>
