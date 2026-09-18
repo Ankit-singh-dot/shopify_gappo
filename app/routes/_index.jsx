@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Await, useLoaderData, Link } from 'react-router';
+import { useState, useEffect } from 'react';
+import { Await, useLoaderData, Link, useFetcher, data } from 'react-router';
 import { Suspense } from 'react';
 import { CartForm } from '@shopify/hydrogen';
 import { useAside } from '~/components/Aside';
@@ -17,6 +17,67 @@ export const meta = () => {
     },
   ];
 };
+
+/**
+ * @param {Route.ActionArgs} args
+ */
+export async function action({ request, context }) {
+  const formData = await request.formData();
+  const email = String(formData.get('email') || '');
+  const intent = String(formData.get('intent') || '');
+
+  if (intent === 'newsletter') {
+    if (!email) {
+      return data({ error: 'Email is required' }, { status: 400 });
+    }
+
+    try {
+      // Storefront API customerCreate mutation for newsletter signup
+      // We generate a dummy password to satisfy the API requirement, but the user doesn't need to know it
+      const dummyPassword = Math.random().toString(36).slice(-8) + 'A1!';
+      
+      const CUSTOMER_CREATE_MUTATION = `#graphql
+        mutation customerCreate($input: CustomerCreateInput!) {
+          customerCreate(input: $input) {
+            customer {
+              id
+              email
+            }
+            customerUserErrors {
+              code
+              field
+              message
+            }
+          }
+        }
+      `;
+
+      const response = await context.storefront.mutate(CUSTOMER_CREATE_MUTATION, {
+        variables: {
+          input: {
+            email,
+            password: dummyPassword,
+            acceptsMarketing: true,
+          }
+        }
+      });
+
+      const errors = response?.customerCreate?.customerUserErrors || [];
+      if (errors.length > 0) {
+        // If the email is already taken, we still return success to the user (security best practice)
+        // or we could show a custom message. We will just return success so they see the thank you message.
+        console.warn('Newsletter signup warning:', errors);
+      }
+
+      return data({ success: true });
+    } catch (error) {
+      console.error('Newsletter signup error:', error);
+      return data({ error: 'Failed to sign up. Please try again later.' }, { status: 500 });
+    }
+  }
+
+  return data({ error: 'Invalid intent' }, { status: 400 });
+}
 
 /**
  * @param {Route.LoaderArgs} args
@@ -65,15 +126,47 @@ function loadDeferredData({ context }) {
 }
 
 export default function Homepage() {
+  /** @type {LoaderReturnData} */
   const data = useLoaderData();
+  const fetcher = useFetcher();
   const { open } = useAside();
-  const [subscribed, setSubscribed] = useState(false);
-  const [email, setEmail] = useState('');
+  
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Check if newsletter signup was successful
+  const isNewsletterSuccess = fetcher.data?.success;
   const storeProducts = data?.storeProducts || [];
   const defaultVariantId = storeProducts[0]?.variants?.nodes?.[0]?.id;
 
   const [selectedQty, setSelectedQty] = useState(1);
-  const [heroImage, setHeroImage] = useState('/images/gapoo_minted_studio_hero.jpg');
+
+  const heroSlides = [
+    {
+      src: '/images/gapoo_minted_studio_hero.jpg',
+      alt: 'Gapoo Minted Goodness 10 Honey Sticks with Morning Brew',
+    },
+    {
+      src: '/images/gapoo_hero_pour.jpg',
+      alt: 'Gapoo Snap & Squeeze Pure Amber Mint Honey Pour',
+    },
+    {
+      src: '/images/gapoo_hero_unboxing.jpg',
+      alt: 'Gapoo 10 Single-Serve Honey Sticks Unboxed',
+    },
+    {
+      src: '/images/gapoo_hero_travertine.jpg',
+      alt: 'Gapoo Box and Sachets on Travertine Stone',
+    },
+  ];
+
+  useEffect(() => {
+    if (isHovered) return;
+    const timer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [isHovered, heroSlides.length]);
 
   // The 3 lifestyle moments using pure, high-res photography without baked-in text
   const moments = [
@@ -195,8 +288,47 @@ export default function Homepage() {
 
             {/* Packaging Feature Badges Removed */}
 
-            {/* Hero Quick Purchase Action */}
-            <div className="pt-2 font-montserrat flex flex-wrap items-center gap-4">
+            {/* Price & Savings Display */}
+            <div className="flex flex-wrap items-baseline gap-3 pt-2 font-montserrat">
+              <span className="font-apricot text-4xl sm:text-5xl font-bold text-[#1a1612]">
+                ₹{289 * selectedQty}
+              </span>
+              <span className="text-base text-[#968674] line-through font-medium">
+                ₹{359 * selectedQty}
+              </span>
+              <span className="text-xs font-bold text-[#15803d] bg-[#dcfce7] border border-[#bbf7d0] px-2 py-0.5 rounded-full uppercase tracking-wider">
+                Save 20%
+              </span>
+              <span className="text-xs text-[#736555] font-medium">
+                (10 Single Serves · ₹19.9/stick)
+              </span>
+            </div>
+
+            {/* Hero Purchase Action: Quantity Selector + Add to Cart + Daily Ritual */}
+            <div className="pt-2 font-montserrat flex flex-wrap items-center gap-3">
+              {/* Clean Quantity Selector */}
+              <div className="flex items-center border border-[#d6cbba] bg-white rounded-full p-1 shadow-xs">
+                <button
+                  type="button"
+                  onClick={() => setSelectedQty(Math.max(1, selectedQty - 1))}
+                  className="w-8 h-8 flex items-center justify-center text-[#736555] hover:text-[#1a1612] hover:bg-[#f5ede0] rounded-full font-bold text-base cursor-pointer select-none transition-colors"
+                  aria-label="Decrease quantity"
+                >
+                  −
+                </button>
+                <span className="w-9 text-center font-bold text-sm text-[#1a1612]">
+                  {selectedQty}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedQty(selectedQty + 1)}
+                  className="w-8 h-8 flex items-center justify-center text-[#736555] hover:text-[#1a1612] hover:bg-[#f5ede0] rounded-full font-bold text-base cursor-pointer select-none transition-colors"
+                  aria-label="Increase quantity"
+                >
+                  +
+                </button>
+              </div>
+
               {defaultVariantId ? (
                 <CartForm
                   route="/cart"
@@ -215,7 +347,7 @@ export default function Homepage() {
                       type="submit"
                       onClick={() => open('cart')}
                       disabled={fetcher.state !== 'idle'}
-                      className="inline-flex items-center justify-center gap-2 bg-[#f5a623] hover:bg-[#e09419] text-[#1a1612] px-8 py-3.5 rounded-full text-sm font-bold tracking-wide shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-60"
+                      className="inline-flex items-center justify-center gap-2 bg-[#f5a623] hover:bg-[#e09419] active:scale-[0.98] text-[#1a1612] px-8 py-3.5 rounded-full text-sm font-bold tracking-wide shadow-md transition-all hover:scale-105 cursor-pointer disabled:opacity-60"
                     >
                       <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                         <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
@@ -225,7 +357,7 @@ export default function Homepage() {
                       <span>
                         {fetcher.state !== 'idle'
                           ? 'Adding...'
-                          : `Add to Cart · ₹${199 * selectedQty}`}
+                          : `Add to Cart · ₹${289 * selectedQty}`}
                       </span>
                       <span className="text-base leading-none">→</span>
                     </button>
@@ -237,7 +369,7 @@ export default function Homepage() {
                   onClick={() => open('cart')}
                   className="inline-flex items-center justify-center gap-2 bg-[#f5a623] hover:bg-[#e09419] text-[#1a1612] px-8 py-3.5 rounded-full text-sm font-bold tracking-wide shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 >
-                  <span>Add to Cart · ₹199</span>
+                  <span>Add to Cart · ₹289</span>
                   <span className="text-base leading-none">→</span>
                 </button>
               )}
@@ -250,142 +382,88 @@ export default function Homepage() {
               </a>
             </div>
 
-            {/* Trust Markers */}
-            <div className="flex items-center gap-4 pt-2 text-xs font-medium text-[#6e6152] font-montserrat">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[#f5a623] text-sm">★</span>
-                <span className="font-semibold text-[#1a1612]">Snap · Squeeze · Sip</span>
-              </div>
+            {/* Clean Trust Markers (No AI Emojis) */}
+            <div className="flex items-center gap-3 pt-2 text-xs font-medium text-[#6e6152] font-montserrat">
+              <span className="font-semibold text-[#1a1612]">Snap · Squeeze · Sip</span>
               <span className="text-[#d0c4b2]">|</span>
-              <div>10 Honey Sticks (12g Pack)</div>
+              <div>10 Honey Sticks (60g Pack)</div>
               <span className="text-[#d0c4b2]">|</span>
               <div>Free shipping over ₹500</div>
             </div>
           </div>
 
-          {/* Right Column: AI-Polished Premium Commercial Product Display WITH Top Add-to-Cart */}
+          {/* Right Column: Premium Commercial Studio Slideshow with Bottom Notch */}
           <div className="lg:col-span-6 relative flex flex-col items-center lg:items-end">
-            <div className="relative w-full max-w-lg lg:max-w-none rounded-[32px] bg-white border border-[#eae0d5] shadow-[0_20px_50px_rgba(0,0,0,0.08)] p-6 sm:p-8 flex flex-col overflow-hidden group">
+            <div
+              className="relative w-full max-w-lg lg:max-w-none aspect-[4/3] rounded-[28px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.12)] border border-[#ebdccb] group bg-[#f7f3eb]"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              {/* Slides with Cross-Fade Transition */}
+              {heroSlides.map((slide, index) => (
+                <div
+                  key={slide.src}
+                  className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${activeSlide === index ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+                    }`}
+                >
+                  <img
+                    src={slide.src}
+                    alt={slide.alt}
+                    className="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.02]"
+                  />
+                  {/* Subtle ambient gradient at bottom for notch readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/5 pointer-events-none" />
+                </div>
+              ))}
 
-              {/* 1. Top Header Bar: Product Title & Price */}
-              <div className="flex items-center justify-between gap-3 pb-4 mb-4 border-b border-[#f4eee6] relative z-20 font-montserrat">
-                <div className="flex items-center gap-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#10b981] animate-pulse shadow-[0_0_8px_#10b981]" />
-                  <span className="text-sm font-bold text-[#1a1612] tracking-wide uppercase">
-                    Minted Goodness · 10 Sticks
-                  </span>
+              {/* Floating Premium Notch at Bottom Middle */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#18130e]/85 hover:bg-[#18130e]/95 backdrop-blur-md border border-white/20 shadow-[0_10px_25px_rgba(0,0,0,0.35)] transition-all">
+                {/* Previous Button */}
+                <button
+                  type="button"
+                  onClick={() => setActiveSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
+                  className="w-6 h-6 flex items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/15 transition-all cursor-pointer"
+                  aria-label="Previous image"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+
+                {/* Progress Indicators */}
+                <div className="flex items-center gap-1.5 px-1">
+                  {heroSlides.map((slide, index) => (
+                    <button
+                      key={slide.src}
+                      type="button"
+                      onClick={() => setActiveSlide(index)}
+                      className={`transition-all duration-300 rounded-full cursor-pointer ${activeSlide === index
+                        ? 'w-7 h-1.5 bg-gradient-to-r from-[#f5a623] to-[#e68a00] shadow-[0_0_8px_#f5a623]'
+                        : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/80'
+                        }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
                 </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="font-apricot text-3xl font-bold text-[#1a1612]">₹{199 * selectedQty}</span>
-                </div>
+
+                {/* Next Button */}
+                <button
+                  type="button"
+                  onClick={() => setActiveSlide((prev) => (prev + 1) % heroSlides.length)}
+                  className="w-6 h-6 flex items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/15 transition-all cursor-pointer"
+                  aria-label="Next image"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+
+                {/* Divider & Counter */}
+                <div className="h-3 w-[1px] bg-white/20 mx-0.5" />
+                <span className="text-[10px] font-mono font-bold text-white/80 pr-1 tracking-wider">
+                  0{activeSlide + 1} / 0{heroSlides.length}
+                </span>
               </div>
-
-              {/* 2. Functional Add to Cart Bar ON TOP OF the Display Image */}
-              <div className="pb-4 mb-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 relative z-20 font-montserrat">
-                {/* Quantity Selector */}
-                <div className="flex items-center justify-between sm:justify-center border border-[#e4d8c8] bg-[#fdfaf1] rounded-full px-4 py-2 shadow-inner">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedQty(Math.max(1, selectedQty - 1))}
-                    className="w-8 h-8 flex items-center justify-center text-[#736555] hover:text-[#1a1612] hover:bg-white rounded-full font-bold text-lg cursor-pointer select-none transition-colors"
-                    aria-label="Decrease quantity"
-                  >
-                    -
-                  </button>
-                  <span className="w-10 text-center font-bold text-base text-[#1a1612]">
-                    {selectedQty}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedQty(selectedQty + 1)}
-                    className="w-8 h-8 flex items-center justify-center text-[#736555] hover:text-[#1a1612] hover:bg-white rounded-full font-bold text-lg cursor-pointer select-none transition-colors"
-                    aria-label="Increase quantity"
-                  >
-                    +
-                  </button>
-                </div>
-
-                {/* Direct Add to Cart Button */}
-                {defaultVariantId ? (
-                  <CartForm
-                    route="/cart"
-                    inputs={{
-                      lines: [
-                        {
-                          merchandiseId: defaultVariantId,
-                          quantity: selectedQty,
-                        },
-                      ],
-                    }}
-                    action={CartForm.ACTIONS.LinesAdd}
-                  >
-                    {(fetcher) => (
-                      <button
-                        type="submit"
-                        onClick={() => open('cart')}
-                        disabled={fetcher.state !== 'idle'}
-                        className="flex-1 w-full bg-gradient-to-r from-[#18181b] to-[#27272a] hover:from-[#27272a] hover:to-[#3f3f46] active:scale-[0.98] text-white px-8 py-3.5 rounded-full text-sm font-bold tracking-wide shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-60"
-                      >
-                        <svg className="w-5 h-5 text-[#f5a623]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-                          <line x1="3" y1="6" x2="21" y2="6" />
-                          <path d="M16 10a4 4 0 01-8 0" />
-                        </svg>
-                        <span>
-                          {fetcher.state !== 'idle'
-                            ? 'Adding to Cart...'
-                            : `Add to Cart · ₹${199 * selectedQty}`}
-                        </span>
-                      </button>
-                    )}
-                  </CartForm>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => open('cart')}
-                    className="flex-1 w-full bg-gradient-to-r from-[#18181b] to-[#27272a] hover:from-[#27272a] hover:to-[#3f3f46] text-white px-8 py-3.5 rounded-full text-sm font-bold tracking-wide shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3 cursor-pointer"
-                  >
-                    <span>Add to Cart · ₹199</span>
-                  </button>
-                )}
-              </div>
-
-              {/* 3. Realistic AI Studio Commercial Product Display Image */}
-              <div className="relative rounded-[22px] overflow-hidden bg-[#fdfaf1] aspect-[4/3] sm:aspect-[16/11] flex items-center justify-center p-1.5 shadow-inner">
-                <img
-                  src={heroImage}
-                  alt="Gapoo Minted Goodness 10 Honey Sticks Box and Sachets"
-                  className="w-full h-full object-cover rounded-[18px] transition-transform duration-700 group-hover:scale-105"
-                />
-
-                {/* Floating badge removed */}
-
-                {/* Image angle switcher */}
-                <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-white/95 backdrop-blur-md p-1 rounded-full shadow-md border border-[#e8cd8c]/60">
-                  <button
-                    type="button"
-                    onClick={() => setHeroImage('/images/gapoo_minted_studio_hero.jpg')}
-                    className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all cursor-pointer ${heroImage === '/images/gapoo_minted_studio_hero.jpg'
-                      ? 'bg-[#18181b] text-white shadow-xs'
-                      : 'text-[#736555] hover:text-[#1a1612]'
-                      }`}
-                  >
-                    Studio Table
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setHeroImage('/images/gapoo_minted_clean_pack.jpg')}
-                    className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all cursor-pointer ${heroImage === '/images/gapoo_minted_clean_pack.jpg'
-                      ? 'bg-[#18181b] text-white shadow-xs'
-                      : 'text-[#736555] hover:text-[#1a1612]'
-                      }`}
-                  >
-                    Packshot
-                  </button>
-                </div>
-              </div>
-
-              {/* Packaging Sub-strip removed */}
             </div>
           </div>
         </div>
@@ -485,19 +563,19 @@ export default function Homepage() {
         <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-medium text-[#6e6152] py-4 border-y border-[#f0e7d3] font-montserrat">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
-            <span>Subscribe & save 15%</span>
+            <span>Unlock Subscription Savings</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#f5a623]" />
-            <span>Free returns within 30 days</span>
+            <span>Satisfaction Promise</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#18181b]" />
-            <span>Ships in 1–2 business days</span>
+            <span>Priority Fulfillment</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#c87a1e]" />
-            <span>2 Honey Sticks (6g Each) per Pack</span>
+            <span>Perfectly Portioned Daily Servings</span>
           </div>
         </div>
       </section>
@@ -562,7 +640,7 @@ export default function Homepage() {
             <div className="hidden lg:block w-2.5 h-7 rounded-full bg-[#f4a22b] absolute -right-2 top-12 pointer-events-none z-0" />
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 font-montserrat relative z-10">
-              {/* Card 1: 0g Added Sugar */}
+              {/* Card 1: Naturally Sweet */}
               <div className="relative overflow-hidden bg-white rounded-[26px] p-6 sm:p-7 border border-[#efe7d6] text-left shadow-sm hover:shadow-md transition-all group">
                 {/* Honeycomb corner accent matching Image 2 */}
                 <div className="absolute -top-3 -right-3 w-16 h-16 pointer-events-none opacity-40 group-hover:opacity-65 transition-opacity">
@@ -574,17 +652,17 @@ export default function Homepage() {
                   </svg>
                 </div>
                 <span className="font-apricot text-4xl sm:text-5xl font-bold text-[#c86a14] block mb-1">
-                  0g
+                  Pure
                 </span>
                 <h4 className="text-xs font-bold tracking-wider text-[#1a1612] uppercase mb-1">
-                  Added Sugar
+                  Natural Sweetness
                 </h4>
                 <p className="text-xs sm:text-sm text-[#736555]">
                   Just what the bees made.
                 </p>
               </div>
 
-              {/* Card 2: 20+ Antioxidants */}
+              {/* Card 2: Antioxidants */}
               <div className="relative overflow-hidden bg-white rounded-[26px] p-6 sm:p-7 border border-[#efe7d6] text-left shadow-sm hover:shadow-md transition-all group">
                 {/* Honeycomb corner accent matching Image 2 */}
                 <div className="absolute -top-3 -right-3 w-16 h-16 pointer-events-none opacity-40 group-hover:opacity-65 transition-opacity">
@@ -596,17 +674,17 @@ export default function Homepage() {
                   </svg>
                 </div>
                 <span className="font-apricot text-4xl sm:text-5xl font-bold text-[#c86a14] block mb-1">
-                  20+
+                  Rich
                 </span>
                 <h4 className="text-xs font-bold tracking-wider text-[#1a1612] uppercase mb-1">
-                  Antioxidants
+                  In Antioxidants
                 </h4>
                 <p className="text-xs sm:text-sm text-[#736555]">
-                  Naturally occurring antioxidants.
+                  Naturally occurring trace minerals.
                 </p>
               </div>
 
-              {/* Card 3: 99.5% Real Honey */}
+              {/* Card 3: Real Honey */}
               <div className="relative overflow-hidden bg-white rounded-[26px] p-6 sm:p-7 border border-[#efe7d6] text-left shadow-sm hover:shadow-md transition-all group">
                 {/* Honeycomb corner accent matching Image 2 */}
                 <div className="absolute -top-3 -right-3 w-16 h-16 pointer-events-none opacity-40 group-hover:opacity-65 transition-opacity">
@@ -618,17 +696,17 @@ export default function Homepage() {
                   </svg>
                 </div>
                 <span className="font-apricot text-4xl sm:text-5xl font-bold text-[#c86a14] block mb-1">
-                  99.5%
+                  Real
                 </span>
                 <h4 className="text-xs font-bold tracking-wider text-[#1a1612] uppercase mb-1">
-                  Real Honey
+                  Apiary Honey
                 </h4>
                 <p className="text-xs sm:text-sm text-[#736555]">
                   Infused with natural mint extract.
                 </p>
               </div>
 
-              {/* Card 4: 60s Energy Boost */}
+              {/* Card 4: Energy Boost */}
               <div className="relative overflow-hidden bg-white rounded-[26px] p-6 sm:p-7 border border-[#efe7d6] text-left shadow-sm hover:shadow-md transition-all group">
                 {/* Honeycomb corner accent matching Image 2 */}
                 <div className="absolute -top-3 -right-3 w-16 h-16 pointer-events-none opacity-40 group-hover:opacity-65 transition-opacity">
@@ -640,13 +718,13 @@ export default function Homepage() {
                   </svg>
                 </div>
                 <span className="font-apricot text-4xl sm:text-5xl font-bold text-[#c86a14] block mb-1">
-                  60s
+                  Quick
                 </span>
                 <h4 className="text-xs font-bold tracking-wider text-[#1a1612] uppercase mb-1">
                   Energy Boost
                 </h4>
                 <p className="text-xs sm:text-sm text-[#736555]">
-                  Quick natural carbs, no crash.
+                  Natural carbs, ready to burn.
                 </p>
               </div>
             </div>
@@ -782,81 +860,126 @@ export default function Homepage() {
       </section>
 
       {/* ============================================================ */}
-      {/* 4. OUR STORY: FROM SMALL APIARIES                            */}
+      {/* 4. OUR STORY & THE APIARY NETWORK                            */}
       {/* ============================================================ */}
-      <section
-        id="our-story"
-        className="py-18 md:py-24 bg-[#20140b] text-[#fdfaf1] scroll-mt-20 relative overflow-hidden"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Story Text & Metrics */}
-            <div className="lg:col-span-7 space-y-6">
-              <span className="text-xs font-bold tracking-widest text-[#f5a623] uppercase font-montserrat">
-                Our Story
-              </span>
-              <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
-                From small apiaries, straight to your stick.
-              </h2>
-              <p className="text-sm sm:text-base text-[#d1c2b0] leading-relaxed max-w-xl font-montserrat">
-                We work directly with family-run beekeepers, paying fair prices
-                for real, unfiltered honey. Then we pack it into tear-open
-                sticks so you can take it anywhere — without the sticky jar.
-              </p>
+      {/* ============================================================ */}
+      {/* 4. OUR STORY & THE APIARY NETWORK (DaVinci Level)            */}
+      {/* ============================================================ */}
+      <section id="our-story" className="py-24 sm:py-40 bg-[#d7b082] text-[#2c1a0e] scroll-mt-20 relative overflow-hidden font-montserrat">
+        {/* Massive Background Etching */}
+        <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center overflow-hidden">
+          <img
+            src="/images/beekeeper_hive_transparent.png"
+            alt=""
+            className="w-full h-full object-cover opacity-[0.15] mix-blend-multiply scale-110"
+          />
+        </div>
 
-              {/* 3 Highlights */}
-              <div className="grid grid-cols-3 gap-6 pt-6 border-t border-[#3a2a1e] font-montserrat">
+        {/* Subtle vignette for depth */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#d7b082]/40 via-transparent to-[#d7b082]/60 z-0" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+
+            {/* Left: Huge Editorial Title */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="h-[1px] w-12 bg-[#2c1a0e]"></div>
+                <span className="text-xs font-bold tracking-[0.2em] text-[#2c1a0e] uppercase">
+                  Our Story
+                </span>
+              </div>
+              <h2 className="font-apricot text-6xl sm:text-7xl lg:text-8xl font-bold text-[#1a110a] leading-[0.9] tracking-tighter">
+                From small apiaries,<br />straight to your stick.
+              </h2>
+            </div>
+
+            {/* Right: Sharp Editorial Copy */}
+            <div className="space-y-12">
+              <div>
+                <span className="text-[10px] font-bold tracking-[0.2em] text-[#5e381f] uppercase block mb-4">
+                  Ethical Sourcing
+                </span>
+                <h3 className="text-3xl sm:text-4xl font-bold text-[#1a110a] leading-tight font-montserrat tracking-tight">
+                  A network of independent keepers.
+                </h3>
+              </div>
+
+              <div className="space-y-6 text-base sm:text-lg text-[#3e2513] leading-relaxed font-medium">
+                <p>
+                  Real honey doesn't come from factories. It comes from vast fields, patient beekeepers, and healthy hives. That's why we've partnered with a curated network of independent apiaries who prioritize the well-being of their bees over mass production.
+                </p>
+                <p>
+                  We maintain a strict <strong className="text-[#1a110a]">Fair Trade Commitment</strong>, ensuring that our beekeepers receive a premium for their hard work. This empowers them to sustain traditional, ethical practices that protect local ecosystems.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-8 pt-8 border-t border-[#b8956c]">
                 <div>
-                  <span className="font-apricot text-3xl sm:text-4xl font-bold text-[#f5a623] block">
-                    120+
-                  </span>
-                  <span className="text-[10px] sm:text-xs tracking-wider uppercase text-[#b8a794]">
+                  <span className="text-5xl font-bold text-[#1a110a] block tracking-tighter">Select</span>
+                  <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-[#5e381f] mt-2 block">
                     Partner Apiaries
                   </span>
                 </div>
                 <div>
-                  <span className="font-apricot text-3xl sm:text-4xl font-bold text-[#f5a623] block">
-                    0
-                  </span>
-                  <span className="text-[10px] sm:text-xs tracking-wider uppercase text-[#b8a794]">
-                    Added Sugar
-                  </span>
-                </div>
-                <div>
-                  <span className="font-apricot text-3xl sm:text-4xl font-bold text-[#f5a623] block">
-                    100%
-                  </span>
-                  <span className="text-[10px] sm:text-xs tracking-wider uppercase text-[#b8a794]">
-                    Recyclable Packs
+                  <span className="text-5xl font-bold text-[#1a110a] block tracking-tighter">100%</span>
+                  <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-[#5e381f] mt-2 block">
+                    Traceable Origin
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Artisanal Beekeeper Illustration with Gapoo Bear Quality Seal */}
-            <div className="lg:col-span-5 flex justify-center">
-              <div className="w-full max-w-md bg-[#2d1c10] border border-[#4a3424] rounded-[32px] p-6 sm:p-8 relative shadow-2xl overflow-hidden group">
-                <div className="relative z-10 flex flex-col items-center text-center">
-                  <div className="w-full max-w-xs mb-4">
-                    <img
-                      src="/images/beekeeper_only_clean.png"
-                      alt="Family Beekeeper Tending Hive in Wildflower Field"
-                      className="w-full h-auto object-contain filter invert brightness-90 contrast-125 transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
+          </div>
+        </div>
+      </section>
 
-                  {/* Gapoo Bear Seal */}
-                  <div className="flex items-center gap-3 bg-[#1c1108]/90 border border-[#4a3424] px-4 py-2 rounded-full font-montserrat">
-                    <img
-                      src="/images/gapoo_bear_amber_badge.png"
-                      alt="Gapoo Bear Mascot"
-                      className="w-6 h-6 object-contain"
-                    />
-                    <span className="text-xs font-bold tracking-wide text-[#f5a623]">
-                      Gapoo Standard · Real Apiary Honey & Mint
-                    </span>
-                  </div>
-                </div>
+      {/* ============================================================ */}
+      {/* 4b. SUSTAINABLE HARVESTING (Gallery Layout)                  */}
+      {/* ============================================================ */}
+      <section className="py-20 sm:py-32 bg-[#1c1815] text-[#fdfaf1] relative overflow-hidden font-montserrat">
+        {/* Soft Ambient Glow in Background */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#d4af37] opacity-[0.04] blur-[100px] pointer-events-none rounded-full" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+            {/* Left Copy */}
+            <div className="lg:col-span-5 space-y-8 order-2 lg:order-1">
+              <div>
+                <span className="text-xs font-bold tracking-widest text-[#d4af37] uppercase block mb-4">
+                  The Product
+                </span>
+                <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                  Pure nature.<br />Modern convenience.
+                </h2>
+              </div>
+
+              <p className="text-base sm:text-lg text-[#bbaaa0] leading-relaxed">
+                By the time a single drop of Gapoo honey reaches your stick, it has been carefully harvested, naturally filtered, and perfectly infused with natural mint extract. We never add artificial syrups or refined sugars. What you taste is pure, unrefined natural sweetness.
+              </p>
+
+              <p className="text-base sm:text-lg text-[#bbaaa0] leading-relaxed">
+                And because we care about the land that gives us so much, our single-serve sticks are Earth Conscious—designed for recycling so you can enjoy guilt-free sweetness on the go.
+              </p>
+            </div>
+
+            {/* Right Images (Overlapping) */}
+            <div className="lg:col-span-7 relative h-[400px] sm:h-[600px] order-1 lg:order-2">
+              <div className="absolute top-0 right-0 w-3/4 h-[70%] rounded-[24px] overflow-hidden shadow-2xl border border-white/10 z-10 group">
+                <img
+                  src="/images/farming2.jpeg"
+                  alt="Close up of bees on a honeycomb frame"
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                />
+              </div>
+
+              <div className="absolute bottom-0 left-0 w-[65%] h-[60%] rounded-[24px] overflow-hidden shadow-2xl border border-white/10 z-20 group">
+                <img
+                  src="/images/farmin2.jpeg"
+                  alt="Beekeeper inspecting hives in a golden field"
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                />
               </div>
             </div>
           </div>
@@ -864,57 +987,161 @@ export default function Homepage() {
       </section>
 
       {/* ============================================================ */}
-      {/* 7. NEWSLETTER CTA: JOIN GAPOO'S BEEHIVE                     */}
+      {/* 4c. COMING SOON: EXPANDING THE HIVE (DaVinci Level)          */}
       {/* ============================================================ */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto text-center space-y-6">
-        {/* Gapoo Bear Mascot Welcome Badge */}
-        <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full overflow-hidden shadow-lg border-2 border-[#faecc9] p-1 bg-white hover:scale-105 transition-transform">
-          <img
-            src="/images/gapoo_bear_amber_badge.png"
-            alt="Gapoo Bear Mascot"
-            className="w-full h-full object-contain"
-          />
+      <section className="bg-[#121212] text-white overflow-hidden font-montserrat flex flex-col md:flex-row min-h-[800px]">
+
+        {/* Left Panel: Ginger Curcumin */}
+        <div className="relative w-full md:w-1/2 p-10 sm:p-16 lg:p-24 flex flex-col justify-between group overflow-hidden bg-[#18110b] border-b md:border-b-0 md:border-r border-[#2a1f14]">
+          {/* Immersive Glow */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#d4a373] opacity-[0.05] blur-[120px] rounded-full pointer-events-none transition-opacity duration-700 group-hover:opacity-[0.1]" />
+
+          <div className="relative z-10 space-y-6">
+            <span className="inline-block text-[10px] font-bold tracking-[0.2em] text-[#d4a373] uppercase border border-[#d4a373]/30 px-3 py-1.5 rounded-full">
+              The Next Chapter
+            </span>
+
+            <h3 className="font-apricot text-5xl sm:text-6xl lg:text-7xl font-bold text-[#f2e6d5] leading-[0.9] tracking-tighter">
+              Ginger Curcumin
+            </h3>
+            <span className="text-xs font-bold tracking-[0.15em] uppercase text-[#8c5a2b] block">
+              The Ultimate Immunity & Wellness Tonic
+            </span>
+          </div>
+
+          <div className="relative z-10 mt-16 sm:mt-24">
+            <ul className="space-y-8">
+              <li className="flex items-start gap-4">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#d4a373] mt-2 flex-shrink-0"></div>
+                <div>
+                  <strong className="block text-[#f2e6d5] text-sm mb-1 uppercase tracking-wider font-bold">Joint & Anti-Inflammatory</strong>
+                  <span className="text-xs text-[#a38062] leading-relaxed">Powerful curcumin helps active adults and desk workers relieve stiffness and accelerate recovery.</span>
+                </div>
+              </li>
+              <li className="flex items-start gap-4">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#d4a373] mt-2 flex-shrink-0"></div>
+                <div>
+                  <strong className="block text-[#f2e6d5] text-sm mb-1 uppercase tracking-wider font-bold">Digestive Comfort</strong>
+                  <span className="text-xs text-[#a38062] leading-relaxed">Traditional ginger relieves indigestion, bloating, and nausea for a soothing after-meal ritual.</span>
+                </div>
+              </li>
+              <li className="flex items-start gap-4">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#d4a373] mt-2 flex-shrink-0"></div>
+                <div>
+                  <strong className="block text-[#f2e6d5] text-sm mb-1 uppercase tracking-wider font-bold">Instant Wellness Tea</strong>
+                  <span className="text-xs text-[#a38062] leading-relaxed">Snap directly into warm water or green tea to create a soothing herbal drink anywhere.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          {/* Subtle Honeycomb Pattern */}
+          <div className="absolute -bottom-24 -right-24 w-96 h-96 opacity-10 pointer-events-none text-[#d4a373]">
+            <svg viewBox="0 0 100 115" fill="currentColor">
+              <polygon points="50,0 100,28.8 100,86.6 50,115.4 0,86.6 0,28.8" />
+            </svg>
+          </div>
         </div>
 
-        <div className="space-y-2 text-center flex flex-col items-center">
+        {/* Right Panel: Chilly */}
+        <div className="relative w-full md:w-1/2 p-10 sm:p-16 lg:p-24 flex flex-col justify-between group overflow-hidden bg-[#0d120d]">
+          {/* Immersive Glow */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#f05423] opacity-[0.05] blur-[120px] rounded-full pointer-events-none transition-opacity duration-700 group-hover:opacity-[0.1]" />
+
+          <div className="relative z-10 space-y-6">
+            <span className="inline-block text-[10px] font-bold tracking-[0.2em] text-[#f05423] uppercase border border-[#f05423]/30 px-3 py-1.5 rounded-full">
+              The Next Chapter
+            </span>
+
+            <h3 className="font-apricot text-5xl sm:text-6xl lg:text-7xl font-bold text-[#e6d8c3] leading-[0.9] tracking-tighter">
+              Chilly
+            </h3>
+            <span className="text-xs font-bold tracking-[0.15em] uppercase text-[#a33917] block">
+              The Bold & Functional Use Cases
+            </span>
+          </div>
+
+          <div className="relative z-10 mt-16 sm:mt-24">
+            <ul className="space-y-8">
+              <li className="flex items-start gap-4">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#f05423] mt-2 flex-shrink-0"></div>
+                <div>
+                  <strong className="block text-[#e6d8c3] text-sm mb-1 uppercase tracking-wider font-bold">Artisanal Pairings</strong>
+                  <span className="text-xs text-[#8a998a] leading-relaxed">An instant flavor-profile booster when drizzled over sharp aged cheddar or charcuterie.</span>
+                </div>
+              </li>
+              <li className="flex items-start gap-4">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#f05423] mt-2 flex-shrink-0"></div>
+                <div>
+                  <strong className="block text-[#e6d8c3] text-sm mb-1 uppercase tracking-wider font-bold">Cocktail Rim / Mixer</strong>
+                  <span className="text-xs text-[#8a998a] leading-relaxed">Craft spicy-sweet beverages like a spicy margarita with precise portion control.</span>
+                </div>
+              </li>
+              <li className="flex items-start gap-4">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#f05423] mt-2 flex-shrink-0"></div>
+                <div>
+                  <strong className="block text-[#e6d8c3] text-sm mb-1 uppercase tracking-wider font-bold">Winter Warm-Up</strong>
+                  <span className="text-xs text-[#8a998a] leading-relaxed">Blend into hot lemon water or tea to provide a soothing, warming chest sensation.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          {/* Subtle Chili Pattern */}
+          <div className="absolute -bottom-24 -right-24 w-96 h-96 opacity-10 pointer-events-none text-[#f05423]">
+            <svg viewBox="0 0 100 115" fill="currentColor">
+              <polygon points="50,0 100,28.8 100,86.6 50,115.4 0,86.6 0,28.8" />
+            </svg>
+          </div>
+        </div>
+
+      </section>
+
+      {/* ============================================================ */}
+      {/* 5. NEWSLETTER CTA: UNLOCK THE GOODNESS                       */}
+      {/* ============================================================ */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto text-center space-y-8 relative">
+        <div className="space-y-3 text-center flex flex-col items-center">
           <span className="text-xs font-bold tracking-widest text-[#c87a1e] uppercase font-montserrat text-center block">
-            Join Gapoo's Beehive
+            Unlock the Goodness
           </span>
-          <h2 className="font-apricot text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1a1612] text-center">
+          <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1a1612] text-center">
             Get 10% off your first box
           </h2>
-          <p className="text-sm sm:text-base text-[#736555] max-w-lg mx-auto font-montserrat text-center leading-relaxed">
-            Sweet perks, secret restocks, occasional bee facts, and a smile in your inbox.
+          <p className="text-base sm:text-lg text-[#736555] max-w-lg mx-auto font-montserrat text-center leading-relaxed">
+            Sweet perks, secret restocks, and a smile in your inbox. No spam, just real honey.
           </p>
         </div>
 
-        {subscribed ? (
-          <div className="inline-block bg-[#faecc9] border border-[#e8cd8c] text-[#8b5311] px-6 py-3 rounded-full text-sm font-semibold font-montserrat">
-            🎉 Welcome to the hive! Check your inbox for your 10% discount code.
+        {isNewsletterSuccess ? (
+          <div className="inline-block bg-[#faecc9] border border-[#e8cd8c] text-[#8b5311] px-6 py-4 rounded-full text-sm font-semibold font-montserrat shadow-sm">
+            🎉 Welcome to the club! Check your inbox for your 10% discount code.
           </div>
         ) : (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (email) setSubscribed(true);
-            }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto font-montserrat"
+          <fetcher.Form
+            method="post"
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto font-montserrat mt-4"
           >
+            <input type="hidden" name="intent" value="newsletter" />
             <input
               type="email"
+              name="email"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               placeholder="you@email.com"
-              className="w-full sm:flex-1 px-5 py-3 rounded-full bg-white border border-[#d6cbba] focus:border-[#18181b] focus:outline-none text-sm shadow-sm"
+              className="w-full sm:flex-1 px-6 py-3.5 rounded-full bg-white border border-[#d6cbba] focus:border-[#18181b] focus:outline-none text-base shadow-sm"
+              disabled={fetcher.state === 'submitting'}
             />
             <button
               type="submit"
-              className="w-full sm:w-auto bg-[#18181b] hover:bg-[#27272a] text-white px-7 py-3 rounded-full text-sm font-semibold tracking-wide shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+              className="w-full sm:w-auto bg-[#18181b] hover:bg-[#27272a] text-white px-8 py-3.5 rounded-full text-sm font-bold tracking-wide shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap disabled:opacity-70 disabled:cursor-not-allowed"
+              disabled={fetcher.state === 'submitting'}
             >
-              Sweeten me up
+              {fetcher.state === 'submitting' ? 'Sweetening...' : 'Sweeten me up'}
             </button>
-          </form>
+            {fetcher.data?.error && (
+              <p className="text-red-500 text-sm mt-2 absolute -bottom-6 w-full text-center">{fetcher.data.error}</p>
+            )}
+          </fetcher.Form>
         )}
       </section>
     </div>
