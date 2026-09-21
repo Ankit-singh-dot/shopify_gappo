@@ -25,12 +25,12 @@ export function Header({ header, isLoggedIn, cart, publicStoreDomain }) {
 
         {/* Desktop Navigation matching the design */}
         <nav className="hidden md:flex items-center space-x-8 font-medium text-sm text-[#4a4036]" role="navigation">
-          {[
-            { href: '#shop', label: 'Shop' },
-            { href: '#why-honey', label: 'Why honey' },
-            { href: '#how-to-use', label: 'How to use' },
-            { href: '#our-story', label: 'Our story' },
-          ].map((item) => (
+            {[
+              { href: '/shop', label: 'Shop' },
+              { href: '/shop#why-honey', label: 'Why honey' },
+              { href: '/shop#how-to-use', label: 'How to use' },
+              { href: '/shop#our-story', label: 'Our story' },
+            ].map((item) => (
             <a
               key={item.href}
               href={item.href}
@@ -84,16 +84,16 @@ export function HeaderMenu({
 
   return (
     <nav className="flex flex-col space-y-4 p-4 text-lg font-medium text-[#4a4036]" role="navigation">
-      <a href="#shop" onClick={close} className="hover:text-black no-underline hover:no-underline">
+      <a href="/shop" onClick={close} className="hover:text-black no-underline hover:no-underline">
         Shop
       </a>
-      <a href="#why-honey" onClick={close} className="hover:text-black no-underline hover:no-underline">
+      <a href="/shop#why-honey" onClick={close} className="hover:text-black no-underline hover:no-underline">
         Why honey
       </a>
-      <a href="#how-to-use" onClick={close} className="hover:text-black no-underline hover:no-underline">
+      <a href="/shop#how-to-use" onClick={close} className="hover:text-black no-underline hover:no-underline">
         How to use
       </a>
-      <a href="#our-story" onClick={close} className="hover:text-black no-underline hover:no-underline">
+      <a href="/shop#our-story" onClick={close} className="hover:text-black no-underline hover:no-underline">
         Our story
       </a>
     </nav>
