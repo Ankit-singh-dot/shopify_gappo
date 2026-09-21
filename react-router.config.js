@@ -9,6 +9,10 @@ import {hydrogenPreset} from '@shopify/hydrogen/react-router-preset';
  */
 export default {
   presets: [hydrogenPreset()],
+  future: {
+    v8_passThroughRequests: true,
+    v8_trailingSlashAwareDataRequests: true,
+  }
 };
 
 /** @typedef {import('@react-router/dev/config').Config} Config */
