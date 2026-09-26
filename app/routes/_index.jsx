@@ -94,6 +94,8 @@ export default function LandingPage() {
   const ctaBearY = useTransform(scrollYProgress, [0.75, 1], ['-10%', '15%']);
   const storyImageY = useTransform(scrollYProgress, [0.2, 0.55], ['8%', '-12%']);
   const storyImageY2 = useTransform(scrollYProgress, [0.2, 0.55], ['16%', '-20%']);
+  const productImageY = useTransform(scrollYProgress, [0.35, 0.65], ['10%', '-10%']);
+  const productBearScale = useTransform(scrollYProgress, [0.4, 0.6], [0.95, 1.05]);
 
   // Lifestyle moments data
   const moments = [
@@ -102,7 +104,7 @@ export default function LandingPage() {
     { img: '/images/moment_pocket_clean.jpg', label: 'On The Trail', caption: 'Nature in your pocket.' },
   ];
 
-  const ribbonWords = '100% PURE · ZERO MESS · SNAP & SQUEEZE · NATURAL MINT · TRACEABLE ORIGIN · EARTH CONSCIOUS · ';
+  const ribbonWords = 'PURE · ZERO MESS · SNAP & SQUEEZE · NATURAL MINT · TRACEABLE ORIGIN · EARTH CONSCIOUS · ';
 
   return (
     <div ref={containerRef} className="bg-[#fdfaf1] text-[#1a110a] font-montserrat relative overflow-hidden">
@@ -165,7 +167,7 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.6 }}
           >
-            100% pure single-serve honey sticks. No sticky spoons, no messy jars. Just nature in your pocket.
+            pure single-serve honey sticks. No sticky spoons, no messy jars. Just nature in your pocket.
           </motion.p>
 
           <motion.div
@@ -192,10 +194,10 @@ export default function LandingPage() {
               className="text-xs sm:text-sm font-bold tracking-widest uppercase text-white/70 hover:text-white transition-colors duration-300 flex items-center gap-2"
               style={{ textDecoration: 'none' }}
             >
-              <span>Our Story</span>
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {/* <span>Our Story</span> */}
+              {/* <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
+              </svg> */}
             </a>
           </motion.div>
         </motion.div>
@@ -224,7 +226,7 @@ export default function LandingPage() {
       <div className="bg-[#1a110a] py-4 sm:py-5 relative overflow-hidden">
         <Marquee speed={35}>
           <span className="inline-flex items-center gap-8 sm:gap-12 px-4 text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase text-[#d4af37]/80">
-            <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#f5a623]" />100% Pure Honey</span>
+            <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#f5a623]" />Pure Honey</span>
             <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#f5a623]" />Zero Preservatives</span>
             <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#f5a623]" />Traceable Origin</span>
             <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#f5a623]" />Fair Trade Sourced</span>
@@ -242,7 +244,7 @@ export default function LandingPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-28 items-start">
 
           {/* Left: Editorial Copy */}
-          <div className="space-y-10 lg:pt-12">
+          <div className="space-y-10 lg:pt-12 pl-10">
             <FadeIn>
               <div className="flex items-center gap-3 mb-2">
                 <div className="h-[1px] w-10 bg-[#c87a1e]" />
@@ -344,174 +346,159 @@ export default function LandingPage() {
       </div>
 
       {/* ════════════════════════════════════════════════════════════ */}
-      {/* 5. PRODUCT SHOWCASE — "Pure Nature. Modern Convenience."    */}
+      {/* 5. PRODUCT SHOWCASE — Cinematic split panel with parallax   */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <section className="py-28 sm:py-40 bg-[#1a110a] text-white relative overflow-hidden">
+      <section className="bg-[#1a110a] text-white relative overflow-hidden">
         {/* Ambient glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#d4af37] opacity-[0.04] blur-[160px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-[#d4af37] opacity-[0.03] blur-[140px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#c87a1e] opacity-[0.04] blur-[120px] rounded-full pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto px-6 sm:px-12 relative z-10">
-          <div className="text-center mb-20 sm:mb-28">
-            <FadeIn>
-              <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase text-[#d4af37] block mb-6">The Product</span>
+        <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[85vh]">
+          {/* Left: Product Image with Parallax */}
+          <div className="relative overflow-hidden min-h-[400px] sm:min-h-[500px] lg:min-h-full">
+            <motion.div
+              style={{ y: productImageY }}
+              className="absolute inset-0 -inset-y-[15%]"
+            >
+              <img
+                src="/images/gapoo_hero_travertine.jpg"
+                alt="Gapoo honey sticks arrangement"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+            {/* Subtle overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#1a110a]/30 lg:to-[#1a110a]/60" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1a110a]/40 via-transparent to-transparent lg:hidden" />
+
+            {/* Bear badge floating element */}
+            <motion.div
+              style={{ scale: productBearScale }}
+              className="absolute bottom-8 left-8 sm:bottom-12 sm:left-12 z-10"
+            >
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-2xl">
+                <img src="/images/gapoo_bear_mascot_hd.png" alt="" className="w-14 h-14 sm:w-16 sm:h-16 object-contain" />
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Right: Editorial Copy */}
+          <div className="flex flex-col justify-center px-8 sm:px-12 lg:px-20 xl:px-28 py-20 sm:py-28 lg:py-36 relative z-10">
+            <FadeIn direction="right">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="h-[1px] w-8 bg-[#d4af37]" />
+                <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[#d4af37]">The Product</span>
+              </div>
             </FadeIn>
-            <FadeIn delay={0.1}>
-              <h2 className="font-apricot text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tighter leading-[0.9]">
+
+            <FadeIn delay={0.1} direction="right">
+              <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tighter leading-[0.9] mb-8">
                 <span className="text-white">Pure nature.</span>
                 <br />
-                <span className="text-[#d4af37]">Modern convenience.</span>
+                <span className="text-[#d4af37] mt-1 block">Modern convenience.</span>
               </h2>
             </FadeIn>
-            <FadeIn delay={0.2}>
-              <p className="mt-8 text-base sm:text-lg text-[#a39585] max-w-2xl mx-auto leading-relaxed font-medium" style={{ textAlign: 'center' }}>
+
+            <FadeIn delay={0.2} direction="right">
+              <p className="text-base sm:text-lg text-[#a39585] leading-[1.8] font-medium max-w-lg mb-10">
                 Carefully harvested, naturally filtered, and perfectly infused with natural mint extract.
-                No artificial syrups. No refined sugars. Just pure, unrefined sweetness.
+                No artificial syrups. No refined sugars. What you taste is pure, unrefined natural sweetness.
               </p>
             </FadeIn>
-          </div>
 
-          {/* Feature Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6 lg:gap-10">
-            {[
-              { icon: '🍯', title: '100% Pure', desc: 'Sourced from independent apiaries with zero additives or preservatives.' },
-              { icon: '🌿', title: 'Mint Infused', desc: 'Natural mint extract for a refreshing twist on classic golden honey.' },
-              { icon: '♻️', title: 'Earth Conscious', desc: 'Single-serve sticks designed for recycling. Guilt-free sweetness on the go.' },
-            ].map((f, i) => (
-              <FadeIn key={f.title} delay={0.1 * i}>
-                <div className="group bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] rounded-2xl sm:rounded-3xl p-8 sm:p-10 hover:bg-white/[0.08] hover:border-[#d4af37]/30 transition-all duration-500 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#d4af37]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="relative z-10">
-                    <span className="text-3xl sm:text-4xl block mb-5">{f.icon}</span>
-                    <h3 className="text-lg sm:text-xl font-bold text-white mb-3 tracking-tight">{f.title}</h3>
-                    <p className="text-sm text-[#a39585] leading-relaxed">{f.desc}</p>
+            {/* Feature list — clean, no emojis */}
+            <div className="space-y-6 mb-12">
+              {[
+                { title: 'Pure Honey', desc: 'Sourced from independent apiaries. Zero additives, zero preservatives.' },
+                { title: 'Natural Mint Infusion', desc: 'A refreshing twist on classic golden honey — gentle and invigorating.' },
+                { title: 'Earth Conscious Packaging', desc: 'Single-serve sticks designed for recycling. Guilt-free on the go.' },
+              ].map((f, i) => (
+                <FadeIn key={f.title} delay={0.25 + 0.08 * i} direction="right">
+                  <div className="flex items-start gap-4 group">
+                    <div className="mt-1.5 flex-shrink-0">
+                      <div className="w-2 h-2 rounded-full bg-[#d4af37] group-hover:scale-150 transition-transform duration-300" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm sm:text-base font-bold text-white mb-1 tracking-tight">{f.title}</h3>
+                      <p className="text-xs sm:text-sm text-[#8a7d70] leading-relaxed">{f.desc}</p>
+                    </div>
                   </div>
-                </div>
-              </FadeIn>
-            ))}
+                </FadeIn>
+              ))}
+            </div>
+
+            <FadeIn delay={0.5} direction="right">
+              <Link
+                to="/shop"
+                className="group inline-flex items-center gap-3 text-xs sm:text-sm font-bold tracking-[0.2em] uppercase text-[#d4af37] hover:text-white transition-colors duration-300"
+                style={{ textDecoration: 'none', color: '#d4af37' }}
+              >
+                <span>Explore the Collection</span>
+                <svg className="w-4 h-4 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+                <div className="h-[1px] flex-1 max-w-[60px] bg-[#d4af37]/30 group-hover:bg-white/30 transition-colors duration-300" />
+              </Link>
+            </FadeIn>
           </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════════════ */}
-      {/* 6. LIFESTYLE MOMENTS — Immersive photography grid            */}
-      {/* ════════════════════════════════════════════════════════════ */}
-      <section className="py-28 sm:py-40 bg-[#fdfaf1] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 sm:px-12">
-          <div className="text-center mb-16 sm:mb-24">
-            <FadeIn>
-              <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase text-[#c87a1e] block mb-5">Every Moment</span>
-            </FadeIn>
-            <FadeIn delay={0.1}>
-              <h2 className="font-apricot text-5xl sm:text-7xl font-bold tracking-tighter text-[#1a110a] leading-[0.9]">
-                Made for your life.
-              </h2>
-            </FadeIn>
-            <FadeIn delay={0.2}>
-              <p className="mt-6 text-base sm:text-lg text-[#5c5247] max-w-xl mx-auto font-medium leading-relaxed" style={{ textAlign: 'center' }}>
-                From morning tea to mountain trails—Gapoo fits wherever you go.
-              </p>
-            </FadeIn>
-          </div>
 
-          {/* Moments Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-            {moments.map((m, i) => (
-              <FadeIn key={m.label} delay={0.1 * i}>
-                <div className="group relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[3/4] cursor-pointer">
-                  <img
-                    src={m.img}
-                    alt={m.label}
-                    className="w-full h-full object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-110"
-                  />
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 z-10">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#f5a623] block mb-2">{m.label}</span>
-                    <p className="text-lg sm:text-xl font-bold text-white leading-tight tracking-tight">{m.caption}</p>
-                  </div>
-                  {/* Hover shine */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-[#f5a623]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ════════════════════════════════════════════════════════════ */}
-      {/* 7. NUMBERS STRIP — Impact stats                             */}
+      {/* FINAL CTA — Cinematic full-bleed closer                      */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <section className="py-20 sm:py-28 bg-[#faecc9] border-y border-[#e8cd8c] relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#faecc9] via-[#fef3da] to-[#faecc9] pointer-events-none" />
-        <div className="max-w-5xl mx-auto px-6 sm:px-12 relative z-10">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-10 sm:gap-8 text-center">
-            {[
-              { num: '100', suffix: '%', label: 'Pure Honey' },
-              { num: '12', suffix: '+', label: 'Sticks per Box' },
-              { num: '0', suffix: '', label: 'Preservatives', prefix: '' },
-              { num: '5000', suffix: '+', label: 'Happy Customers' },
-            ].map((s, i) => (
-              <FadeIn key={s.label} delay={0.08 * i}>
-                <div className="flex flex-col items-center">
-                  <span className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1a110a] tracking-tighter font-apricot">
-                    <AnimatedCounter target={s.num} suffix={s.suffix} prefix={s.prefix} />
-                  </span>
-                  <span className="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold text-[#8b5311] mt-2">{s.label}</span>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════════════ */}
-      {/* 8. FINAL CTA — Cinematic closer                             */}
-      {/* ════════════════════════════════════════════════════════════ */}
-      <section className="relative py-36 sm:py-48 px-6 text-center bg-[#fdfaf1] overflow-hidden">
-        {/* Parallax Bear */}
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+        {/* Full-bleed background image with parallax */}
         <motion.div
           style={{ y: ctaBearY }}
-          className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0"
+          className="absolute inset-0 -inset-y-[10%] z-0"
         >
           <img
-            src="/images/gapoo_bear_mascot_hd.png"
-            className="w-[350px] sm:w-[500px] lg:w-[650px] h-auto object-contain opacity-[0.06] mix-blend-multiply select-none"
-            alt=""
+            src="/images/gapoo_hero_unboxing.jpg"
+            alt="Gapoo honey sticks"
+            className="w-full h-full object-cover"
           />
         </motion.div>
 
-        <div className="relative z-10 max-w-3xl mx-auto">
-          <FadeIn>
-            <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase text-[#c87a1e] block mb-6">
-              Join the Movement
-            </span>
-          </FadeIn>
+        {/* Dark cinematic overlay */}
+        <div className="absolute inset-0 z-[1] bg-gradient-to-b from-black/60 via-black/50 to-black/75" />
+
+        {/* Warm glow accent */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#d4af37] opacity-[0.08] blur-[100px] rounded-full pointer-events-none z-[2]" />
+
+        {/* Content */}
+        <div className="relative z-10 text-center px-6 w-full flex flex-col items-center" style={{ padding: '6rem 1.5rem' }}>
+          {/* <FadeIn>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 mb-10">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#f5a623] animate-pulse" />
+              <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase text-white/80">
+                Join the Movement
+              </span>
+            </div>
+          </FadeIn> */}
 
           <FadeIn delay={0.1}>
-            <h2 className="font-apricot text-5xl sm:text-7xl lg:text-8xl font-bold text-[#1a110a] leading-[0.9] tracking-tighter">
+            <h2 className="font-apricot text-5xl sm:text-7xl lg:text-9xl xl:text-[140px] font-bold text-white leading-[0.85] tracking-tighter drop-shadow-2xl">
               Ready to taste<br />the difference?
             </h2>
           </FadeIn>
 
           <FadeIn delay={0.2}>
-            <p className="mt-8 text-base sm:text-lg text-[#5c5247] max-w-md mx-auto font-medium leading-relaxed" style={{ textAlign: 'center' }}>
+            <p className="mt-8 sm:mt-10 text-sm sm:text-base md:text-lg text-white/60 max-w-lg mx-auto font-medium leading-relaxed" style={{ textAlign: 'center' }}>
               Experience the new standard of honey. Delivered straight to your doorstep in individual tear-and-pour sticks.
             </p>
           </FadeIn>
 
           <FadeIn delay={0.3}>
-            <div className="mt-12 flex justify-center">
+            <div className="mt-12 sm:mt-14 flex flex-col sm:flex-row items-center gap-5">
               <Link
                 to="/shop"
-                className="group relative inline-flex items-center gap-3 px-12 py-6 rounded-full bg-[#1a110a] text-white shadow-2xl hover:shadow-[#f5a623]/30 transition-all duration-500 overflow-hidden border border-[#d4af37]/30 hover:border-[#f5a623]"
-                style={{ color: '#ffffff', textDecoration: 'none' }}
+                className="group relative inline-flex items-center gap-3 px-12 py-6 rounded-full bg-white text-[#1a110a] shadow-2xl hover:shadow-[#f5a623]/40 transition-all duration-500 overflow-hidden"
+                style={{ color: '#1a110a', textDecoration: 'none' }}
               >
-                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#d97706] via-[#f5a623] to-[#fbbf24] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-                <span
-                  className="relative z-10 font-bold tracking-[0.22em] uppercase text-xs sm:text-sm text-white group-hover:text-[#1a110a] transition-colors duration-300 flex items-center gap-3"
-                  style={{ color: 'inherit' }}
-                >
+                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#f5a623] via-[#fbbf24] to-[#d97706] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
+                <span className="relative z-10 font-bold tracking-[0.22em] uppercase text-xs sm:text-sm group-hover:text-white transition-colors duration-300 flex items-center gap-3">
                   <span>Shop the Collection</span>
                   <svg
                     className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform duration-300"
@@ -525,6 +512,21 @@ export default function LandingPage() {
               </Link>
             </div>
           </FadeIn>
+
+          {/* Bear logo watermark at bottom */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.5, delay: 0.6 }}
+            className="mt-16 sm:mt-24"
+          >
+            <img
+              src="/images/gapoo_bear_mascot_hd.png"
+              alt=""
+              className="w-16 sm:w-20 h-auto opacity-[0.25] mx-auto select-none invert brightness-200"
+            />
+          </motion.div>
         </div>
       </section>
 

@@ -231,11 +231,11 @@ export function FlyingBee() {
         @keyframes beeSpinLoop {
           0% { transform: scale(1) rotate(0deg); }
           50% { transform: scale(1.35) rotate(180deg); }
-          100% { transform: scale(1) rotate(360deg); }
+          { transform: scale(1) rotate(360deg); }
         }
         @keyframes pollenFade {
           0% { opacity: 1; transform: translate(0, 0) scale(1); }
-          100% { opacity: 0; transform: translate(var(--pollen-dx), var(--pollen-dy)) scale(0.2); }
+          { opacity: 0; transform: translate(var(--pollen-dx), var(--pollen-dy)) scale(0.2); }
         }
         .bee-wing-left {
           transform-origin: 22px 14px;
