@@ -107,7 +107,7 @@ export default function LandingPage() {
   const ribbonWords = 'PURE · ZERO MESS · SNAP & SQUEEZE · NATURAL MINT · TRACEABLE ORIGIN · EARTH CONSCIOUS · ';
 
   return (
-    <div ref={containerRef} className="bg-[#fdfaf1] text-[#1a110a] font-montserrat relative overflow-hidden">
+    <div ref={containerRef} className="bg-[#fdfaf1] text-[#1a110a] font-montserrat relative">
 
       {/* ════════════════════════════════════════════════════════════ */}
       {/* 1. CINEMATIC HERO — Full-bleed product image with parallax */}
@@ -443,6 +443,188 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* BENEFITS STACK — Sticky stacking cards                      */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <section id="benefits-stacked" className="relative w-full bg-[#fdfaf1]">
+        {/* Section Intro */}
+        <div className="pt-24 sm:pt-36 pb-6 px-6 sm:px-8 max-w-7xl mx-auto text-center">
+          <FadeIn>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-[#faecd0] border border-[#ebd8b0] mb-6 shadow-sm">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#c87a1e]" />
+              <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.25em] uppercase text-[#8b5311]">
+                Functional Daily Wellness
+              </span>
+            </div>
+          </FadeIn>
+
+          <FadeIn delay={0.1}>
+            <h2 className="font-apricot text-5xl sm:text-6xl lg:text-7xl font-bold text-[#1a110a] tracking-tighter leading-[0.95]">
+              Honey with benefits
+            </h2>
+          </FadeIn>
+
+          <FadeIn delay={0.15}>
+            <p className="mt-5 sm:mt-6 text-base sm:text-lg text-[#5c5247] font-medium leading-relaxed max-w-xl mx-auto" style={{ textAlign: 'center' }}>
+              Full of energy, packed with goodness and as close to nature as it gets.
+            </p>
+          </FadeIn>
+        </div>
+
+        {/* Stacking Cards */}
+        <div className="relative w-full pb-28 md:pb-44">
+          {[
+            {
+              id: 'soothe',
+              number: '01',
+              category: 'DAILY WELLNESS · SOOTHE',
+              title: 'Soothe',
+              subtitle: 'Natural throat coat & inner calm — Rich in raw bio-active enzymes that soothe irritated airways, calm inflammation, and restore gentle digestive balance.',
+              col1Label: 'THE SCIENCE',
+              col1Text: 'Raw unheated honey coats inflamed mucosal membranes with active bio-defensins and natural hydrogen peroxide precursors for soothing relief without side effects.',
+              col2Label: 'THE RITUAL',
+              col2Text: 'Drop one stick into steaming green tea, herbal chamomile, or warm lemon water. Can also be taken straight from the stick for immediate throat comfort.',
+              image: '/images/moment_tea_clean.jpg',
+              imageAlt: 'Sipping warm herbal tea with soothing raw honey',
+              mediaTag: 'Tea & Throat Care',
+            },
+            {
+              id: 'energize',
+              number: '02',
+              category: 'CLEAN FUEL · ENERGIZE',
+              title: 'Energize',
+              subtitle: 'Clean, crash-free physical stamina — An unrefined natural balance of fructose and glucose that your brain and muscles absorb immediately for sustained energy.',
+              col1Label: 'THE SCIENCE',
+              col1Text: 'Naturally balanced simple carbohydrates deliver an immediate cellular glycogen recharge without the insulin spike and crash of refined white sugar.',
+              col2Label: 'THE RITUAL',
+              col2Text: 'Drizzle over morning rolled oats, Greek yogurt, or take 15 minutes before running, cycling, or high-intensity gym sessions for clean athletic fuel.',
+              image: '/images/moment_breakfast_clean.jpg',
+              imageAlt: 'Drizzle pure honey on berries, oats, and morning breakfast',
+              mediaTag: 'Morning Oats & Workouts',
+            },
+            {
+              id: 'nourish',
+              number: '03',
+              category: 'RAW ORIGIN · NOURISH',
+              title: 'Nourish',
+              subtitle: 'Alive with wild pollen & antioxidants — Never boiled or hyper-filtered past natural hive temperatures to protect 100% of living enzymes and micronutrients.',
+              col1Label: 'THE SCIENCE',
+              col1Text: 'Preserves active bee pollen, amino acids, and antioxidant polyphenols that commercial factory honeys destroy through high-heat pasteurization.',
+              col2Label: 'THE RITUAL',
+              col2Text: 'Take one stick every morning with warm water as a daily holistic immunity tonic, or blend seamlessly into fruit smoothies and salad dressings.',
+              image: '/images/farming2.jpeg',
+              imageAlt: 'Healthy bees and raw honeycomb from ethical apiaries',
+              mediaTag: '100% Raw Comb Origin',
+            },
+            {
+              id: 'pocket-ready',
+              number: '04',
+              category: 'MESS-FREE · POCKET READY',
+              title: 'Pocket Ready',
+              subtitle: 'Snap, squeeze & go anywhere — No heavy glass jars to shatter, no sticky knives or dripping spoons. Slide sticks into any pocket, backpack, or carry-on.',
+              col1Label: 'THE DESIGN',
+              col1Text: 'Precision tear system ensures a clean, controlled single-stream flow with zero sticky residual dripping onto your fingers or clothes.',
+              col2Label: 'THE RITUAL',
+              col2Text: 'Stash sticks in your laptop bag, running vest, or flight kit. Compliant with carry-on regulations for instant natural energy on the go.',
+              image: '/images/moment_pocket_clean.jpg',
+              imageAlt: 'Gapoo honey sticks in pocket on outdoor trail',
+              mediaTag: 'On The Trail & Travel',
+            },
+          ].map((card, index) => (
+            <div
+              key={card.id}
+              className="sticky w-full px-4 sm:px-6 md:px-12"
+              style={{
+                top: `calc(12vh + ${index * 40}px)`,
+                zIndex: index + 10,
+                marginBottom: '70vh',
+              }}
+            >
+              <div className="w-full max-w-6xl mx-auto rounded-[28px] sm:rounded-[36px] shadow-[0_-8px_30px_-12px_rgba(0,0,0,0.12),0_20px_50px_-12px_rgba(0,0,0,0.2)] overflow-hidden border border-[#ebd8b0] bg-white">
+                <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[440px] sm:min-h-[480px]">
+
+                  {/* Left: Dark image panel with giant watermark number */}
+                  <div className="lg:col-span-5 bg-[#18110b] relative p-5 sm:p-8 flex items-center justify-center overflow-hidden min-h-[240px] lg:min-h-full">
+                    {/* Giant translucent number watermark */}
+                    <span className="font-apricot font-bold text-[100px] sm:text-[160px] lg:text-[200px] leading-none text-white/[0.06] absolute top-0 left-3 sm:left-5 select-none pointer-events-none tracking-tighter">
+                      {card.number}
+                    </span>
+
+                    {/* Image */}
+                    <div className="relative z-10 w-full aspect-[4/3] sm:aspect-[16/11] rounded-2xl sm:rounded-[24px] overflow-hidden border border-white/10 shadow-2xl group">
+                      <img
+                        src={card.image}
+                        alt={card.imageAlt}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+
+                      {/* Media tag */}
+                      <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4">
+                        <span className="px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[10px] sm:text-[11px] font-bold text-[#1a110a] uppercase tracking-wider shadow-md">
+                          {card.mediaTag}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right: White editorial content */}
+                  <div className="lg:col-span-7 bg-white p-6 sm:p-8 lg:p-12 flex flex-col justify-between">
+                    <div>
+                      {/* Category + arrow */}
+                      <div className="flex items-center justify-between gap-4 mb-4 sm:mb-5">
+                        <span className="px-3 py-1.5 rounded-full bg-[#faecd0] text-[#5c5247] text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase">
+                          {card.category}
+                        </span>
+                        <Link
+                          to="/shop"
+                          className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-black/10 flex items-center justify-center hover:bg-[#c87a1e] hover:text-white hover:border-[#c87a1e] transition-all duration-300 text-[#1a110a] flex-shrink-0 group"
+                          style={{ textDecoration: 'none' }}
+                        >
+                          <svg className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M7 17L17 7M17 7H7M17 7V17" />
+                          </svg>
+                        </Link>
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="font-apricot font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1a110a] tracking-tight leading-[1.05] mb-3">
+                        {card.title}
+                      </h3>
+
+                      {/* Subtitle */}
+                      <p className="text-sm sm:text-base text-[#5c5247] font-medium leading-relaxed max-w-xl">
+                        {card.subtitle}
+                      </p>
+                    </div>
+
+                    {/* Two-column details */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-6 mt-5 border-t border-[#f0e8d8]">
+                      <div>
+                        <h4 className="text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase text-[#c87a1e] mb-1.5">
+                          {card.col1Label}
+                        </h4>
+                        <p className="text-xs sm:text-[13px] text-[#5c5247] leading-relaxed font-medium">
+                          {card.col1Text}
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase text-[#c87a1e] mb-1.5">
+                          {card.col2Label}
+                        </h4>
+                        <p className="text-xs sm:text-[13px] text-[#5c5247] leading-relaxed font-medium">
+                          {card.col2Text}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
 
       {/* ════════════════════════════════════════════════════════════ */}
