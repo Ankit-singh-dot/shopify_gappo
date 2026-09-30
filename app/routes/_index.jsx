@@ -54,107 +54,6 @@ function Marquee({ children, speed = 30, className = '' }) {
   );
 }
 
-/* ─── Horizontal Scroll Gallery ─── */
-function HorizontalGallery() {
-  const targetRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ["start start", "end end"]
-  });
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]);
-
-  const cards = [
-    {
-      id: 'soothe',
-      title: 'Soothe',
-      subtitle: 'Natural throat coat & inner calm.',
-      desc: 'Raw unheated honey coats inflamed mucosal membranes for soothing relief.',
-      img: '/images/moment_tea_clean.jpg',
-      tag: 'Morning Tea',
-    },
-    {
-      id: 'energize',
-      title: 'Energize',
-      subtitle: 'Clean, crash-free physical stamina.',
-      desc: 'Naturally balanced simple carbohydrates deliver an immediate cellular glycogen recharge.',
-      img: '/images/moment_breakfast_clean.jpg',
-      tag: 'Breakfast Bowl',
-    },
-    {
-      id: 'nourish',
-      title: 'Nourish',
-      subtitle: 'Alive with wild pollen & antioxidants.',
-      desc: 'Never boiled or hyper-filtered. Protects 100% of living enzymes and micronutrients.',
-      img: '/images/farming2.jpeg',
-      tag: 'Raw Origin',
-    },
-    {
-      id: 'pocket',
-      title: 'Pocket Ready',
-      subtitle: 'Snap, squeeze & go anywhere.',
-      desc: 'No heavy glass jars, no sticky knives. Slide sticks into any pocket, backpack, or carry-on.',
-      img: '/images/moment_pocket_clean.jpg',
-      tag: 'On The Trail',
-    },
-  ];
-
-  return (
-    <section ref={targetRef} className="relative h-[350vh] bg-[#1a110a] z-10">
-      <div className="sticky top-0 h-[100svh] flex flex-col justify-center overflow-hidden pt-16 pb-12 sm:pt-20">
-        
-        {/* Intro text */}
-        <div className="w-full px-6 sm:px-12 lg:px-24 mb-6 sm:mb-10 z-20 shrink-0">
-          <FadeIn>
-            <div className="flex items-center gap-3 mb-2 sm:mb-4">
-              <div className="h-[1px] w-12 bg-[#c87a1e]" />
-              <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase text-[#c87a1e]">Every Moment</span>
-            </div>
-            <h2 className="font-apricot text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tighter drop-shadow-2xl">
-              Made for your life.
-            </h2>
-          </FadeIn>
-        </div>
-
-        <motion.div style={{ x }} className="flex gap-6 sm:gap-10 px-6 sm:px-12 lg:px-24 items-start h-[55vh] sm:h-[65vh] shrink-0">
-          {cards.map((card, index) => (
-            <div 
-              key={card.id} 
-              className="relative w-[85vw] sm:w-[55vw] lg:w-[40vw] xl:w-[35vw] h-full shrink-0 rounded-[32px] sm:rounded-[40px] overflow-hidden group shadow-2xl border border-white/10"
-            >
-              {/* Giant number watermark */}
-              <div className="absolute top-4 sm:top-6 right-6 sm:right-8 z-10 text-[80px] sm:text-[120px] font-apricot font-bold text-white/20 pointer-events-none select-none drop-shadow-lg leading-none">
-                0{index + 1}
-              </div>
-              
-              <img 
-                src={card.img} 
-                alt={card.title} 
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-110" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/10 transition-opacity duration-700" />
-              
-              <div className="absolute bottom-0 left-0 p-6 sm:p-10 w-full">
-                <span className="inline-block px-4 py-2 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-white text-[9px] sm:text-[10px] uppercase tracking-[0.2em] font-bold mb-3 sm:mb-5 shadow-xl">
-                  {card.tag}
-                </span>
-                <h3 className="font-apricot text-3xl sm:text-4xl lg:text-5xl text-white font-bold mb-1.5 sm:mb-2">{card.title}</h3>
-                <p className="text-[#c87a1e] font-medium text-xs sm:text-sm lg:text-base mb-3 sm:mb-4">{card.subtitle}</p>
-                <div className="h-[1px] w-12 bg-white/20 mb-3 sm:mb-4" />
-                <p className="text-white/70 text-xs sm:text-sm leading-relaxed max-w-sm font-medium">
-                  {card.desc}
-                </p>
-              </div>
-            </div>
-          ))}
-          {/* Spacer block at the end so the last card doesn't hug the right edge tightly */}
-          <div className="w-[10vw] shrink-0" />
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-
 /* ─── Counter Animation ─── */
 function AnimatedCounter({ target, suffix = '', prefix = '' }) {
   const ref = useRef(null);
@@ -208,7 +107,7 @@ export default function LandingPage() {
   const ribbonWords = 'PURE · ZERO MESS · SNAP & SQUEEZE · NATURAL MINT · TRACEABLE ORIGIN · EARTH CONSCIOUS · ';
 
   return (
-    <div ref={containerRef} className="bg-[#fdfaf1] text-[#1a110a] font-montserrat relative overflow-x-clip">
+    <div ref={containerRef} className="bg-[#fdfaf1] text-[#1a110a] font-montserrat relative overflow-x-hidden">
 
       {/* ════════════════════════════════════════════════════════════ */}
       {/* 1. CINEMATIC HERO — Full-bleed product image with parallax */}
@@ -324,31 +223,30 @@ export default function LandingPage() {
       {/* ════════════════════════════════════════════════════════════ */}
       {/* 2. TRUST MARQUEE — Horizontal scrolling social proof        */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <div className="bg-[#1a110a] py-4 sm:py-5 relative overflow-hidden">
+      <div className="bg-[#c87a1e] pt-6 sm:pt-8 relative z-20">
         <Marquee speed={35}>
-          <span className="inline-flex items-center gap-8 sm:gap-12 px-4 text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase text-[#d4af37]/80">
-            <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#f5a623]" />Pure Honey</span>
-            <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#f5a623]" />Zero Preservatives</span>
-            <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#f5a623]" />Traceable Origin</span>
-            <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#f5a623]" />Fair Trade Sourced</span>
-            <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#f5a623]" />Earth Conscious</span>
-            <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#f5a623]" />Single-Serve Sticks</span>
-            <span className="text-[#d4af37]/30 mx-4">—</span>
+          <span className="inline-flex items-center gap-8 sm:gap-12 px-4 text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase text-[#fdfaf1]">
+            <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-white" />Pure Honey</span>
+            <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-white" />Zero Preservatives</span>
+            <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-white" />Traceable Origin</span>
+            <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-white" />Fair Trade Sourced</span>
+            <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-white" />Earth Conscious</span>
+            <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-white" />Single-Serve Sticks</span>
+            <span className="text-white/40 mx-4">—</span>
           </span>
         </Marquee>
-      </div>
-
-      {/* Wave Divider: Marquee (Dark) to Story (Beige) */}
-      <div className="w-full bg-[#fdfaf1] relative z-20 -mt-[1px]">
-        <svg viewBox="0 0 1440 100" className="w-full h-12 sm:h-20 md:h-28 block fill-[#1a110a]" preserveAspectRatio="none">
-          <path d="M0,0 C480,100 960,100 1440,0 L1440,0 L0,0 Z" />
-        </svg>
+        {/* Wavy Divider Bottom */}
+        <div className="absolute top-full left-0 w-full overflow-hidden leading-none z-20 -mt-[1px]">
+          <svg viewBox="0 0 1440 120" preserveAspectRatio="none" className="w-full h-[40px] sm:h-[70px] lg:h-[100px] text-[#c87a1e]">
+            <path fill="currentColor" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"></path>
+          </svg>
+        </div>
       </div>
 
       {/* ════════════════════════════════════════════════════════════ */}
       {/* 3. STORY SECTION — Editorial two-column with parallax imgs  */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <section id="story" className="py-20 sm:py-32 px-6 sm:px-12 lg:px-24 max-w-[1440px] mx-auto relative z-10 scroll-mt-20">
+      <section id="story" className="py-28 sm:py-40 px-6 sm:px-12 lg:px-24 max-w-[1440px] mx-auto relative z-10 scroll-mt-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-28 items-start">
 
           {/* Left: Editorial Copy */}
@@ -442,28 +340,35 @@ export default function LandingPage() {
       {/* ════════════════════════════════════════════════════════════ */}
       {/* 4. ANIMATED RIBBON DIVIDER                                  */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <div className="py-6 bg-[#c87a1e] overflow-hidden relative">
+      <div className="pt-8 pb-4 bg-[#c87a1e] relative z-20">
+        {/* Wavy Divider Top */}
+        <div className="absolute bottom-full left-0 w-full overflow-hidden leading-none z-20 -mb-[1px]">
+          <svg viewBox="0 0 1440 120" preserveAspectRatio="none" className="w-full h-[40px] sm:h-[70px] lg:h-[100px] text-[#c87a1e]">
+            <path fill="currentColor" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+          </svg>
+        </div>
+        
         <motion.div
           style={{ x: ribbonX }}
-          className="whitespace-nowrap"
+          className="whitespace-nowrap pb-2"
         >
-          <span className="inline-block text-[14px] sm:text-[18px] font-black tracking-[0.25em] uppercase text-white/90 select-none">
+          <span className="inline-block text-[14px] sm:text-[18px] font-black tracking-[0.25em] uppercase text-[#fdfaf1] select-none drop-shadow-sm">
             {ribbonWords.repeat(6)}
           </span>
         </motion.div>
-      </div>
 
-      {/* Wave Divider: Ribbon (Orange) to Product (Dark) */}
-      <div className="w-full bg-[#1a110a] relative z-20 -mt-[1px]">
-        <svg viewBox="0 0 1440 120" className="w-full h-16 sm:h-24 md:h-32 block fill-[#c87a1e]" preserveAspectRatio="none">
-          <path d="M0,0 C320,120 420,120 720,60 C1020,0 1120,0 1440,120 L1440,0 L0,0 Z" />
-        </svg>
+        {/* Wavy Divider Bottom (Transitions to dark product section) */}
+        <div className="absolute top-full left-0 w-full overflow-hidden leading-none z-20 -mt-[1px]">
+          <svg viewBox="0 0 1440 120" preserveAspectRatio="none" className="w-full h-[40px] sm:h-[60px] lg:h-[90px] text-[#c87a1e]">
+            <path fill="currentColor" d="M0,32L60,42.7C120,53,240,75,360,74.7C480,75,600,53,720,48C840,43,960,53,1080,58.7C1200,64,1320,64,1380,64L1440,64L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"></path>
+          </svg>
+        </div>
       </div>
 
       {/* ════════════════════════════════════════════════════════════ */}
       {/* 5. PRODUCT SHOWCASE — Cinematic split panel with parallax   */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#1a110a] text-white relative overflow-hidden pt-10 sm:pt-16 pb-20 sm:pb-32">
+      <section className="bg-[#1a110a] text-white relative overflow-hidden">
         {/* Ambient glow */}
         <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-[#d4af37] opacity-[0.03] blur-[140px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#c87a1e] opacity-[0.04] blur-[120px] rounded-full pointer-events-none" />
@@ -559,10 +464,6 @@ export default function LandingPage() {
       </section>
 
 
-      {/* ════════════════════════════════════════════════════════════ */}
-      {/* 6. HORIZONTAL SCROLL LIFESTYLE GALLERY                      */}
-      {/* ════════════════════════════════════════════════════════════ */}
-      <HorizontalGallery />
 
       {/* ════════════════════════════════════════════════════════════ */}
       {/* FINAL CTA — Cinematic full-bleed closer                      */}
