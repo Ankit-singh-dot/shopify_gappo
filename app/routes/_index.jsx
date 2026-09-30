@@ -77,6 +77,31 @@ function AnimatedCounter({ target, suffix = '', prefix = '' }) {
   return <span ref={ref}>{prefix}{count}{suffix}</span>;
 }
 
+/* ─── Scroll Reveal Text Component ─── */
+function RevealWord({ word, progress, range }) {
+  const opacity = useTransform(progress, range, [0.15, 1]);
+  return <motion.span style={{ opacity }} className="mr-[0.25em] inline-block">{word}</motion.span>;
+}
+
+function ScrollRevealText({ text, className }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 85%", "end 45%"]
+  });
+  
+  const words = text.split(" ");
+  return (
+    <div ref={ref} className={`flex flex-wrap ${className}`}>
+      {words.map((word, i) => {
+        const start = i / words.length;
+        const end = start + (1 / words.length);
+        return <RevealWord key={i} word={word} progress={scrollYProgress} range={[start, end]} />;
+      })}
+    </div>
+  );
+}
+
 export default function LandingPage() {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -96,6 +121,16 @@ export default function LandingPage() {
   const storyImageY2 = useTransform(scrollYProgress, [0.2, 0.55], ['16%', '-20%']);
   const productImageY = useTransform(scrollYProgress, [0.35, 0.65], ['10%', '-10%']);
   const productBearScale = useTransform(scrollYProgress, [0.4, 0.6], [0.95, 1.05]);
+
+  // Manifesto Typography Parallax
+  const manifestoRef = useRef(null);
+  const { scrollYProgress: manifestoScroll } = useScroll({
+    target: manifestoRef,
+    offset: ['start end', 'end start'],
+  });
+  const manifestoX1 = useTransform(manifestoScroll, [0, 1], ['0%', '-40%']);
+  const manifestoX2 = useTransform(manifestoScroll, [0, 1], ['-20%', '10%']);
+  const manifestoX3 = useTransform(manifestoScroll, [0, 1], ['-10%', '-50%']);
 
   // Lifestyle moments data
   const moments = [
@@ -335,6 +370,55 @@ export default function LandingPage() {
             </FadeIn>
           </div>
         </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* 3.5 BOLD SCROLL-REVEAL TYPOGRAPHY                           */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <section className="pt-24 sm:pt-32 pb-32 sm:pb-48 px-6 sm:px-12 lg:px-24 max-w-[1440px] mx-auto relative z-10 flex justify-center">
+         <ScrollRevealText 
+           text="Forget everything you know about honey. We stripped away the jars, the sticky spoons, and the artificial syrups. What remains is 100% pure, unadulterated energy — precisely measured and perfectly packaged for modern life."
+           className="font-apricot text-5xl sm:text-7xl lg:text-[85px] leading-[1.3] sm:leading-[1.4] tracking-normal text-[#1a110a] max-w-5xl text-center"
+         />
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* 3.6 MASSIVE KINETIC TYPOGRAPHY                              */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <section ref={manifestoRef} className="py-40 sm:py-56 lg:py-72 min-h-[100svh] flex flex-col justify-center overflow-hidden relative border-t border-[#ebd8b0] bg-[#faecd0]">
+         <div className="flex flex-col gap-6 sm:gap-10 opacity-90 relative z-10">
+           <motion.div style={{ x: manifestoX1 }} className="whitespace-nowrap flex items-center">
+              <h2 className="font-montserrat leading-[0.85] tracking-tighter font-black text-[#1a110a]" style={{ fontSize: 'clamp(3rem, 10vw, 10rem)' }}>
+                 LEAVE THE JAR <span className="text-[#c87a1e] px-4 sm:px-8">✦</span> LEAVE THE JAR <span className="text-[#c87a1e] px-4 sm:px-8">✦</span> LEAVE THE JAR <span className="text-[#c87a1e] px-4 sm:px-8">✦</span> LEAVE THE JAR
+              </h2>
+           </motion.div>
+           <motion.div style={{ x: manifestoX2 }} className="whitespace-nowrap flex items-center">
+              <h2 className="font-montserrat leading-[0.85] tracking-tighter font-black text-transparent" style={{ WebkitTextStroke: '2px #1a110a', fontSize: 'clamp(4rem, 12vw, 12rem)' }}>
+                 TEAR & SQUEEZE <span className="text-transparent px-4 sm:px-8" style={{ WebkitTextStroke: '2px #1a110a' }}>✦</span> TEAR & SQUEEZE <span className="text-transparent px-4 sm:px-8" style={{ WebkitTextStroke: '2px #1a110a' }}>✦</span> TEAR & SQUEEZE <span className="text-transparent px-4 sm:px-8" style={{ WebkitTextStroke: '2px #1a110a' }}>✦</span> TEAR & SQUEEZE
+              </h2>
+           </motion.div>
+           <motion.div style={{ x: manifestoX3 }} className="whitespace-nowrap flex items-center">
+              <h2 className="font-montserrat leading-[0.85] tracking-tighter font-black text-[#1a110a]" style={{ fontSize: 'clamp(3rem, 10vw, 10rem)' }}>
+                 100% PURE <span className="text-[#c87a1e] px-4 sm:px-8">✦</span> 100% PURE <span className="text-[#c87a1e] px-4 sm:px-8">✦</span> 100% PURE <span className="text-[#c87a1e] px-4 sm:px-8">✦</span> 100% PURE
+              </h2>
+           </motion.div>
+         </div>
+
+         {/* Center floating image */}
+         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85vw] sm:w-[50vw] max-w-[500px] pointer-events-none z-20 mix-blend-multiply">
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0, y: 80, rotate: -6 }}
+              whileInView={{ scale: 1, opacity: 1, y: 0, rotate: 3 }}
+              transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+              viewport={{ once: true, margin: "-10%" }}
+            >
+              <img 
+                src="/images/moment_pocket_clean.jpg" 
+                alt="Honey sticks in pocket" 
+                className="w-full h-auto rounded-[32px] sm:rounded-[40px] object-cover border-4 border-[#fdfaf1] shadow-2xl"
+              />
+            </motion.div>
+         </div>
       </section>
 
       {/* ════════════════════════════════════════════════════════════ */}
