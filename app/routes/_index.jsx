@@ -147,7 +147,7 @@ export default function LandingPage() {
   const ribbonWords = 'PURE · ZERO MESS · SNAP & SQUEEZE · NATURAL MINT · TRACEABLE ORIGIN · EARTH CONSCIOUS · ';
 
   return (
-    <div ref={containerRef} className="bg-[#fdfaf1] text-[#1a110a] font-montserrat relative overflow-x-hidden">
+    <div ref={containerRef} className="bg-[#fdfaf1] text-[#1a110a] font-montserrat relative w-full overflow-clip">
 
       {/* ════════════════════════════════════════════════════════════ */}
       {/* 1. CINEMATIC HERO — Full-bleed product image with parallax */}
