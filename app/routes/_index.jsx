@@ -237,10 +237,17 @@ export default function LandingPage() {
         </Marquee>
       </div>
 
+      {/* Wave Divider: Marquee (Dark) to Story (Beige) */}
+      <div className="w-full bg-[#fdfaf1] relative z-20 -mt-[1px]">
+        <svg viewBox="0 0 1440 100" className="w-full h-12 sm:h-20 md:h-28 block fill-[#1a110a]" preserveAspectRatio="none">
+          <path d="M0,0 C480,100 960,100 1440,0 L1440,0 L0,0 Z" />
+        </svg>
+      </div>
+
       {/* ════════════════════════════════════════════════════════════ */}
       {/* 3. STORY SECTION — Editorial two-column with parallax imgs  */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <section id="story" className="py-28 sm:py-40 px-6 sm:px-12 lg:px-24 max-w-[1440px] mx-auto relative z-10 scroll-mt-20">
+      <section id="story" className="py-20 sm:py-32 px-6 sm:px-12 lg:px-24 max-w-[1440px] mx-auto relative z-10 scroll-mt-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-28 items-start">
 
           {/* Left: Editorial Copy */}
@@ -345,10 +352,17 @@ export default function LandingPage() {
         </motion.div>
       </div>
 
+      {/* Wave Divider: Ribbon (Orange) to Product (Dark) */}
+      <div className="w-full bg-[#1a110a] relative z-20 -mt-[1px]">
+        <svg viewBox="0 0 1440 120" className="w-full h-16 sm:h-24 md:h-32 block fill-[#c87a1e]" preserveAspectRatio="none">
+          <path d="M0,0 C320,120 420,120 720,60 C1020,0 1120,0 1440,120 L1440,0 L0,0 Z" />
+        </svg>
+      </div>
+
       {/* ════════════════════════════════════════════════════════════ */}
       {/* 5. PRODUCT SHOWCASE — Cinematic split panel with parallax   */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#1a110a] text-white relative overflow-hidden">
+      <section className="bg-[#1a110a] text-white relative overflow-hidden pt-10 sm:pt-16 pb-20 sm:pb-32">
         {/* Ambient glow */}
         <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-[#d4af37] opacity-[0.03] blur-[140px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#c87a1e] opacity-[0.04] blur-[120px] rounded-full pointer-events-none" />
