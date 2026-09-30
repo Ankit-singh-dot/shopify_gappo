@@ -170,113 +170,81 @@ export default function LandingPage() {
     <div ref={containerRef} className="bg-[#fdfaf1] text-[#1a110a] font-montserrat relative w-full overflow-clip">
 
       {/* ════════════════════════════════════════════════════════════ */}
-      {/* 1. CINEMATIC HERO — Full-bleed product image with parallax */}
+      {/* 1. CINEMATIC HERO — The Expanding Reveal Sequence           */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <section className="relative h-[100svh] w-full flex flex-col items-center justify-center overflow-hidden">
-        {/* Parallax Background Image */}
+      <section className="relative h-[100svh] w-full flex flex-col items-center justify-center overflow-hidden bg-[#fdfaf1]">
+        
+        {/* The Expanding Image Capsule */}
         <motion.div
-          style={{ scale: heroImageScale, y: heroImageY }}
-          className="absolute inset-0 z-0"
+          className="absolute inset-0 z-0 origin-center flex items-center justify-center"
         >
-          <img
-            src="/images/gapoo_hero_pour.jpg"
-            alt="Gapoo honey stick pouring golden honey into a cup"
-            className="w-full h-full object-cover"
-          />
+          <motion.div
+             initial={{ width: "clamp(200px, 25vw, 400px)", height: "clamp(300px, 50vh, 600px)", borderRadius: "300px" }}
+             animate={{ width: "100vw", height: "100vh", borderRadius: "0px" }}
+             transition={{ duration: 1.5, ease: [0.76, 0, 0.24, 1], delay: 0.8 }}
+             className="overflow-hidden relative shadow-2xl"
+          >
+            <motion.img
+              src="/images/gapoo_hero_pour.jpg"
+              alt="Gapoo honey stick"
+              className="w-full h-full object-cover"
+              initial={{ scale: 1.6 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 1.5, ease: [0.76, 0, 0.24, 1], delay: 0.8 }}
+            />
+            {/* Dark gradient overlay for text legibility (fades in after expansion) */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 1.8 }}
+              className="absolute inset-0 z-[1] bg-black/40"
+            />
+          </motion.div>
         </motion.div>
-
-        {/* Dark gradient overlay for text legibility */}
-        <motion.div
-          style={{ opacity: heroOverlayOpacity }}
-          className="absolute inset-0 z-[1] bg-gradient-to-b from-black/50 via-black/30 to-black/60"
-        />
-
-        {/* Warm honey glow from bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-[40%] z-[2] bg-gradient-to-t from-[#1a110a]/40 via-transparent to-transparent pointer-events-none" />
 
         {/* Foreground Content */}
         <motion.div
-          style={{ y: heroTextY }}
-          className="relative z-10 text-center px-6 flex flex-col items-center max-w-5xl mx-auto"
+          className="relative z-10 w-full h-full flex flex-col items-center justify-center pointer-events-none"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8 shadow-lg">
-              <span className="w-2 h-2 rounded-full bg-[#f5a623] animate-pulse" />
-              <span className="text-[11px] sm:text-xs font-bold tracking-[0.3em] uppercase text-white/90">
-                Redefining Sweetness
-              </span>
-            </div>
-          </motion.div>
-
-          <motion.h1
-            className="font-apricot text-7xl sm:text-9xl lg:text-[160px] xl:text-[200px] font-bold leading-[0.85] tracking-tighter text-white select-none drop-shadow-2xl"
-            initial={{ opacity: 0, scale: 0.9, y: 40 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          >
-            Gapoo.
-          </motion.h1>
-
-          <motion.p
-            className="mt-6 sm:mt-8 text-sm sm:text-base md:text-lg text-white/80 max-w-lg font-medium leading-relaxed tracking-wide"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.6 }}
-          >
-            pure single-serve honey sticks. No sticky spoons, no messy jars. Just nature in your pocket.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.9 }}
-            className="mt-10 sm:mt-12 flex flex-col sm:flex-row items-center gap-4"
-          >
-            <Link
-              to="/shop"
-              className="group relative inline-flex items-center gap-3 px-10 py-5 rounded-full bg-white text-[#1a110a] shadow-2xl hover:shadow-[#f5a623]/40 transition-all duration-500 overflow-hidden"
-              style={{ color: '#1a110a', textDecoration: 'none' }}
-            >
-              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#f5a623] via-[#fbbf24] to-[#d97706] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-              <span className="relative z-10 font-bold tracking-[0.2em] uppercase text-xs sm:text-sm group-hover:text-white transition-colors duration-300 flex items-center gap-3">
-                <span>Enter the Shop</span>
-                <svg className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </span>
-            </Link>
-            <a
-              href="#story"
-              className="text-xs sm:text-sm font-bold tracking-widest uppercase text-white/70 hover:text-white transition-colors duration-300 flex items-center gap-2"
-              style={{ textDecoration: 'none' }}
-            >
-              {/* <span>Our Story</span> */}
-              {/* <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg> */}
-            </a>
-          </motion.div>
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.8, duration: 1 }}
-        >
-          <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/50">Scroll</span>
-          <div className="w-[1px] h-10 bg-white/20 overflow-hidden rounded-full">
-            <motion.div
-              className="w-full h-full bg-[#f5a623]"
-              animate={{ y: ['-100%', '100%'] }}
-              transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
-            />
-          </div>
+           {/* The Massive Text that changes color dynamically */}
+           <motion.h1
+             initial={{ opacity: 0, y: 50, scale: 0.9, color: "#1a110a" }}
+             animate={{ opacity: 1, y: 0, scale: 1, color: "#fdfaf1" }}
+             transition={{ 
+               opacity: { duration: 0.8, ease: "easeOut" },
+               y: { duration: 0.8, ease: "easeOut" },
+               scale: { duration: 0.8, ease: "easeOut" },
+               color: { duration: 0.5, delay: 1.3 } // Color flips exactly as the image swallows it
+             }}
+             className="font-apricot tracking-tighter leading-[0.85] drop-shadow-2xl z-20 pointer-events-auto text-center"
+             style={{ fontSize: 'clamp(6rem, 25vw, 400px)' }}
+           >
+             Gapoo.
+           </motion.h1>
+           
+           <motion.div 
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             transition={{ duration: 1, delay: 2.2 }}
+             className="absolute bottom-12 flex flex-col items-center gap-8 pointer-events-auto"
+           >
+              <p className="text-white/90 max-w-sm text-center font-medium leading-relaxed tracking-wide text-sm sm:text-base md:text-lg drop-shadow-lg">
+                Pure single-serve honey sticks. No sticky spoons, no messy jars.
+              </p>
+              <Link
+                to="/shop"
+                className="group relative inline-flex items-center gap-3 px-10 sm:px-12 py-5 rounded-full bg-white text-[#1a110a] shadow-[0_20px_50px_rgba(200,122,30,0.3)] hover:shadow-[0_20px_60px_rgba(200,122,30,0.5)] transition-all duration-700 overflow-hidden shrink-0"
+                style={{ textDecoration: 'none' }}
+              >
+                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#f5a623] via-[#fbbf24] to-[#d97706] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-700 ease-[0.16,1,0.3,1]" />
+                <span className="relative z-10 font-bold tracking-[0.2em] uppercase text-[10px] sm:text-xs group-hover:text-white transition-colors duration-300 flex items-center gap-4">
+                  <span>Enter the Shop</span>
+                  <svg className="w-4 h-4 transform group-hover:translate-x-2 transition-transform duration-500 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </span>
+              </Link>
+           </motion.div>
         </motion.div>
       </section>
 
