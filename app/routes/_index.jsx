@@ -54,6 +54,107 @@ function Marquee({ children, speed = 30, className = '' }) {
   );
 }
 
+/* ─── Horizontal Scroll Gallery ─── */
+function HorizontalGallery() {
+  const targetRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start start", "end end"]
+  });
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]);
+
+  const cards = [
+    {
+      id: 'soothe',
+      title: 'Soothe',
+      subtitle: 'Natural throat coat & inner calm.',
+      desc: 'Raw unheated honey coats inflamed mucosal membranes for soothing relief.',
+      img: '/images/moment_tea_clean.jpg',
+      tag: 'Morning Tea',
+    },
+    {
+      id: 'energize',
+      title: 'Energize',
+      subtitle: 'Clean, crash-free physical stamina.',
+      desc: 'Naturally balanced simple carbohydrates deliver an immediate cellular glycogen recharge.',
+      img: '/images/moment_breakfast_clean.jpg',
+      tag: 'Breakfast Bowl',
+    },
+    {
+      id: 'nourish',
+      title: 'Nourish',
+      subtitle: 'Alive with wild pollen & antioxidants.',
+      desc: 'Never boiled or hyper-filtered. Protects 100% of living enzymes and micronutrients.',
+      img: '/images/farming2.jpeg',
+      tag: 'Raw Origin',
+    },
+    {
+      id: 'pocket',
+      title: 'Pocket Ready',
+      subtitle: 'Snap, squeeze & go anywhere.',
+      desc: 'No heavy glass jars, no sticky knives. Slide sticks into any pocket, backpack, or carry-on.',
+      img: '/images/moment_pocket_clean.jpg',
+      tag: 'On The Trail',
+    },
+  ];
+
+  return (
+    <section ref={targetRef} className="relative h-[350vh] bg-[#1a110a] z-10">
+      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
+        
+        {/* Intro text floating over the scroll */}
+        <div className="absolute top-24 left-6 sm:top-28 sm:left-12 lg:left-24 z-20 pointer-events-none">
+          <FadeIn>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-[1px] w-12 bg-[#c87a1e]" />
+              <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase text-[#c87a1e]">Every Moment</span>
+            </div>
+            <h2 className="font-apricot text-5xl sm:text-7xl lg:text-8xl font-bold text-white tracking-tighter drop-shadow-2xl">
+              Made for your life.
+            </h2>
+          </FadeIn>
+        </div>
+
+        <motion.div style={{ x }} className="flex gap-6 sm:gap-10 px-6 sm:px-12 lg:px-24 mt-32 sm:mt-24 items-center h-[60vh] sm:h-[70vh]">
+          {cards.map((card, index) => (
+            <div 
+              key={card.id} 
+              className="relative w-[85vw] sm:w-[60vw] lg:w-[45vw] h-full shrink-0 rounded-[32px] sm:rounded-[48px] overflow-hidden group shadow-2xl border border-white/10"
+            >
+              {/* Giant number watermark */}
+              <div className="absolute top-6 right-8 z-10 text-[100px] sm:text-[140px] font-apricot font-bold text-white/20 pointer-events-none select-none drop-shadow-lg">
+                0{index + 1}
+              </div>
+              
+              <img 
+                src={card.img} 
+                alt={card.title} 
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-110" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/10 transition-opacity duration-700" />
+              
+              <div className="absolute bottom-0 left-0 p-8 sm:p-12 w-full">
+                <span className="inline-block px-4 py-2 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-white text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold mb-4 sm:mb-6 shadow-xl">
+                  {card.tag}
+                </span>
+                <h3 className="font-apricot text-4xl sm:text-5xl lg:text-6xl text-white font-bold mb-2 sm:mb-3">{card.title}</h3>
+                <p className="text-[#c87a1e] font-medium text-sm sm:text-lg mb-4 sm:mb-5">{card.subtitle}</p>
+                <div className="h-[1px] w-16 bg-white/20 mb-5" />
+                <p className="text-white/70 text-xs sm:text-sm md:text-base leading-relaxed max-w-md font-medium">
+                  {card.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+          {/* Spacer block at the end so the last card doesn't hug the right edge tightly */}
+          <div className="w-[10vw] shrink-0" />
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+
 /* ─── Counter Animation ─── */
 function AnimatedCounter({ target, suffix = '', prefix = '' }) {
   const ref = useRef(null);
@@ -458,6 +559,10 @@ export default function LandingPage() {
       </section>
 
 
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* 6. HORIZONTAL SCROLL LIFESTYLE GALLERY                      */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <HorizontalGallery />
 
       {/* ════════════════════════════════════════════════════════════ */}
       {/* FINAL CTA — Cinematic full-bleed closer                      */}
