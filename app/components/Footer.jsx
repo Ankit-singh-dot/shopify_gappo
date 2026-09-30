@@ -111,6 +111,8 @@ export function Footer({footer, header, publicStoreDomain}) {
       {/* Background Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[100vw] max-w-[1200px] h-[600px] bg-[#c87a1e] opacity-[0.04] blur-[150px] rounded-full pointer-events-none z-0" />
     </footer>
+  );
+}
 
 /**
  * @typedef {Object} FooterProps
