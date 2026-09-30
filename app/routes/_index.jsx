@@ -545,38 +545,36 @@ export default function LandingPage() {
 
 
       {/* ════════════════════════════════════════════════════════════ */}
-      {/* FINAL CTA — Expanding Capsule Interactive                   */}
+      {/* FINAL CTA — Monumental Typography                           */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <section className="relative min-h-[100svh] flex flex-col items-center justify-center overflow-hidden bg-[#fdfaf1] py-32 px-4 sm:px-6 z-10 border-t border-[#ebd8b0]">
+      <section className="relative min-h-[100svh] flex flex-col items-center justify-center overflow-hidden bg-[#fdfaf1] py-32 px-4 z-10 border-t border-[#ebd8b0]">
         
         {/* Background ambient text */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center pointer-events-none opacity-[0.03] select-none">
-           <h2 className="font-montserrat font-black text-[35vw] leading-none text-[#1a110a] whitespace-nowrap">GAPOO</h2>
+           <h2 className="font-montserrat font-black whitespace-nowrap" style={{ fontSize: 'clamp(10rem, 35vw, 600px)', lineHeight: 0.8 }}>GAPOO</h2>
         </div>
 
         <div className="relative z-10 flex flex-col items-center w-full max-w-7xl mx-auto">
            {/* Top text */}
            <FadeIn>
-             <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2">
-                <h2 className="font-montserrat font-black text-[12vw] sm:text-[9vw] lg:text-[120px] xl:text-[150px] leading-[0.85] text-[#1a110a] uppercase tracking-tighter drop-shadow-sm text-center">
-                   TASTE THE
-                </h2>
-             </div>
+             <h2 className="font-montserrat font-black text-[#1a110a] uppercase tracking-tighter text-center" style={{ fontSize: 'clamp(4rem, 12vw, 180px)', lineHeight: 0.85 }}>
+               TASTE THE
+             </h2>
            </FadeIn>
 
            {/* Middle Row with interactive capsule */}
            <FadeIn delay={0.1}>
-             <div className="flex flex-col sm:flex-row justify-center items-center gap-y-6 gap-x-4 sm:gap-x-8 mt-4 sm:mt-6 w-full">
-                <h2 className="font-apricot text-[20vw] sm:text-[12vw] lg:text-[160px] xl:text-[200px] leading-[0.7] text-[#c87a1e] tracking-tighter sm:pr-4 drop-shadow-md">
+             <div className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-12 mt-6 sm:mt-8 w-full">
+                <h2 className="font-apricot text-[#c87a1e] tracking-tighter sm:pr-4" style={{ fontSize: 'clamp(5rem, 15vw, 220px)', lineHeight: 0.7 }}>
                    purest
                 </h2>
                 
                 <Link to="/shop" className="shrink-0 group block" style={{ textDecoration: 'none' }}>
                   <motion.div 
-                    className="h-[25vw] sm:h-[10vw] lg:h-[130px] rounded-[100px] overflow-hidden relative cursor-pointer shadow-[0_20px_50px_rgba(200,122,30,0.3)] border-4 border-white group-hover:border-[#c87a1e] transition-colors duration-700"
-                    initial={{ width: "60vw" }}
-                    whileHover={{ width: "80vw" }}
-                    animate={{ minWidth: "200px" }}
+                    className="rounded-[200px] overflow-hidden relative cursor-pointer shadow-[0_20px_50px_rgba(200,122,30,0.3)] border-[6px] border-white group-hover:border-[#c87a1e] transition-colors duration-700"
+                    style={{ height: 'clamp(120px, 15vw, 200px)' }}
+                    initial={{ width: "clamp(200px, 25vw, 350px)" }}
+                    whileHover={{ width: "clamp(250px, 35vw, 500px)" }}
                     transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                   >
                     <img src="/images/gapoo_hero_unboxing.jpg" alt="Unboxing" className="absolute inset-0 w-full h-full object-cover scale-[1.15] group-hover:scale-100 transition-transform duration-[1.5s] ease-[0.16,1,0.3,1]" />
@@ -595,15 +593,15 @@ export default function LandingPage() {
 
            {/* Bottom Text */}
            <FadeIn delay={0.2}>
-             <div className="flex flex-wrap justify-center items-center mt-6 sm:mt-8">
-                <h2 className="font-montserrat font-black text-[12vw] sm:text-[9vw] lg:text-[120px] xl:text-[150px] leading-[0.85] text-[#1a110a] uppercase tracking-tighter drop-shadow-sm text-center">
+             <div className="mt-6 sm:mt-10">
+                <h2 className="font-montserrat font-black text-[#1a110a] uppercase tracking-tighter text-center" style={{ fontSize: 'clamp(4rem, 12vw, 180px)', lineHeight: 0.85 }}>
                    DIFFERENCE.
                 </h2>
              </div>
            </FadeIn>
            
            <FadeIn delay={0.3}>
-             <p className="mt-12 sm:mt-16 text-base sm:text-lg lg:text-xl text-[#5c5247] max-w-xl text-center font-medium leading-relaxed px-4 mx-auto">
+             <p className="mt-12 sm:mt-20 text-base sm:text-lg lg:text-2xl text-[#5c5247] max-w-2xl text-center font-medium leading-relaxed px-4 mx-auto">
                Experience the new standard of honey. Delivered straight to your doorstep in individual tear-and-pour sticks. No spoons, no sticky jars.
              </p>
            </FadeIn>
@@ -637,12 +635,12 @@ export default function LandingPage() {
              whileInView={{ opacity: 1, y: 0 }}
              viewport={{ once: true }}
              transition={{ duration: 1.5, delay: 0.6 }}
-             className="mt-20 sm:mt-24 pointer-events-none"
+             className="mt-20 sm:mt-32 pointer-events-none"
            >
              <img
                src="/images/gapoo_bear_mascot_hd.png"
                alt=""
-               className="w-16 sm:w-20 h-auto opacity-[0.4] mx-auto select-none mix-blend-multiply filter contrast-150 grayscale sepia hue-rotate-30"
+               className="w-20 sm:w-24 h-auto opacity-[0.3] mx-auto select-none mix-blend-multiply filter contrast-150 grayscale sepia hue-rotate-30"
              />
            </motion.div>
         </div>
