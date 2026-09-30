@@ -132,6 +132,11 @@ export default function LandingPage() {
   const manifestoX2 = useTransform(manifestoScroll, [0, 1], ['-20%', '10%']);
   const manifestoX3 = useTransform(manifestoScroll, [0, 1], ['-10%', '-50%']);
 
+  // Horizontal Scroll Parallax
+  const horizontalRef = useRef(null);
+  const { scrollYProgress: horizontalScroll } = useScroll({ target: horizontalRef });
+  const horizontalX = useTransform(horizontalScroll, [0, 1], ["0%", "-75%"]);
+
   // Lifestyle moments data
   const moments = [
     { img: '/images/moment_tea_clean.jpg', label: 'Morning Tea', caption: 'Drop it in. Stir. Sip.' },
@@ -450,81 +455,90 @@ export default function LandingPage() {
       </div>
 
       {/* ════════════════════════════════════════════════════════════ */}
-      {/* 5. PRODUCT SHOWCASE — Immersive Glassmorphism Experience    */}
+      {/* 5. PRODUCT SHOWCASE — Horizontal Scroll                     */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#1a110a] relative min-h-[200vh]">
-        {/* Sticky Background Image Container */}
-        <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
-          <motion.div
-             style={{ scale: productBearScale }}
-             className="absolute inset-0"
-          >
-            <img
-              src="/images/gapoo_hero_travertine.jpg"
-              alt="Gapoo honey sticks arrangement"
-              className="w-full h-full object-cover"
-            />
-            {/* Gradient mask to blend the bottom and left */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1a110a] via-[#1a110a]/40 to-transparent" />
-            <div className="absolute inset-0 bg-[#1a110a]/40 sm:bg-transparent sm:bg-gradient-to-r sm:from-[#1a110a]/90 sm:via-[#1a110a]/40 sm:to-transparent" />
-          </motion.div>
-          
-          {/* Massive Typographic overlay fixed on screen */}
-          <div className="absolute inset-0 flex flex-col justify-center px-6 sm:px-12 lg:px-24 pointer-events-none z-10 max-w-[1440px] mx-auto w-full">
-            <h2 className="font-apricot text-6xl sm:text-8xl lg:text-[110px] font-bold tracking-tighter leading-[0.9] text-white drop-shadow-2xl max-w-xl">
-              Pure nature. <br/>
-              <span className="text-transparent" style={{ WebkitTextStroke: '2px rgba(253,250,241,0.9)' }}>Modern convenience.</span>
-            </h2>
-          </div>
-        </div>
-
-        {/* Scrolling Foreground Content (Glass Cards) */}
-        <div className="relative z-20 max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 pb-32 -mt-[50vh]">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-16 items-start">
-             {/* Left column empty to show fixed text */}
-             <div className="hidden md:block"></div>
-             
-             {/* Right column scrolling cards */}
-             <div className="space-y-6 sm:space-y-8 pt-[30vh] sm:pt-0">
-               {/* Main desc card */}
-               <FadeIn>
-                 <div className="bg-[#1a110a]/40 backdrop-blur-2xl border border-white/20 rounded-[32px] p-8 sm:p-12 shadow-2xl relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-50 pointer-events-none" />
-                    <p className="text-lg sm:text-xl lg:text-2xl text-white/95 leading-[1.6] font-medium relative z-10">
-                      Carefully harvested, naturally filtered, and perfectly infused with natural mint extract. No artificial syrups. No refined sugars. What you taste is pure, unrefined natural sweetness.
-                    </p>
+      <section ref={horizontalRef} className="bg-[#1a110a] h-[400vh] relative z-30">
+        <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-[#1a110a] flex items-center">
+          <motion.div style={{ x: horizontalX }} className="flex h-full w-[400vw]">
+            
+            {/* PANEL 1: Intro */}
+            <div className="w-[100vw] h-full flex flex-col md:flex-row items-center justify-center px-6 sm:px-12 lg:px-24 gap-12 lg:gap-24 relative overflow-hidden shrink-0">
+              <div className="w-full md:w-1/2 flex flex-col justify-center">
+                 <div className="flex items-center gap-3 mb-6">
+                   <div className="h-[1px] w-8 bg-[#c87a1e]" />
+                   <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[#c87a1e]">The Collection</span>
                  </div>
-               </FadeIn>
+                 <h2 className="font-montserrat font-black text-6xl sm:text-7xl lg:text-[100px] leading-[0.85] tracking-tighter text-transparent" style={{ WebkitTextStroke: '2px #fdfaf1' }}>
+                    PURE NATURE
+                 </h2>
+                 <h2 className="font-montserrat font-black text-6xl sm:text-7xl lg:text-[100px] leading-[0.85] tracking-tighter text-white mt-2">
+                    MODERN FORM.
+                 </h2>
+                 <p className="text-lg sm:text-xl text-[#a39585] font-medium max-w-md mt-10 leading-relaxed">
+                   Carefully harvested, naturally filtered, and perfectly infused with natural mint extract. No artificial syrups. No refined sugars.
+                 </p>
+              </div>
+              <div className="w-full md:w-1/2 h-[50vh] md:h-[70vh] relative rounded-[40px] overflow-hidden shadow-2xl border border-white/10">
+                 <img src="/images/gapoo_hero_travertine.jpg" className="w-full h-full object-cover" alt="Gapoo box" />
+              </div>
+            </div>
 
-               {/* Feature Cards Grid */}
-               <div className="grid grid-cols-1 gap-6">
-                 {[
-                   { num: '01', title: 'Pure Honey', desc: 'Sourced from independent apiaries. Zero additives, zero preservatives.', color: 'from-[#f5a623] to-[#d4af37]' },
-                   { num: '02', title: 'Natural Mint Infusion', desc: 'A refreshing twist on classic golden honey — gentle and invigorating.', color: 'from-[#10b981] to-[#059669]' },
-                   { num: '03', title: 'Earth Conscious', desc: 'Single-serve sticks designed for recycling. Guilt-free on the go.', color: 'from-[#c87a1e] to-[#b45309]' },
-                 ].map((f, i) => (
-                   <FadeIn key={f.title} delay={0.1 * i}>
-                     <div className="group relative bg-[#1a110a]/50 backdrop-blur-xl border border-white/10 hover:border-white/30 rounded-[32px] p-8 transition-all duration-500 overflow-hidden shadow-2xl">
-                       <div className={`absolute -right-8 -top-8 w-40 h-40 bg-gradient-to-br ${f.color} opacity-[0.15] blur-2xl group-hover:scale-150 group-hover:opacity-30 transition-all duration-700`} />
-                       <div className="text-[#fdfaf1] font-montserrat font-black text-2xl mb-4 opacity-30">{f.num}</div>
-                       <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 tracking-tight">{f.title}</h3>
-                       <p className="text-[#d4c9bc] leading-relaxed max-w-sm">{f.desc}</p>
-                     </div>
-                   </FadeIn>
-                 ))}
-               </div>
+            {/* PANEL 2: Pure Honey */}
+            <div className="w-[100vw] h-full flex flex-col-reverse md:flex-row items-center justify-center px-6 sm:px-12 lg:px-24 gap-12 lg:gap-24 relative shrink-0">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[40vw] font-apricot text-white/[0.03] select-none pointer-events-none">01</div>
+              <div className="w-full md:w-1/2 h-[50vh] md:h-[70vh] relative rounded-[40px] overflow-hidden shadow-2xl border border-white/10">
+                 <img src="/images/moment_tea_clean.jpg" className="w-full h-full object-cover" alt="Honey tea" />
+              </div>
+              <div className="w-full md:w-1/2 flex flex-col justify-center relative z-10">
+                 <h3 className="font-montserrat font-black text-5xl sm:text-6xl lg:text-8xl text-white mb-6 tracking-tighter">
+                   PURE HONEY
+                 </h3>
+                 <p className="text-xl sm:text-2xl text-[#c87a1e] font-medium max-w-md leading-relaxed">
+                   Sourced from independent apiaries. Zero additives, zero preservatives.
+                 </p>
+              </div>
+            </div>
 
-               <FadeIn delay={0.3}>
+            {/* PANEL 3: Mint Infusion */}
+            <div className="w-[100vw] h-full flex flex-col md:flex-row items-center justify-center px-6 sm:px-12 lg:px-24 gap-12 lg:gap-24 relative shrink-0">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[40vw] font-apricot text-white/[0.03] select-none pointer-events-none">02</div>
+              <div className="w-full md:w-1/2 flex flex-col justify-center relative z-10">
+                 <h3 className="font-montserrat font-black text-5xl sm:text-6xl lg:text-8xl text-white mb-6 tracking-tighter">
+                   NATURAL MINT
+                 </h3>
+                 <p className="text-xl sm:text-2xl text-[#10b981] font-medium max-w-md leading-relaxed">
+                   A refreshing twist on classic golden honey — gentle and invigorating.
+                 </p>
+              </div>
+              <div className="w-full md:w-1/2 h-[50vh] md:h-[70vh] relative rounded-[40px] overflow-hidden shadow-2xl border border-white/10">
+                 <img src="/images/gapoo_hero_pour.jpg" className="w-full h-full object-cover" alt="Honey pour" />
+              </div>
+            </div>
+
+            {/* PANEL 4: Earth Conscious & CTA */}
+            <div className="w-[100vw] h-full flex flex-col-reverse md:flex-row items-center justify-center px-6 sm:px-12 lg:px-24 gap-12 lg:gap-24 relative shrink-0">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[40vw] font-apricot text-white/[0.03] select-none pointer-events-none">03</div>
+              <div className="w-full md:w-1/2 h-[50vh] md:h-[70vh] relative rounded-[40px] overflow-hidden shadow-2xl border border-white/10">
+                 <img src="/images/moment_pocket_clean.jpg" className="w-full h-full object-cover" alt="Pocket sticks" />
+              </div>
+              <div className="w-full md:w-1/2 flex flex-col justify-center relative z-10">
+                 <h3 className="font-montserrat font-black text-5xl sm:text-6xl lg:text-8xl text-white mb-6 tracking-tighter">
+                   EARTH AWARE
+                 </h3>
+                 <p className="text-xl sm:text-2xl text-[#d4af37] font-medium max-w-md leading-relaxed mb-12">
+                   Single-serve sticks designed for recycling. Guilt-free on the go.
+                 </p>
                  <Link
                    to="/shop"
-                   className="inline-flex items-center justify-center w-full sm:w-auto px-12 py-6 rounded-full bg-white text-[#1a110a] font-bold tracking-[0.2em] uppercase text-sm hover:bg-[#c87a1e] hover:text-white transition-all duration-500 shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(200,122,30,0.3)] mt-4"
+                   className="inline-flex items-center justify-center w-max px-12 py-6 rounded-full bg-white text-[#1a110a] font-bold tracking-[0.2em] uppercase text-sm hover:bg-[#c87a1e] hover:text-white transition-all duration-500 shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(200,122,30,0.3)]"
                    style={{ textDecoration: 'none' }}
                  >
                    Explore the Collection
                  </Link>
-               </FadeIn>
-             </div>
-          </div>
+              </div>
+            </div>
+
+          </motion.div>
         </div>
       </section>
 
