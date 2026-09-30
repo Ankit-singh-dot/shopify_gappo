@@ -545,87 +545,106 @@ export default function LandingPage() {
 
 
       {/* ════════════════════════════════════════════════════════════ */}
-      {/* FINAL CTA — Cinematic full-bleed closer                      */}
+      {/* FINAL CTA — Expanding Capsule Interactive                   */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        {/* Full-bleed background image with parallax */}
-        <motion.div
-          style={{ y: ctaBearY }}
-          className="absolute inset-0 -inset-y-[10%] z-0"
-        >
-          <img
-            src="/images/gapoo_hero_unboxing.jpg"
-            alt="Gapoo honey sticks"
-            className="w-full h-full object-cover"
-          />
-        </motion.div>
+      <section className="relative min-h-[100svh] flex flex-col items-center justify-center overflow-hidden bg-[#fdfaf1] py-32 px-4 sm:px-6 z-10 border-t border-[#ebd8b0]">
+        
+        {/* Background ambient text */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center pointer-events-none opacity-[0.03] select-none">
+           <h2 className="font-montserrat font-black text-[35vw] leading-none text-[#1a110a] whitespace-nowrap">GAPOO</h2>
+        </div>
 
-        {/* Dark cinematic overlay */}
-        <div className="absolute inset-0 z-[1] bg-gradient-to-b from-black/60 via-black/50 to-black/75" />
+        <div className="relative z-10 flex flex-col items-center w-full max-w-7xl mx-auto">
+           {/* Top text */}
+           <FadeIn>
+             <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2">
+                <h2 className="font-montserrat font-black text-[12vw] sm:text-[9vw] lg:text-[120px] xl:text-[150px] leading-[0.85] text-[#1a110a] uppercase tracking-tighter drop-shadow-sm text-center">
+                   TASTE THE
+                </h2>
+             </div>
+           </FadeIn>
 
-        {/* Warm glow accent */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#d4af37] opacity-[0.08] blur-[100px] rounded-full pointer-events-none z-[2]" />
-
-        {/* Content */}
-        <div className="relative z-10 text-center px-6 w-full flex flex-col items-center" style={{ padding: '6rem 1.5rem' }}>
-          {/* <FadeIn>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 mb-10">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#f5a623] animate-pulse" />
-              <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase text-white/80">
-                Join the Movement
-              </span>
-            </div>
-          </FadeIn> */}
-
-          <FadeIn delay={0.1}>
-            <h2 className="font-apricot text-5xl sm:text-7xl lg:text-9xl xl:text-[140px] font-bold text-white leading-[0.85] tracking-tighter drop-shadow-2xl">
-              Ready to taste<br />the difference?
-            </h2>
-          </FadeIn>
-
-          <FadeIn delay={0.2}>
-            <p className="mt-8 sm:mt-10 text-sm sm:text-base md:text-lg text-white/60 max-w-lg mx-auto font-medium leading-relaxed" style={{ textAlign: 'center' }}>
-              Experience the new standard of honey. Delivered straight to your doorstep in individual tear-and-pour sticks.
-            </p>
-          </FadeIn>
-
-          <FadeIn delay={0.3}>
-            <div className="mt-12 sm:mt-14 flex flex-col sm:flex-row items-center gap-5">
-              <Link
-                to="/shop"
-                className="group relative inline-flex items-center gap-3 px-12 py-6 rounded-full bg-white text-[#1a110a] shadow-2xl hover:shadow-[#f5a623]/40 transition-all duration-500 overflow-hidden"
-                style={{ color: '#1a110a', textDecoration: 'none' }}
-              >
-                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#f5a623] via-[#fbbf24] to-[#d97706] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-                <span className="relative z-10 font-bold tracking-[0.22em] uppercase text-xs sm:text-sm group-hover:text-white transition-colors duration-300 flex items-center gap-3">
-                  <span>Shop the Collection</span>
-                  <svg
-                    className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform duration-300"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+           {/* Middle Row with interactive capsule */}
+           <FadeIn delay={0.1}>
+             <div className="flex flex-col sm:flex-row justify-center items-center gap-y-6 gap-x-4 sm:gap-x-8 mt-4 sm:mt-6 w-full">
+                <h2 className="font-apricot text-[20vw] sm:text-[12vw] lg:text-[160px] xl:text-[200px] leading-[0.7] text-[#c87a1e] tracking-tighter sm:pr-4 drop-shadow-md">
+                   purest
+                </h2>
+                
+                <Link to="/shop" className="shrink-0 group block" style={{ textDecoration: 'none' }}>
+                  <motion.div 
+                    className="h-[25vw] sm:h-[10vw] lg:h-[130px] rounded-[100px] overflow-hidden relative cursor-pointer shadow-[0_20px_50px_rgba(200,122,30,0.3)] border-4 border-white group-hover:border-[#c87a1e] transition-colors duration-700"
+                    initial={{ width: "60vw" }}
+                    whileHover={{ width: "80vw" }}
+                    animate={{ minWidth: "200px" }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </span>
-              </Link>
-            </div>
-          </FadeIn>
+                    <img src="/images/gapoo_hero_unboxing.jpg" alt="Unboxing" className="absolute inset-0 w-full h-full object-cover scale-[1.15] group-hover:scale-100 transition-transform duration-[1.5s] ease-[0.16,1,0.3,1]" />
+                    <div className="absolute inset-0 bg-[#c87a1e]/20 mix-blend-multiply group-hover:opacity-0 transition-opacity duration-500" />
+                    
+                    {/* "Shop Now" pill that appears on hover */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-[50ms]">
+                       <span className="bg-white/90 backdrop-blur-md text-[#1a110a] px-6 py-3 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] sm:text-xs whitespace-nowrap shadow-xl">
+                         Shop Now
+                       </span>
+                    </div>
+                  </motion.div>
+                </Link>
+             </div>
+           </FadeIn>
 
-          {/* Bear logo watermark at bottom */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.5, delay: 0.6 }}
-            className="mt-16 sm:mt-24"
-          >
-            <img
-              src="/images/gapoo_bear_mascot_hd.png"
-              alt=""
-              className="w-16 sm:w-20 h-auto opacity-[0.25] mx-auto select-none invert brightness-200"
-            />
-          </motion.div>
+           {/* Bottom Text */}
+           <FadeIn delay={0.2}>
+             <div className="flex flex-wrap justify-center items-center mt-6 sm:mt-8">
+                <h2 className="font-montserrat font-black text-[12vw] sm:text-[9vw] lg:text-[120px] xl:text-[150px] leading-[0.85] text-[#1a110a] uppercase tracking-tighter drop-shadow-sm text-center">
+                   DIFFERENCE.
+                </h2>
+             </div>
+           </FadeIn>
+           
+           <FadeIn delay={0.3}>
+             <p className="mt-12 sm:mt-16 text-base sm:text-lg lg:text-xl text-[#5c5247] max-w-xl text-center font-medium leading-relaxed px-4 mx-auto">
+               Experience the new standard of honey. Delivered straight to your doorstep in individual tear-and-pour sticks. No spoons, no sticky jars.
+             </p>
+           </FadeIn>
+
+           <FadeIn delay={0.4}>
+             <div className="mt-12 sm:mt-16 flex justify-center">
+                <Link
+                  to="/shop"
+                  className="group relative inline-flex items-center gap-3 px-10 sm:px-12 py-5 sm:py-6 rounded-full bg-[#1a110a] text-white shadow-[0_20px_40px_rgba(26,17,10,0.2)] hover:shadow-[0_20px_60px_rgba(200,122,30,0.4)] transition-all duration-700 overflow-hidden transform hover:-translate-y-1"
+                  style={{ textDecoration: 'none' }}
+                >
+                  <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#f5a623] via-[#fbbf24] to-[#d97706] transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-[0.16,1,0.3,1]" />
+                  <span className="relative z-10 font-bold tracking-[0.2em] uppercase text-[10px] sm:text-xs text-white transition-colors duration-300 flex items-center gap-4">
+                    <span>Explore the Collection</span>
+                    <svg
+                      className="w-4 h-4 transform group-hover:translate-x-2 transition-transform duration-500 ease-out"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </span>
+                </Link>
+             </div>
+           </FadeIn>
+
+           {/* Bear logo watermark at bottom */}
+           <motion.div
+             initial={{ opacity: 0, y: 20 }}
+             whileInView={{ opacity: 1, y: 0 }}
+             viewport={{ once: true }}
+             transition={{ duration: 1.5, delay: 0.6 }}
+             className="mt-20 sm:mt-24 pointer-events-none"
+           >
+             <img
+               src="/images/gapoo_bear_mascot_hd.png"
+               alt=""
+               className="w-16 sm:w-20 h-auto opacity-[0.4] mx-auto select-none mix-blend-multiply filter contrast-150 grayscale sepia hue-rotate-30"
+             />
+           </motion.div>
         </div>
       </section>
 
