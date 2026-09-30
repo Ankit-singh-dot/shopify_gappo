@@ -100,29 +100,29 @@ function HorizontalGallery() {
 
   return (
     <section ref={targetRef} className="relative h-[350vh] bg-[#1a110a] z-10">
-      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
+      <div className="sticky top-0 h-[100svh] flex flex-col justify-center overflow-hidden pt-16 pb-12 sm:pt-20">
         
-        {/* Intro text floating over the scroll */}
-        <div className="absolute top-24 left-6 sm:top-28 sm:left-12 lg:left-24 z-20 pointer-events-none">
+        {/* Intro text */}
+        <div className="w-full px-6 sm:px-12 lg:px-24 mb-6 sm:mb-10 z-20 shrink-0">
           <FadeIn>
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-2 sm:mb-4">
               <div className="h-[1px] w-12 bg-[#c87a1e]" />
               <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase text-[#c87a1e]">Every Moment</span>
             </div>
-            <h2 className="font-apricot text-5xl sm:text-7xl lg:text-8xl font-bold text-white tracking-tighter drop-shadow-2xl">
+            <h2 className="font-apricot text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tighter drop-shadow-2xl">
               Made for your life.
             </h2>
           </FadeIn>
         </div>
 
-        <motion.div style={{ x }} className="flex gap-6 sm:gap-10 px-6 sm:px-12 lg:px-24 mt-32 sm:mt-24 items-center h-[60vh] sm:h-[70vh]">
+        <motion.div style={{ x }} className="flex gap-6 sm:gap-10 px-6 sm:px-12 lg:px-24 items-start h-[55vh] sm:h-[65vh] shrink-0">
           {cards.map((card, index) => (
             <div 
               key={card.id} 
-              className="relative w-[85vw] sm:w-[60vw] lg:w-[45vw] h-full shrink-0 rounded-[32px] sm:rounded-[48px] overflow-hidden group shadow-2xl border border-white/10"
+              className="relative w-[85vw] sm:w-[55vw] lg:w-[40vw] xl:w-[35vw] h-full shrink-0 rounded-[32px] sm:rounded-[40px] overflow-hidden group shadow-2xl border border-white/10"
             >
               {/* Giant number watermark */}
-              <div className="absolute top-6 right-8 z-10 text-[100px] sm:text-[140px] font-apricot font-bold text-white/20 pointer-events-none select-none drop-shadow-lg">
+              <div className="absolute top-4 sm:top-6 right-6 sm:right-8 z-10 text-[80px] sm:text-[120px] font-apricot font-bold text-white/20 pointer-events-none select-none drop-shadow-lg leading-none">
                 0{index + 1}
               </div>
               
@@ -133,14 +133,14 @@ function HorizontalGallery() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/10 transition-opacity duration-700" />
               
-              <div className="absolute bottom-0 left-0 p-8 sm:p-12 w-full">
-                <span className="inline-block px-4 py-2 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-white text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold mb-4 sm:mb-6 shadow-xl">
+              <div className="absolute bottom-0 left-0 p-6 sm:p-10 w-full">
+                <span className="inline-block px-4 py-2 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-white text-[9px] sm:text-[10px] uppercase tracking-[0.2em] font-bold mb-3 sm:mb-5 shadow-xl">
                   {card.tag}
                 </span>
-                <h3 className="font-apricot text-4xl sm:text-5xl lg:text-6xl text-white font-bold mb-2 sm:mb-3">{card.title}</h3>
-                <p className="text-[#c87a1e] font-medium text-sm sm:text-lg mb-4 sm:mb-5">{card.subtitle}</p>
-                <div className="h-[1px] w-16 bg-white/20 mb-5" />
-                <p className="text-white/70 text-xs sm:text-sm md:text-base leading-relaxed max-w-md font-medium">
+                <h3 className="font-apricot text-3xl sm:text-4xl lg:text-5xl text-white font-bold mb-1.5 sm:mb-2">{card.title}</h3>
+                <p className="text-[#c87a1e] font-medium text-xs sm:text-sm lg:text-base mb-3 sm:mb-4">{card.subtitle}</p>
+                <div className="h-[1px] w-12 bg-white/20 mb-3 sm:mb-4" />
+                <p className="text-white/70 text-xs sm:text-sm leading-relaxed max-w-sm font-medium">
                   {card.desc}
                 </p>
               </div>
@@ -208,7 +208,7 @@ export default function LandingPage() {
   const ribbonWords = 'PURE · ZERO MESS · SNAP & SQUEEZE · NATURAL MINT · TRACEABLE ORIGIN · EARTH CONSCIOUS · ';
 
   return (
-    <div ref={containerRef} className="bg-[#fdfaf1] text-[#1a110a] font-montserrat relative">
+    <div ref={containerRef} className="bg-[#fdfaf1] text-[#1a110a] font-montserrat relative overflow-x-clip">
 
       {/* ════════════════════════════════════════════════════════════ */}
       {/* 1. CINEMATIC HERO — Full-bleed product image with parallax */}
