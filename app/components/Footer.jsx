@@ -8,20 +8,6 @@ export function Footer({footer, header, publicStoreDomain}) {
   return (
     <footer className="bg-[#1a110a] text-white pt-24 pb-12 relative overflow-hidden border-t border-[#c87a1e]">
       
-      {/* Massive Drop-in Logo */}
-      <div className="w-full flex justify-center items-center overflow-hidden mb-24 px-4 h-[30vw] min-h-[150px] relative">
-         <motion.h1 
-           className="font-apricot text-[#c87a1e] tracking-tighter leading-none text-center absolute drop-shadow-2xl"
-           style={{ fontSize: 'clamp(5rem, 28vw, 500px)' }}
-           initial={{ y: "-100%", opacity: 0, scale: 0.9, rotateX: 45 }}
-           whileInView={{ y: "0%", opacity: 1, scale: 1, rotateX: 0 }}
-           viewport={{ once: false, margin: "0px" }}
-           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], type: "spring", bounce: 0.4 }}
-         >
-           Gapoo
-         </motion.h1>
-      </div>
-
       <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-24 relative z-10">
          {/* Footer Grid */}
          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 mb-24">

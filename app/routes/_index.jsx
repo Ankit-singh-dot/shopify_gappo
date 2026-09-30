@@ -137,6 +137,26 @@ export default function LandingPage() {
   const { scrollYProgress: horizontalScroll } = useScroll({ target: horizontalRef });
   const horizontalX = useTransform(horizontalScroll, [0, 1], ["0%", "-75%"]);
 
+  // Apple-style Final Logo Reveal
+  const appleLogoRef = useRef(null);
+  const { scrollYProgress: appleScroll } = useScroll({ 
+    target: appleLogoRef,
+    offset: ["start end", "end end"] 
+  });
+  
+  // The bear starts huge and low, rises and shrinks into place
+  const appleBearScale = useTransform(appleScroll, [0.3, 0.7], [5, 1]);
+  const appleBearY = useTransform(appleScroll, [0.3, 0.7], ["60vh", "0vh"]);
+  
+  // The text fades in after the bear settles
+  const appleTextOpacity = useTransform(appleScroll, [0.7, 0.85], [0, 1]);
+  const appleTextY = useTransform(appleScroll, [0.7, 0.85], ["40px", "0px"]);
+  
+  // Background fades to match footer color at the very end
+  const appleBgColor = useTransform(appleScroll, [0.85, 1], ["#fdfaf1", "#1a110a"]);
+  const appleBearFilter = useTransform(appleScroll, [0.85, 1], ["invert(0%) brightness(1)", "invert(100%) brightness(2)"]);
+  const appleTextColor = useTransform(appleScroll, [0.85, 1], ["#1a110a", "#c87a1e"]);
+
   // Lifestyle moments data
   const moments = [
     { img: '/images/moment_tea_clean.jpg', label: 'Morning Tea', caption: 'Drop it in. Stir. Sip.' },
@@ -644,6 +664,45 @@ export default function LandingPage() {
              />
            </motion.div>
         </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* MASSIVE LOGO REVEAL — Apple Style                          */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <section ref={appleLogoRef} className="relative h-[300vh]">
+         <motion.div 
+           className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden"
+           style={{ backgroundColor: appleBgColor }}
+         >
+            {/* The Mascot */}
+            <motion.div 
+               style={{ scale: appleBearScale, y: appleBearY, filter: appleBearFilter }}
+               className="relative z-10 flex items-center justify-center"
+            >
+               <img src="/images/gapoo_bear_mascot_hd.png" alt="Gapoo Mascot" className="w-[30vw] min-w-[200px] max-w-[400px] object-contain select-none" />
+            </motion.div>
+            
+            {/* The Text */}
+            <motion.h2 
+               style={{ opacity: appleTextOpacity, y: appleTextY, color: appleTextColor }}
+               className="font-apricot text-center tracking-tighter mt-8 z-10 select-none"
+               style={{ 
+                 opacity: appleTextOpacity, 
+                 y: appleTextY, 
+                 color: appleTextColor,
+                 fontSize: 'clamp(5rem, 15vw, 200px)',
+                 lineHeight: 0.8
+               }}
+            >
+               Gapoo
+            </motion.h2>
+
+            {/* Ambient transition glow when dark */}
+            <motion.div 
+               style={{ opacity: appleTextOpacity }}
+               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] bg-[#c87a1e] blur-[150px] rounded-full pointer-events-none mix-blend-screen opacity-0"
+            />
+         </motion.div>
       </section>
 
     </div>
