@@ -1255,9 +1255,10 @@ export type StoreProductsQuery = {
       Pick<StorefrontAPI.Product, 'id' | 'title' | 'handle'> & {
         variants: {
           nodes: Array<
-            Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
-              price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
-            }
+            Pick<
+              StorefrontAPI.ProductVariant,
+              'id' | 'title' | 'availableForSale'
+            > & {price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>}
           >;
         };
       }
@@ -1364,7 +1365,7 @@ interface GeneratedQueryTypes {
     return: FeaturedCollectionQuery;
     variables: FeaturedCollectionQueryVariables;
   };
-  '#graphql\n  query StoreProducts($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    products(first: 8, sortKey: UPDATED_AT, reverse: true) {\n      nodes {\n        id\n        title\n        handle\n        variants(first: 1) {\n          nodes {\n            id\n            availableForSale\n            price {\n              amount\n              currencyCode\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+  '#graphql\n  query StoreProducts($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    products(first: 8, sortKey: UPDATED_AT, reverse: true) {\n      nodes {\n        id\n        title\n        handle\n        variants(first: 10) {\n          nodes {\n            id\n            title\n            availableForSale\n            price {\n              amount\n              currencyCode\n            }\n          }\n        }\n      }\n    }\n  }\n': {
     return: StoreProductsQuery;
     variables: StoreProductsQueryVariables;
   };
