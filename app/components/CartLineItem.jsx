@@ -64,6 +64,18 @@ export function CartLineItem({layout, line, childrenMap}) {
               ))}
             </ul>
           )}
+          {line?.attributes?.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {line.attributes.map((attr) => (
+                <span
+                  key={attr.key}
+                  className="inline-block text-[10px] font-semibold bg-[#faecc9] text-[#8b5311] px-2 py-0.5 rounded-full border border-[#f5cf80]"
+                >
+                  {attr.key}: {attr.value}
+                </span>
+              ))}
+            </div>
+          )}
           <CartLineQuantity line={line} />
         </div>
       </div>
