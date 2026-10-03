@@ -216,8 +216,8 @@ export default function LandingPage() {
                scale: { duration: 0.8, ease: "easeOut" },
                color: { duration: 0.5, delay: 1.3 } // Color flips exactly as the image swallows it
              }}
-             className="font-apricot tracking-tighter leading-[0.85] drop-shadow-2xl z-20 pointer-events-auto text-center"
-             style={{ fontSize: 'clamp(6rem, 25vw, 400px)' }}
+             className="font-apricot tracking-tighter leading-[0.7] drop-shadow-2xl z-20 pointer-events-auto text-center -mt-8"
+             style={{ fontSize: 'clamp(5rem, 18vw, 280px)' }}
            >
              Gapoo.
            </motion.h1>
@@ -226,7 +226,7 @@ export default function LandingPage() {
              initial={{ opacity: 0, y: 20 }}
              animate={{ opacity: 1, y: 0 }}
              transition={{ duration: 1, delay: 2.2 }}
-             className="absolute bottom-12 flex flex-col items-center gap-8 pointer-events-auto"
+             className="absolute bottom-8 sm:bottom-12 flex flex-col items-center gap-6 sm:gap-8 pointer-events-auto z-20"
            >
               <p className="text-white/90 max-w-sm text-center font-medium leading-relaxed tracking-wide text-sm sm:text-base md:text-lg drop-shadow-lg">
                 Pure single-serve honey sticks. No sticky spoons, no messy jars.
