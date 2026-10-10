@@ -50,7 +50,7 @@ export function Footer({footer, header, publicStoreDomain}) {
                <div className="space-y-8">
                  <h4 className="font-montserrat font-bold tracking-[0.25em] uppercase text-[#c87a1e] text-xs">Learn</h4>
                  <ul className="space-y-5 text-[#d4c9bc] font-medium text-sm sm:text-base">
-                   <li><a href="#" className="hover:text-white transition-colors relative inline-block group"><span>Our Story</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></a></li>
+                   <li><a href="/shop#our-story" className="hover:text-white transition-colors relative inline-block group"><span>Our Story</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></a></li>
                    <li><a href="#" className="hover:text-white transition-colors relative inline-block group"><span>Sourcing</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></a></li>
                    <li><a href="#" className="hover:text-white transition-colors relative inline-block group"><span>Recipes</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></a></li>
                    <li><a href="#" className="hover:text-white transition-colors relative inline-block group"><span>Sustainability</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></a></li>

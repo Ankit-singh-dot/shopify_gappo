@@ -873,123 +873,269 @@ export default function ShopPage() {
       </div>
 
       {/* ============================================================ */}
-      {/* 4. COMING SOON: THE NEXT CHAPTER (CONTAINED CARD SHOWCASE)   */}
+      {/* 4. OUR STORY (DIRECT FROM GAPOO STORY DOCUMENT)              */}
       {/* ============================================================ */}
-      <section className="my-8 sm:my-14 lg:my-20 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto font-montserrat">
-        <div className="bg-[#140e0a] text-white rounded-[32px] sm:rounded-[44px] overflow-hidden flex flex-col md:flex-row shadow-[0_25px_60px_rgba(0,0,0,0.25)] border border-[#2e1d10]">
-          {/* Left Panel: Ginger Curcumin */}
-          <div className="relative w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-between group overflow-hidden bg-[#18110b] border-b md:border-b-0 md:border-r border-[#2a1f14]">
-            <div className="absolute top-0 right-0 w-[450px] h-[450px] bg-[#d4a373] opacity-[0.06] blur-[120px] rounded-full pointer-events-none" />
+      <section id="our-story" className="my-10 sm:my-16 lg:my-24 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto font-montserrat scroll-mt-28 relative">
+        <span id="story" className="absolute -top-32 left-0 pointer-events-none" />
 
-            <div className="relative z-10 space-y-4">
-              <span className="inline-block text-[10px] font-bold tracking-[0.2em] text-[#d4a373] uppercase border border-[#d4a373]/30 px-3 py-1.5 rounded-full">
-                The Next Chapter
-              </span>
-              <h3 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold text-[#f2e6d5] leading-[0.95] tracking-tighter">
-                Ginger Curcumin
-              </h3>
-              <span className="text-xs font-bold tracking-[0.15em] uppercase text-[#8c5a2b] block">
-                The Ultimate Immunity & Wellness Tonic
-              </span>
+        {/* ─── CHAPTER 1: THE HIVE AWAKENING ─── */}
+        <div className="bg-white rounded-[32px] sm:rounded-[44px] p-8 sm:p-12 lg:p-16 border border-[#eee4d4] shadow-sm mb-10 sm:mb-14 relative overflow-hidden">
+          <div className="max-w-3xl space-y-6 relative z-10">
+            <div className="inline-flex items-center gap-2 bg-[#faecc9] border border-[#e5cf9d] px-4 py-1.5 rounded-full text-xs font-bold text-[#8b5311] uppercase tracking-wider shadow-2xs">
+              <span>Chapter 01 · The Hive Awakening</span>
             </div>
 
-            <div className="relative z-10 mt-10 sm:mt-14 space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#d4a373] mt-2 shrink-0" />
-                <div>
-                  <strong className="block text-[#f2e6d5] text-sm mb-0.5 uppercase tracking-wider font-bold">
-                    Joint & Anti-Inflammatory
-                  </strong>
-                  <span className="text-xs text-[#a38062] leading-relaxed">
-                    Powerful curcumin helps active adults and desk workers relieve stiffness and accelerate recovery.
+            <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1a110a] leading-[1.05]">
+              The Hive Awakening
+            </h2>
+
+            <p className="text-base sm:text-lg text-[#3d3228] leading-relaxed font-medium">
+              The seed for Gapoo was planted not in a corporate boardroom, but in the dirt and the hum of the hives during a hands-on bee farming training session. It blossomed from the simple, grounded concept of &ldquo;Garden+Pool&rdquo;—a vision to reconnect the modern adult wellness lifestyle with the untamed, natural bounty of the earth.
+            </p>
+
+            <p className="text-sm sm:text-base text-[#5c5043] leading-relaxed">
+              As we worked alongside local Indian beekeepers, we uncovered a profound betrayal of consumer trust. India&apos;s commercial honey market is highly fragmented, with pure nectar passing through multiple aggregators where genuine batches easily get mixed with compromised syrups. The market is flooded with cheap rice, corn, and cane syrups specifically designed to bypass standard domestic purity tests.
+            </p>
+
+            {/* Investigation findings from CSE Report */}
+            <div className="p-6 sm:p-7 rounded-2xl bg-[#faf5ec] border border-[#ebdccb] space-y-4">
+              <p className="text-xs sm:text-sm text-[#4a3e32] leading-relaxed">
+                A 2020 Centre for Science and Environment investigation revealed a heartbreaking reality: 77 percent of tested samples were adulterated with sugar syrups, and only 3 of 13 brands passed the internationally accepted NMR test. This race-to-the-bottom pricing doesn&apos;t just trick the consumer; it ruthlessly exploits the hardworking apiarists who harvest true nectar.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#ebdccb]">
+                <div className="flex items-center gap-3">
+                  <span className="font-apricot text-3xl sm:text-4xl font-bold text-[#c87a1e] leading-none">
+                    77%
+                  </span>
+                  <span className="text-xs font-semibold text-[#5c5043] leading-tight">
+                    Tested samples adulterated with sugar syrups in CSE investigation
                   </span>
                 </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#d4a373] mt-2 shrink-0" />
-                <div>
-                  <strong className="block text-[#f2e6d5] text-sm mb-0.5 uppercase tracking-wider font-bold">
-                    Digestive Comfort
-                  </strong>
-                  <span className="text-xs text-[#a38062] leading-relaxed">
-                    Traditional ginger relieves indigestion, bloating, and nausea for a soothing after-meal ritual.
+                <div className="flex items-center gap-3">
+                  <span className="font-apricot text-3xl sm:text-4xl font-bold text-[#c87a1e] leading-none">
+                    3 of 13
                   </span>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#d4a373] mt-2 shrink-0" />
-                <div>
-                  <strong className="block text-[#f2e6d5] text-sm mb-0.5 uppercase tracking-wider font-bold">
-                    Instant Wellness Tea
-                  </strong>
-                  <span className="text-xs text-[#a38062] leading-relaxed">
-                    Snap directly into warm water or green tea to create a soothing herbal drink anywhere.
+                  <span className="text-xs font-semibold text-[#5c5043] leading-tight">
+                    Brands passed the internationally accepted NMR test
                   </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right Panel: Chilly */}
-          <div className="relative w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-between group overflow-hidden bg-[#0d120d]">
-            <div className="absolute top-0 right-0 w-[450px] h-[450px] bg-[#f05423] opacity-[0.06] blur-[120px] rounded-full pointer-events-none" />
+          {/* Faint Mascot Watermark */}
+          <img
+            src="/images/gapoo_bear_mascot_clean.png"
+            alt=""
+            className="absolute -bottom-10 right-4 w-72 h-auto opacity-[0.04] pointer-events-none select-none"
+          />
+        </div>
 
-            <div className="relative z-10 space-y-4">
-              <span className="inline-block text-[10px] font-bold tracking-[0.2em] text-[#f05423] uppercase border border-[#f05423]/30 px-3 py-1.5 rounded-full">
-                The Next Chapter
-              </span>
-              <h3 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold text-[#e6d8c3] leading-[0.95] tracking-tighter">
-                Chilly
-              </h3>
-              <span className="text-xs font-bold tracking-[0.15em] uppercase text-[#a33917] block">
-                The Bold & Functional Use Cases
-              </span>
+        {/* ─── CHAPTER 2: THE GAPOO PROMISE & BOTANICAL INFUSIONS ─── */}
+        <div className="bg-white rounded-[32px] sm:rounded-[44px] p-8 sm:p-12 lg:p-16 border border-[#eee4d4] shadow-sm mb-10 sm:mb-14 space-y-8">
+          <div className="max-w-3xl space-y-6">
+            <div className="inline-flex items-center gap-2 bg-[#faecc9] border border-[#e5cf9d] px-4 py-1.5 rounded-full text-xs font-bold text-[#8b5311] uppercase tracking-wider shadow-2xs">
+              <span>Chapter 02 · The Gapoo Promise</span>
             </div>
 
-            <div className="relative z-10 mt-10 sm:mt-14 space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#f05423] mt-2 shrink-0" />
-                <div>
-                  <strong className="block text-[#e6d8c3] text-sm mb-0.5 uppercase tracking-wider font-bold">
-                    Artisanal Pairings
-                  </strong>
-                  <span className="text-xs text-[#8a998a] leading-relaxed">
-                    An instant flavor-profile booster when drizzled over sharp aged cheddar or charcuterie.
-                  </span>
-                </div>
+            <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1a110a] leading-[1.05]">
+              The Gapoo Promise
+            </h2>
+
+            <p className="text-base sm:text-lg text-[#3d3228] leading-relaxed font-medium">
+              Gapoo was born from a frustrating realization: behind milk, honey has quietly become the most ignored and heavily adulterated commodity in the global consumer market. We watched consumers routinely prioritize cheap prices, risking their health because the alternative—investing in a massive, expensive jar of 100% pure honey—felt like too big of a financial gamble just to try it.
+            </p>
+
+            <p className="text-sm sm:text-base text-[#5c5043] leading-relaxed">
+              Even when people did make the investment, traditional glass jars proved to be a messy, sticky, spill-prone hassle that trapped this incredible superfood in the kitchen cabinet. The biggest problem wasn&apos;t just the deceit; it was that true honey was stubbornly stuck as a cumbersome home product rather than an accessible, everyday wellness tool.
+            </p>
+
+            <p className="text-sm sm:text-base text-[#5c5043] leading-relaxed">
+              Gapoo was created to strip away this deceit and inconvenience. By bypassing fragmented trader networks, we source 100% traceable, hive-to-bottle raw multifloral honey infused with flavours directly from local farmers and pack it into a sleek, mess-free stick format that travels effortlessly with you.
+            </p>
+          </div>
+
+          {/* Botanical Infusions Showcase */}
+          <div className="pt-4 border-t border-[#f0e4d2] space-y-4">
+            <h3 className="text-sm sm:text-base font-bold text-[#1a110a] uppercase tracking-wider">
+              Beyond pure nectar, we craft individual botanical infusions for specific daily rituals:
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+              <div className="p-6 rounded-2xl bg-[#faf6ee] border border-[#ebdccb] space-y-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#15803d] block">
+                  Cooling
+                </span>
+                <h4 className="font-apricot text-2xl font-bold text-[#1a110a]">
+                  Mint Honey
+                </h4>
+                <p className="text-xs sm:text-sm text-[#5c5043] leading-relaxed">
+                  A clean, mindful sweetener providing cooling relief from the heat.
+                </p>
               </div>
 
-              <div className="flex items-start gap-4">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#f05423] mt-2 shrink-0" />
-                <div>
-                  <strong className="block text-[#e6d8c3] text-sm mb-0.5 uppercase tracking-wider font-bold">
-                    Cocktail Rim / Mixer
-                  </strong>
-                  <span className="text-xs text-[#8a998a] leading-relaxed">
-                    Craft spicy-sweet beverages like a spicy margarita with precise portion control.
-                  </span>
-                </div>
+              <div className="p-6 rounded-2xl bg-[#faf6ee] border border-[#ebdccb] space-y-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#c2410c] block">
+                  Spicy Kick
+                </span>
+                <h4 className="font-apricot text-2xl font-bold text-[#1a110a]">
+                  Chilly Honey
+                </h4>
+                <p className="text-xs sm:text-sm text-[#5c5043] leading-relaxed">
+                  To add a bold, spicy culinary kick to your meals and snacks.
+                </p>
               </div>
 
-              <div className="flex items-start gap-4">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#f05423] mt-2 shrink-0" />
-                <div>
-                  <strong className="block text-[#e6d8c3] text-sm mb-0.5 uppercase tracking-wider font-bold">
-                    Winter Warm-Up
-                  </strong>
-                  <span className="text-xs text-[#8a998a] leading-relaxed">
-                    Blend into hot lemon water or tea to provide a soothing, warming chest sensation.
-                  </span>
-                </div>
+              <div className="p-6 rounded-2xl bg-[#faf6ee] border border-[#ebdccb] space-y-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#b45309] block">
+                  Wellness
+                </span>
+                <h4 className="font-apricot text-2xl font-bold text-[#1a110a]">
+                  Ginger &amp; Turmeric Honey
+                </h4>
+                <p className="text-xs sm:text-sm text-[#5c5043] leading-relaxed">
+                  A potent, antioxidant-rich wellness blend for a natural immunity boost.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── CHAPTER 3: THE INDIAN HONEY FINGERPRINT ─── */}
+        <div className="bg-white rounded-[32px] sm:rounded-[44px] p-8 sm:p-12 lg:p-16 border border-[#eee4d4] shadow-sm mb-10 sm:mb-14 relative overflow-hidden">
+          <div className="max-w-3xl space-y-6">
+            <div className="inline-flex items-center gap-2 bg-[#faecc9] border border-[#e5cf9d] px-4 py-1.5 rounded-full text-xs font-bold text-[#8b5311] uppercase tracking-wider shadow-2xs">
+              <span>Chapter 03 · Traceability &amp; Standards</span>
+            </div>
+
+            <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1a110a] leading-[1.05]">
+              The Indian Honey Fingerprint
+            </h2>
+
+            <p className="text-base sm:text-lg text-[#3d3228] leading-relaxed font-medium">
+              Our vision is fiercely protective of India&apos;s natural heritage. We are building the definitive Indian Honey Fingerprint System—mapping the botanical, chemical, functional, and physical markers of our nectar to elevate it to a premium global standard.
+            </p>
+
+            <p className="text-sm sm:text-base text-[#5c5043] leading-relaxed">
+              Historically, Indian honey has faced global shipment rejections due to traces of antibiotics, heavy metals, and a lack of rigorous NMR testing, casting a shadow of &ldquo;guilt by association&rdquo; over our nation&apos;s true nectar. We are closing that gap by ensuring every batch is rigorously tested at FSSAI registered labs, accompanied by a Certificate of Analysis to guarantee zero adulteration, zero antibiotics, and zero heavy metals.
+            </p>
+
+            <p className="text-sm sm:text-base text-[#5c5043] leading-relaxed">
+              We are determined to make Indian honey uniquely competitive, creating a place on the world map for the country not just for the monumental Taj Mahal, but for exporting world-class, naturally sourced honey.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#f0e4d2]">
+              <div className="p-4 rounded-xl bg-[#faf6ee] border border-[#ebdccb]">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1a110a] mb-1">
+                  FSSAI Registered Labs
+                </h4>
+                <p className="text-xs text-[#5c5043]">
+                  Accompanied by a Certificate of Analysis for every batch.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-[#faf6ee] border border-[#ebdccb]">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1a110a] mb-1">
+                  Purity Guarantee
+                </h4>
+                <p className="text-xs text-[#5c5043]">
+                  Zero adulteration, zero antibiotics, and zero heavy metals.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── CHAPTER 4: BEYOND HONEY: THE TRUE POWER OF THE HIVE ─── */}
+        <div className="bg-[#140e0a] text-white rounded-[32px] sm:rounded-[44px] p-8 sm:p-12 lg:p-16 border border-[#2e1d10] shadow-[0_25px_60px_rgba(0,0,0,0.25)] space-y-10 relative overflow-hidden">
+          <div className="max-w-3xl space-y-6 relative z-10">
+            <div className="inline-flex items-center gap-2 bg-[#2a1d13] border border-[#d4a373]/40 px-4 py-1.5 rounded-full text-xs font-bold text-[#d4a373] uppercase tracking-wider">
+              <span>Chapter 04 · The True Power of the Hive</span>
+            </div>
+
+            <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold text-[#f2e6d5] leading-[1.05]">
+              Beyond Honey: The True Power of the Hive
+            </h2>
+
+            <p className="text-base sm:text-lg text-[#d9cbb8] leading-relaxed font-medium">
+              Most people believe bees exist solely to forage honey and pollinate flowers, completely unaware of the miraculous, natural pharmacy hidden within the hive. Gapoo aims to change this narrative and introduce the general public to the vast, untapped potential of the bees&apos; labor.
+            </p>
+
+            <blockquote className="p-5 rounded-2xl bg-[#1c140d] border-l-4 border-[#c87a1e] text-xs sm:text-sm text-[#b8a896] leading-relaxed">
+              You may have heard the chilling quote often attributed to Albert Einstein: &ldquo;If the bee disappeared off the face of the Earth, man would only have four years left to live.&rdquo; While historians debate whether Einstein actually spoke those exact words, the scientific reality behind the claim is absolutely valid—without bees pollinating over a third of our global food supply, our ecosystems and agricultural survival would face catastrophic collapse.
+            </blockquote>
+
+            <p className="text-xs sm:text-sm text-[#b8a896] leading-relaxed">
+              These tiny architects are profound scientific marvels. Did you know that a single worker bee will produce only about 1/12th of a teaspoon of honey in her entire lifetime? Or that bees generate an invisible electrostatic charge as they fly, acting like a literal magnet to pull pollen off flowers before they even touch the petals? Every single drop of the hive&apos;s yield is precious.
+            </p>
+          </div>
+
+          {/* Coming Soon Finishing Items */}
+          <div className="pt-6 border-t border-[#2a1d13] space-y-6 relative z-10">
+            <div className="max-w-2xl">
+              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#d4a373] block mb-1">
+                Coming Soon
+              </span>
+              <p className="text-xs sm:text-sm text-[#d9cbb8] leading-relaxed">
+                To honor this incredible insect and empower our farmers to scale beyond basic liquid honey, Gapoo is expanding. Coming soon to both the everyday consumable market and the B2B manufacturing sector, we will introduce the hive&apos;s highest-value finishing items:
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="p-5 rounded-2xl bg-[#1a120c] border border-[#2a1d13] space-y-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#f5a623] block">
+                  Dietary Superfood
+                </span>
+                <h4 className="font-apricot text-2xl font-bold text-[#f2e6d5]">
+                  Bee Pollen
+                </h4>
+                <p className="text-xs text-[#a39482] leading-relaxed">
+                  A high-protein, nutrient-dense dietary superfood utilized as a natural energy booster.
+                </p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-[#1a120c] border border-[#2a1d13] space-y-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#f5a623] block">
+                  Hive Defense
+                </span>
+                <h4 className="font-apricot text-2xl font-bold text-[#f2e6d5]">
+                  Propolis
+                </h4>
+                <p className="text-xs text-[#a39482] leading-relaxed">
+                  The hive&apos;s &ldquo;bee glue,&rdquo; acting as a raw, natural antibiotic defense for immune support and antimicrobial oral care.
+                </p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-[#1a120c] border border-[#2a1d13] space-y-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#f5a623] block">
+                  Cellular Superfood
+                </span>
+                <h4 className="font-apricot text-2xl font-bold text-[#f2e6d5]">
+                  Royal Jelly
+                </h4>
+                <p className="text-xs text-[#a39482] leading-relaxed">
+                  A highly-prized cellular superfood utilized in premium anti-aging and fertility health supplements.
+                </p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-[#1a120c] border border-[#2a1d13] space-y-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#f5a623] block">
+                  Eco-Friendly
+                </span>
+                <h4 className="font-apricot text-2xl font-bold text-[#f2e6d5]">
+                  Beeswax
+                </h4>
+                <p className="text-xs text-[#a39482] leading-relaxed">
+                  A natural, eco-friendly wax processed into skin-nourishing cosmetics, salves, and lip balms.
+                </p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Explicit Spacer & Divider between The Next Chapter and Newsletter */}
+      {/* Explicit Spacer & Divider between Our Story and Newsletter */}
       <div className="w-full max-w-4xl mx-auto px-6 sm:px-8 my-10 sm:my-16">
         <div className="h-[1px] bg-[#ebdccb]/70" />
       </div>

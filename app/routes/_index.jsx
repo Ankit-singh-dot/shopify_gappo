@@ -272,9 +272,10 @@ export default function LandingPage() {
       </div>
 
       {/* ════════════════════════════════════════════════════════════ */}
-      {/* 3. STORY SECTION — Editorial two-column with parallax imgs  */}
+      {/* 3. STORY SECTION — The Hive Awakening & The Gapoo Promise   */}
       {/* ════════════════════════════════════════════════════════════ */}
       <section id="story" className="py-28 sm:py-40 px-6 sm:px-12 lg:px-24 max-w-[1440px] mx-auto relative z-10 scroll-mt-20">
+        <span id="our-story" className="absolute -top-32 left-0 pointer-events-none" />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-28 items-start">
 
           {/* Left: Editorial Copy */}
@@ -288,7 +289,7 @@ export default function LandingPage() {
 
             <FadeIn delay={0.1}>
               <h2 className="font-apricot text-5xl sm:text-6xl lg:text-7xl font-bold leading-[0.9] tracking-tighter text-[#1a110a]">
-                Real honey doesn't come from factories.
+                The Hive Awakening.
               </h2>
             </FadeIn>
 
@@ -299,11 +300,13 @@ export default function LandingPage() {
             <FadeIn delay={0.25}>
               <div className="space-y-6 text-base sm:text-lg text-[#5c5247] leading-[1.8] font-medium">
                 <p>
-                  It comes from vast fields, patient beekeepers, and healthy hives.
-                  We've partnered with a curated network of independent apiaries who prioritize the well-being of their bees over mass production.
+                  The seed for Gapoo was planted not in a corporate boardroom, but in the dirt and the hum of the hives during a hands-on bee farming training session. It blossomed from the simple, grounded concept of &ldquo;Garden+Pool&rdquo;—a vision to reconnect the modern adult wellness lifestyle with the untamed, natural bounty of the earth.
                 </p>
                 <p>
-                  We maintain a strict <strong className="text-[#1a110a]">Fair Trade Commitment</strong>, ensuring our beekeepers receive a premium for their craft—empowering traditional, ethical practices that protect local ecosystems.
+                  As we worked alongside local Indian beekeepers, we uncovered a profound betrayal of consumer trust. A 2020 Centre for Science and Environment investigation revealed 77 percent of tested samples were adulterated with sugar syrups, and only 3 of 13 brands passed the internationally accepted NMR test.
+                </p>
+                <p>
+                  Gapoo was created to strip away this deceit and inconvenience. By bypassing fragmented trader networks, we source 100% traceable, hive-to-bottle raw multifloral honey directly from local farmers and pack it into a sleek, mess-free stick format that travels effortlessly with you.
                 </p>
               </div>
             </FadeIn>
@@ -318,8 +321,8 @@ export default function LandingPage() {
                 </div>
                 <div className="w-[1px] h-14 bg-[#c87a1e]/20" />
                 <div className="flex flex-col">
-                  <span className="text-4xl sm:text-5xl font-bold text-[#c87a1e] tracking-tighter font-apricot">Select</span>
-                  <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#1a110a] mt-1">Partner Apiaries</span>
+                  <span className="text-4xl sm:text-5xl font-bold text-[#c87a1e] tracking-tighter font-apricot">FSSAI</span>
+                  <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#1a110a] mt-1">Tested Batch Labs</span>
                 </div>
               </div>
             </FadeIn>
@@ -351,13 +354,13 @@ export default function LandingPage() {
 
             {/* Floating accent card */}
             <FadeIn delay={0.5} className="absolute right-4 bottom-20 z-30">
-              <div className="bg-white/95 backdrop-blur-md border border-[#e8cd8c] rounded-2xl px-5 py-4 shadow-xl max-w-[200px]">
+              <div className="bg-white/95 backdrop-blur-md border border-[#e8cd8c] rounded-2xl px-5 py-4 shadow-xl max-w-[220px]">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="w-2 h-2 rounded-full bg-[#10b981]" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#10b981]">Verified</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#10b981]">Certificate of Analysis</span>
                 </div>
                 <p className="text-xs text-[#5c5247] leading-relaxed font-medium">
-                  Every batch is tested and traceable to its source apiary.
+                  Guaranteed zero adulteration, zero antibiotics, and zero heavy metals.
                 </p>
               </div>
             </FadeIn>
