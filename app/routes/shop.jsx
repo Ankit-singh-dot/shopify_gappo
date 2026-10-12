@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Await, useLoaderData, Link, useFetcher, data } from 'react-router';
 import { Suspense } from 'react';
 import { CartForm } from '@shopify/hydrogen';
@@ -44,7 +44,7 @@ function FadeIn({ children, className = '', delay = 0, direction = 'up', distanc
 }
 
 /**
- * THREE PRICING TIERS
+ * THREE PRICING TIERS (INTEGRATED WITH SHOPIFY PRODUCTS)
  * 1 Pack: ₹189 (10 Sticks · ₹18.9 / stick)
  * 3 Pack: ₹399 (30 Sticks · ₹13.3 / stick · Save ₹168 vs single packs)
  * 6 Pack: ₹699 (60 Sticks · ₹11.6 / stick · Save ₹435 vs single packs)
@@ -60,11 +60,13 @@ const PACK_OPTIONS = [
     savingsText: '',
     pricePerStick: '₹18.9',
     unitQty: 1,
-    cartQty: 1,
     popular: false,
     bestValue: false,
     freeShipping: false,
     note: 'Standard shipping · Free over ₹500',
+    matchTitles: ['1 pack', '1-pack'],
+    matchHandles: ['test2', '1-pack'],
+    defaultVariantId: 'gid://shopify/ProductVariant/43245994213427',
   },
   {
     id: '3-pack',
@@ -76,11 +78,13 @@ const PACK_OPTIONS = [
     savingsText: 'Save ₹168',
     pricePerStick: '₹13.3',
     unitQty: 3,
-    cartQty: 3,
     popular: true,
     bestValue: false,
     freeShipping: true,
     note: 'FREE Shipping Included',
+    matchTitles: ['3 pack', '3-pack', 'pack-3'],
+    matchHandles: ['pack-3', '3-pack'],
+    defaultVariantId: 'gid://shopify/ProductVariant/45044237762611',
   },
   {
     id: '6-pack',
@@ -92,11 +96,13 @@ const PACK_OPTIONS = [
     savingsText: 'Save ₹435',
     pricePerStick: '₹11.6',
     unitQty: 6,
-    cartQty: 6,
     popular: false,
     bestValue: true,
     freeShipping: true,
     note: 'FREE Shipping Included',
+    matchTitles: ['6 pack', '6-pack'],
+    matchHandles: ['6-pack'],
+    defaultVariantId: 'gid://shopify/ProductVariant/45044241367091',
   },
 ];
 
@@ -178,9 +184,12 @@ async function loadCriticalData({ context }) {
       .catch(() => null),
   ]);
 
+  const storeProducts = productsData?.products?.nodes || [];
+  console.log('STOREFRONT_PRODUCTS_DEBUG:', JSON.stringify(storeProducts));
+
   return {
     featuredCollection: collections?.nodes?.[0] || null,
-    storeProducts: productsData?.products?.nodes || [],
+    storeProducts,
   };
 }
 
@@ -207,11 +216,40 @@ export default function ShopPage() {
   const { open } = useAside();
 
   const storeProducts = loaderData?.storeProducts || [];
-  const defaultVariantId = storeProducts[0]?.variants?.nodes?.[0]?.id;
 
-  // Selected pack: Default to 3-pack
+  // Dynamically resolve each pack option against real Shopify products
+  const resolvedPacks = useMemo(() => {
+    return PACK_OPTIONS.map((pack) => {
+      const product = storeProducts.find((p) => {
+        const titleLower = (p.title || '').trim().toLowerCase();
+        const handleLower = (p.handle || '').trim().toLowerCase();
+        return (
+          pack.matchTitles.some((t) => titleLower === t || titleLower.startsWith(t)) ||
+          pack.matchHandles.some((h) => handleLower === h)
+        );
+      });
+
+      const variant = product?.variants?.nodes?.[0];
+      const variantId = variant?.id || pack.defaultVariantId;
+      const availableForSale = variant ? variant.availableForSale : true;
+      const shopifyPrice = variant?.price?.amount
+        ? Math.round(parseFloat(variant.price.amount))
+        : pack.price;
+
+      return {
+        ...pack,
+        shopifyProduct: product,
+        shopifyVariant: variant,
+        variantId,
+        availableForSale,
+        price: shopifyPrice,
+      };
+    });
+  }, [storeProducts]);
+
+  // Selected pack: Default to 3-pack (index 1)
   const [selectedPackIndex, setSelectedPackIndex] = useState(1);
-  const activePack = PACK_OPTIONS[selectedPackIndex];
+  const activePack = resolvedPacks[selectedPackIndex] || resolvedPacks[0];
 
   // Bundle Quantity Multiplier
   const [bundleMultiplier, setBundleMultiplier] = useState(1);
@@ -335,7 +373,7 @@ export default function ShopPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {PACK_OPTIONS.map((pack, idx) => {
+                {resolvedPacks.map((pack, idx) => {
                   const isSelected = selectedPackIndex === idx;
                   return (
                     <button
@@ -431,58 +469,72 @@ export default function ShopPage() {
               </div>
 
               {/* Add to Cart Form Button */}
-              {defaultVariantId ? (
-                <CartForm
-                  route="/cart"
-                  inputs={{
-                    lines: [
-                      {
-                        merchandiseId: defaultVariantId,
-                        quantity: activePack.cartQty * bundleMultiplier,
-                        attributes: [
-                          { key: 'Pack', value: activePack.title },
-                          { key: 'Total Sticks', value: `${totalSticks} Sticks` },
-                          { key: 'Bundle Deal', value: `₹${totalPrice}` },
-                        ],
-                      },
-                    ],
-                  }}
-                  action={CartForm.ACTIONS.LinesAdd}
-                >
-                  {(fetcher) => (
-                    <button
-                      type="submit"
-                      onClick={() => open('cart')}
-                      disabled={fetcher.state !== 'idle'}
-                      className="w-full sm:flex-1 group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#1a110a] text-white shadow-[0_8px_20px_rgba(26,17,10,0.18)] hover:shadow-[0_12px_30px_rgba(200,122,30,0.3)] transition-all duration-300 overflow-hidden cursor-pointer disabled:opacity-70"
-                    >
-                      <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#f5a623] via-[#fbbf24] to-[#d97706] transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-[0.16,1,0.3,1]" />
+              {activePack?.variantId ? (
+                <div className="w-full sm:flex-1">
+                  <CartForm
+                    route="/cart"
+                    inputs={{
+                      lines: [
+                        {
+                          merchandiseId: activePack.variantId,
+                          quantity: 1 * bundleMultiplier,
+                          attributes: [
+                            { key: 'Pack', value: activePack.title },
+                            { key: 'Total Sticks', value: `${totalSticks} Sticks` },
+                            { key: 'Bundle Deal', value: `₹${totalPrice}` },
+                          ],
+                        },
+                      ],
+                    }}
+                    action={CartForm.ACTIONS.LinesAdd}
+                  >
+                    {(cartFetcher) => (
+                      <div className="w-full">
+                        <button
+                          type="submit"
+                          onClick={() => open('cart')}
+                          disabled={cartFetcher.state !== 'idle'}
+                          className="w-full group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#1a110a] text-white shadow-[0_8px_20px_rgba(26,17,10,0.18)] hover:shadow-[0_12px_30px_rgba(200,122,30,0.3)] transition-all duration-300 overflow-hidden cursor-pointer disabled:opacity-70"
+                        >
+                          <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#f5a623] via-[#fbbf24] to-[#d97706] transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-[0.16,1,0.3,1]" />
 
-                      <span className="relative z-10 font-bold tracking-wider uppercase text-xs sm:text-sm text-white transition-colors duration-300 flex items-center gap-2">
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-                          <line x1="3" y1="6" x2="21" y2="6" />
-                          <path d="M16 10a4 4 0 01-8 0" />
-                        </svg>
-                        <span>
-                          {fetcher.state !== 'idle'
-                            ? 'Adding to Cart...'
-                            : `Add ${activePack.name} · ₹${totalPrice}`}
-                        </span>
-                        <span className="text-base transform group-hover:translate-x-1 transition-transform duration-300">
-                          →
-                        </span>
-                      </span>
-                    </button>
-                  )}
-                </CartForm>
+                          <span className="relative z-10 font-bold tracking-wider uppercase text-xs sm:text-sm text-white transition-colors duration-300 flex items-center gap-2">
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                              <line x1="3" y1="6" x2="21" y2="6" />
+                              <path d="M16 10a4 4 0 01-8 0" />
+                            </svg>
+                            <span>
+                              {cartFetcher.state !== 'idle'
+                                ? 'Adding to Cart...'
+                                : `Add ${activePack.name} · ₹${totalPrice}`}
+                            </span>
+                            <span className="text-base transform group-hover:translate-x-1 transition-transform duration-300">
+                              →
+                            </span>
+                          </span>
+                        </button>
+
+                        {/* Error warning if Shopify Cart reports out-of-stock */}
+                        {cartFetcher.data?.errors?.length > 0 && (
+                          <div className="mt-2.5 p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 font-medium text-center">
+                            <span>⚠️ {cartFetcher.data.errors[0].message}</span>
+                            <span className="block mt-1 text-[11px] text-amber-700">
+                              (Tip: In Shopify Admin, check &ldquo;Continue selling when out of stock&rdquo; or update inventory for {activePack.name}.)
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </CartForm>
+                </div>
               ) : (
                 <button
                   type="button"
                   onClick={() => open('cart')}
                   className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 bg-[#f5a623] hover:bg-[#e09419] text-[#1a110a] px-8 py-3.5 rounded-full text-sm font-bold tracking-wide shadow-md transition-all cursor-pointer"
                 >
-                  <span>Add ${activePack.name} · ₹${totalPrice}</span>
+                  <span>Add {activePack.name} · ₹${totalPrice}</span>
                   <span>→</span>
                 </button>
               )}
