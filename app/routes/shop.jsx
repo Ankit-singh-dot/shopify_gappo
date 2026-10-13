@@ -57,13 +57,15 @@ const PACK_OPTIONS = [
     badge: 'Starter',
     sticks: 10,
     price: 189,
-    savingsText: '',
+    originalPrice: 249,
+    savingsText: 'Save ₹60',
     pricePerStick: '₹18.9',
     unitQty: 1,
     popular: false,
     bestValue: false,
     freeShipping: false,
-    note: 'Standard shipping · Free over ₹500',
+    shippingNote: '+ ₹70 Delivery',
+    note: '₹70 Delivery Charges Apply · Free delivery on 3+ packs',
     matchTitles: ['1 pack', '1-pack'],
     matchHandles: ['test2', '1-pack'],
     defaultVariantId: 'gid://shopify/ProductVariant/43245994213427',
@@ -75,13 +77,15 @@ const PACK_OPTIONS = [
     badge: '🔥 Most Popular',
     sticks: 30,
     price: 399,
+    originalPrice: 567,
     savingsText: 'Save ₹168',
     pricePerStick: '₹13.3',
     unitQty: 3,
     popular: true,
     bestValue: false,
     freeShipping: true,
-    note: 'FREE Shipping Included',
+    shippingNote: 'FREE Delivery',
+    note: 'FREE Delivery Included (Saved ₹70)',
     matchTitles: ['3 pack', '3-pack', 'pack-3'],
     matchHandles: ['pack-3', '3-pack'],
     defaultVariantId: 'gid://shopify/ProductVariant/45044237762611',
@@ -93,13 +97,15 @@ const PACK_OPTIONS = [
     badge: '⚡ Best Value',
     sticks: 60,
     price: 699,
+    originalPrice: 1134,
     savingsText: 'Save ₹435',
     pricePerStick: '₹11.6',
     unitQty: 6,
     popular: false,
     bestValue: true,
     freeShipping: true,
-    note: 'FREE Shipping Included',
+    shippingNote: 'FREE Delivery',
+    note: 'FREE Delivery Included (Saved ₹70)',
     matchTitles: ['6 pack', '6-pack'],
     matchHandles: ['6-pack'],
     defaultVariantId: 'gid://shopify/ProductVariant/45044241367091',
@@ -235,6 +241,12 @@ export default function ShopPage() {
       const shopifyPrice = variant?.price?.amount
         ? Math.round(parseFloat(variant.price.amount))
         : pack.price;
+      const shopifyCompareAtPrice = variant?.compareAtPrice?.amount
+        ? Math.round(parseFloat(variant.compareAtPrice.amount))
+        : pack.originalPrice;
+      const savings = (shopifyCompareAtPrice || pack.originalPrice) - shopifyPrice;
+      const savingsText =
+        savings > 0 ? `Save ₹${savings.toLocaleString('en-IN')}` : pack.savingsText;
 
       return {
         ...pack,
@@ -243,6 +255,8 @@ export default function ShopPage() {
         variantId,
         availableForSale,
         price: shopifyPrice,
+        originalPrice: shopifyCompareAtPrice,
+        savingsText,
       };
     });
   }, [storeProducts]);
@@ -312,6 +326,7 @@ export default function ShopPage() {
 
   const totalSticks = activePack.sticks * bundleMultiplier;
   const totalPrice = activePack.price * bundleMultiplier;
+  const totalOriginalPrice = (activePack.originalPrice || activePack.price) * bundleMultiplier;
 
   return (
     <div className="bg-[#fdfaf1] text-[#20140b] relative w-full overflow-clip">
@@ -425,8 +440,15 @@ export default function ShopPage() {
                       </div>
 
                       <div className="pt-2.5 border-t border-[#f0e4d2] mt-2.5">
-                        <div className="font-apricot text-2xl font-bold text-[#1a110a] leading-none">
-                          ₹{pack.price}
+                        <div className="flex items-baseline gap-1.5 flex-wrap">
+                          {pack.originalPrice && pack.originalPrice > pack.price && (
+                            <span className="text-xs sm:text-sm font-semibold text-[#8c7e6e] line-through decoration-[#8c7e6e]/70">
+                              ₹{pack.originalPrice.toLocaleString('en-IN')}
+                            </span>
+                          )}
+                          <span className="font-apricot text-2xl font-bold text-[#1a110a] leading-none">
+                            ₹{pack.price}
+                          </span>
                         </div>
                         <div className="mt-1 text-[11px] text-[#8c7e6e] font-medium flex items-center justify-between">
                           <span>{pack.pricePerStick}/ea</span>
@@ -434,6 +456,16 @@ export default function ShopPage() {
                             <span className="text-[#15803d] font-bold">{pack.savingsText}</span>
                           )}
                         </div>
+                        {pack.shippingNote && (
+                          <div
+                            className={`mt-2 pt-1.5 border-t border-[#f2e6d6] text-[10.5px] font-bold flex items-center gap-1.5 ${
+                              pack.freeShipping ? 'text-[#15803d]' : 'text-[#b45309]'
+                            }`}
+                          >
+                            <span>{pack.freeShipping ? '✓' : '📦'}</span>
+                            <span>{pack.shippingNote}</span>
+                          </div>
+                        )}
                       </div>
                     </button>
                   );
@@ -504,10 +536,27 @@ export default function ShopPage() {
                               <line x1="3" y1="6" x2="21" y2="6" />
                               <path d="M16 10a4 4 0 01-8 0" />
                             </svg>
-                            <span>
-                              {cartFetcher.state !== 'idle'
-                                ? 'Adding to Cart...'
-                                : `Add ${activePack.name} · ₹${totalPrice}`}
+                            <span className="inline-flex items-center gap-1.5 flex-wrap justify-center">
+                              {cartFetcher.state !== 'idle' ? (
+                                'Adding to Cart...'
+                              ) : (
+                                <>
+                                  <span>Add {activePack.name} ·</span>
+                                  {totalOriginalPrice > totalPrice && (
+                                    <span className="line-through text-white/60 text-xs sm:text-sm font-normal">
+                                      ₹{totalOriginalPrice.toLocaleString('en-IN')}
+                                    </span>
+                                  )}
+                                  <span className="text-[#f5a623] group-hover:text-white font-extrabold">
+                                    ₹{totalPrice}
+                                  </span>
+                                  {!activePack.freeShipping && (
+                                    <span className="text-[11px] text-amber-200/90 font-medium ml-0.5">
+                                      (+ ₹70 delivery)
+                                    </span>
+                                  )}
+                                </>
+                              )}
                             </span>
                             <span className="text-base transform group-hover:translate-x-1 transition-transform duration-300">
                               →
@@ -534,7 +583,20 @@ export default function ShopPage() {
                   onClick={() => open('cart')}
                   className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 bg-[#f5a623] hover:bg-[#e09419] text-[#1a110a] px-8 py-3.5 rounded-full text-sm font-bold tracking-wide shadow-md transition-all cursor-pointer"
                 >
-                  <span>Add {activePack.name} · ₹${totalPrice}</span>
+                  <span className="inline-flex items-center gap-1.5 flex-wrap justify-center">
+                    <span>Add {activePack.name} ·</span>
+                    {totalOriginalPrice > totalPrice && (
+                      <span className="line-through text-[#786a5a] text-xs sm:text-sm font-normal">
+                        ₹{totalOriginalPrice.toLocaleString('en-IN')}
+                      </span>
+                    )}
+                    <span className="font-extrabold">₹{totalPrice}</span>
+                    {!activePack.freeShipping && (
+                      <span className="text-[11px] text-[#786a5a] font-medium ml-0.5">
+                        (+ ₹70 delivery)
+                      </span>
+                    )}
+                  </span>
                   <span>→</span>
                 </button>
               )}
@@ -543,7 +605,11 @@ export default function ShopPage() {
             {/* Clean Delivery & Value Info Strip */}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-3 text-xs font-medium text-[#6e6152] font-montserrat border-t border-[#f0e4d2]">
               <span className="font-semibold text-[#1a110a] flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#15803d]" />
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    activePack.freeShipping ? 'bg-[#15803d]' : 'bg-[#d97706]'
+                  }`}
+                />
                 <span>{activePack.note}</span>
               </span>
               <span>10 Sticks (60g Box)</span>
@@ -1287,6 +1353,10 @@ const STORE_PRODUCTS_QUERY = `#graphql
             title
             availableForSale
             price {
+              amount
+              currencyCode
+            }
+            compareAtPrice {
               amount
               currencyCode
             }

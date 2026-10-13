@@ -127,9 +127,9 @@ export default function LandingPage() {
 
   // Parallax transforms
   const bearY = useTransform(scrollYProgress, [0.05, 0.35], ['0%', '25%']);
+  const storyImageY = useTransform(scrollYProgress, [0.15, 0.5], ['0%', '-6%']);
+  const storyImageY2 = useTransform(scrollYProgress, [0.15, 0.5], ['0%', '-8%']);
   const ribbonX = useTransform(scrollYProgress, [0, 1], ['0%', '-40%']);
-  const storyImageY = useTransform(scrollYProgress, [0.2, 0.55], ['6%', '-10%']);
-  const storyImageY2 = useTransform(scrollYProgress, [0.2, 0.55], ['12%', '-16%']);
 
   // Manifesto Typography Parallax
   const manifestoRef = useRef(null);
@@ -282,7 +282,7 @@ export default function LandingPage() {
       {/* ════════════════════════════════════════════════════════════ */}
       {/* 3. STORY SECTION — Chapter 01: The Hive Awakening           */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <section id="story" className="py-24 sm:py-36 px-6 sm:px-12 lg:px-24 max-w-[1440px] mx-auto relative z-10 scroll-mt-20">
+      <section id="story" className="pt-20 sm:pt-28 pb-20 sm:pb-28 lg:pb-32 px-6 sm:px-12 lg:px-24 max-w-[1440px] mx-auto relative z-10 scroll-mt-20">
         <span id="our-story" className="absolute -top-32 left-0 pointer-events-none" />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start">
           {/* Left: Editorial Story Narrative */}
@@ -363,7 +363,7 @@ export default function LandingPage() {
           </div>
 
           {/* Right: Authentic Bee Farming Photo Stack (farming1.jpeg & farmin2.jpeg) */}
-          <div className="relative h-[500px] sm:h-[620px] lg:h-[700px] w-full mt-6 lg:mt-0">
+          <div className="relative h-[480px] sm:h-[580px] lg:h-[660px] w-full mt-6 lg:mt-0">
             {/* Bear watermark */}
             <motion.div
               style={{ y: bearY }}
@@ -375,7 +375,7 @@ export default function LandingPage() {
             {/* Top Photo: The Beekeepers in forest smoke and morning rays */}
             <motion.div
               style={{ y: storyImageY }}
-              className="absolute right-0 top-0 w-[74%] h-[56%] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl z-20 border border-white/50 group"
+              className="absolute right-0 top-0 w-[72%] sm:w-[70%] h-[52%] sm:h-[54%] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl z-20 border border-white/50 group"
             >
               <img
                 src="/images/farming1.jpeg"
@@ -396,14 +396,14 @@ export default function LandingPage() {
             {/* Bottom Photo: Traditional valley meadow apiary boxes */}
             <motion.div
               style={{ y: storyImageY2 }}
-              className="absolute left-0 bottom-6 w-[66%] h-[56%] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl z-10 border border-white/50 group"
+              className="absolute left-0 bottom-14 sm:bottom-20 w-[62%] sm:w-[60%] h-[50%] sm:h-[52%] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl z-10 border border-white/50 group"
             >
               <img
                 src="/images/farmin2.jpeg"
                 alt="Rustic wooden beehives in a mountain valley meadow"
                 className="w-full h-full object-cover scale-[1.05] group-hover:scale-[1.12] transition-transform duration-[1.5s]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent opacity-85" />
               <div className="absolute bottom-4 left-5 right-5 text-white">
                 <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-amber-300 block mb-0.5">
                   Valley Apiaries
@@ -414,15 +414,13 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-            {/* Floating Quality Tag */}
-            <FadeIn delay={0.4} className="absolute right-4 bottom-12 z-30">
-              <div className="bg-white/95 backdrop-blur-md border border-[#e8cd8c] rounded-2xl px-5 py-3.5 shadow-xl">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#10b981]" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#1a110a]">
-                    100% Hive-To-Bottle Direct
-                  </span>
-                </div>
+            {/* Floating Quality Tag — Sleek Pill at Top Right of Collage (Zero Overlap) */}
+            <FadeIn delay={0.4} className="absolute -top-3.5 right-4 sm:right-8 z-30">
+              <div className="bg-white/95 backdrop-blur-md border border-[#e8cd8c] rounded-full px-4 sm:px-5 py-2.5 shadow-xl flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse" />
+                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#1a110a]">
+                  100% Hive-To-Bottle Direct
+                </span>
               </div>
             </FadeIn>
           </div>
@@ -432,7 +430,7 @@ export default function LandingPage() {
       {/* ════════════════════════════════════════════════════════════ */}
       {/* 3.5 VISUAL EXHIBITION — The Wild Canopy in India             */}
       {/* ════════════════════════════════════════════════════════════ */}
-      <section className="py-20 sm:py-32 px-6 sm:px-12 lg:px-24 max-w-[1440px] mx-auto relative z-10">
+      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-12 lg:px-24 max-w-[1440px] mx-auto relative z-10">
         <div className="bg-[#f5ecda] rounded-[36px] sm:rounded-[48px] p-7 sm:p-12 lg:p-16 border border-[#e5d4b5] shadow-xl overflow-hidden relative">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             {/* Left: The Breathtaking Giant Wild Beehive Tree Canopy Image */}
@@ -1007,7 +1005,7 @@ export default function LandingPage() {
               >
                 <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#f5a623] via-[#fbbf24] to-[#d97706] transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-[0.16,1,0.3,1]" />
                 <span className="relative z-10 font-bold tracking-[0.18em] uppercase text-xs text-white transition-colors duration-300 flex items-center gap-3">
-                  <span>Explore Honey Sticks · 1, 3 &amp; 6 Packs</span>
+                  <span>Explore Honey Sticks </span>
                   <span className="text-sm">→</span>
                 </span>
               </Link>
