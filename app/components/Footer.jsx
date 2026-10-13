@@ -16,10 +16,10 @@ export function Footer({footer, header, publicStoreDomain}) {
             <div className="lg:col-span-5 space-y-8">
                <img src="/images/gapoo_bear_mascot_hd.png" alt="Gapoo Bear" className="w-20 h-20 sm:w-24 sm:h-24 object-contain filter invert brightness-200 opacity-90" />
                <h3 className="font-montserrat font-black text-3xl sm:text-4xl lg:text-5xl text-white tracking-tighter leading-[1.1] max-w-sm uppercase">
-                 The new standard.
+                 The hive awakening.
                </h3>
                <p className="text-[#a39585] max-w-sm text-lg leading-relaxed font-medium">
-                 Pure, unadulterated goodness in a revolutionary single-serve stick. Designed for the modern ritual.
+                 100% traceable, hive-to-bottle raw botanical honey and the untapped natural pharmacy of the hive. Born from Garden+Pool.
                </p>
                
                {/* Newsletter Input */}
@@ -50,7 +50,7 @@ export function Footer({footer, header, publicStoreDomain}) {
                <div className="space-y-8">
                  <h4 className="font-montserrat font-bold tracking-[0.25em] uppercase text-[#c87a1e] text-xs">Learn</h4>
                  <ul className="space-y-5 text-[#d4c9bc] font-medium text-sm sm:text-base">
-                   <li><a href="/shop#our-story" className="hover:text-white transition-colors relative inline-block group"><span>Our Story</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></a></li>
+                   <li><Link to="/story" className="hover:text-white transition-colors relative inline-block group"><span>Our Story (4 Chapters)</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
                    <li><a href="#" className="hover:text-white transition-colors relative inline-block group"><span>Sourcing</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></a></li>
                    <li><a href="#" className="hover:text-white transition-colors relative inline-block group"><span>Recipes</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></a></li>
                    <li><a href="#" className="hover:text-white transition-colors relative inline-block group"><span>Sustainability</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></a></li>

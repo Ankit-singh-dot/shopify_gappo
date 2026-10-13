@@ -15,6 +15,7 @@ import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
+import {SmoothScroll} from './components/SmoothScroll';
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
@@ -171,7 +172,11 @@ export default function App() {
   const data = useRouteLoaderData('root');
 
   if (!data) {
-    return <Outlet />;
+    return (
+      <SmoothScroll>
+        <Outlet />
+      </SmoothScroll>
+    );
   }
 
   return (
@@ -180,9 +185,11 @@ export default function App() {
       shop={data.shop}
       consent={data.consent}
     >
-      <PageLayout {...data}>
-        <Outlet />
-      </PageLayout>
+      <SmoothScroll>
+        <PageLayout {...data}>
+          <Outlet />
+        </PageLayout>
+      </SmoothScroll>
     </Analytics.Provider>
   );
 }
