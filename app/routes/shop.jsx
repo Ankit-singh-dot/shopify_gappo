@@ -45,9 +45,9 @@ function FadeIn({ children, className = '', delay = 0, direction = 'up', distanc
 
 /**
  * THREE PRICING TIERS (INTEGRATED WITH SHOPIFY PRODUCTS)
- * 1 Pack: ₹189 (10 Sticks · ₹18.9 / stick)
- * 3 Pack: ₹399 (30 Sticks · ₹13.3 / stick · Save ₹168 vs single packs)
- * 6 Pack: ₹699 (60 Sticks · ₹11.6 / stick · Save ₹435 vs single packs)
+ * 1 Pack: ₹189 (MSRP ₹199 · 10 Sticks · ₹18.9 / stick · Save ₹10)
+ * 3 Pack: ₹399 (MSRP ₹597 · 30 Sticks · ₹13.3 / stick · Save ₹198)
+ * 6 Pack: ₹699 (MSRP ₹1194 · 60 Sticks · ₹11.6 / stick · Save ₹495)
  */
 const PACK_OPTIONS = [
   {
@@ -57,8 +57,8 @@ const PACK_OPTIONS = [
     badge: 'Starter',
     sticks: 10,
     price: 189,
-    originalPrice: 249,
-    savingsText: 'Save ₹60',
+    originalPrice: 199,
+    savingsText: 'Save ₹10',
     pricePerStick: '₹18.9',
     unitQty: 1,
     popular: false,
@@ -77,8 +77,8 @@ const PACK_OPTIONS = [
     badge: '🔥 Most Popular',
     sticks: 30,
     price: 399,
-    originalPrice: 567,
-    savingsText: 'Save ₹168',
+    originalPrice: 597,
+    savingsText: 'Save ₹198',
     pricePerStick: '₹13.3',
     unitQty: 3,
     popular: true,
@@ -97,8 +97,8 @@ const PACK_OPTIONS = [
     badge: '⚡ Best Value',
     sticks: 60,
     price: 699,
-    originalPrice: 1134,
-    savingsText: 'Save ₹435',
+    originalPrice: 1194,
+    savingsText: 'Save ₹495',
     pricePerStick: '₹11.6',
     unitQty: 6,
     popular: false,
@@ -241,10 +241,10 @@ export default function ShopPage() {
       const shopifyPrice = variant?.price?.amount
         ? Math.round(parseFloat(variant.price.amount))
         : pack.price;
-      const shopifyCompareAtPrice = variant?.compareAtPrice?.amount
+      const effectiveOriginalPrice = pack.originalPrice ?? (variant?.compareAtPrice?.amount
         ? Math.round(parseFloat(variant.compareAtPrice.amount))
-        : pack.originalPrice;
-      const savings = (shopifyCompareAtPrice || pack.originalPrice) - shopifyPrice;
+        : undefined);
+      const savings = (effectiveOriginalPrice || 0) - shopifyPrice;
       const savingsText =
         savings > 0 ? `Save ₹${savings.toLocaleString('en-IN')}` : pack.savingsText;
 
@@ -255,7 +255,7 @@ export default function ShopPage() {
         variantId,
         availableForSale,
         price: shopifyPrice,
-        originalPrice: shopifyCompareAtPrice,
+        originalPrice: effectiveOriginalPrice,
         savingsText,
       };
     });
