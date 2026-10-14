@@ -18,56 +18,40 @@ export function CartSummary({cart, layout}) {
     ? parseFloat(cart.cost.subtotalAmount.amount)
     : 0;
 
-  // Free delivery threshold: 3+ packs (₹399 and above)
-  const FREE_SHIPPING_THRESHOLD = 399;
-  const isFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
-  const amountNeeded = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
-  const progressPercent = Math.min(100, Math.round((subtotal / FREE_SHIPPING_THRESHOLD) * 100));
+  // Delivery Rule:
+  // If the cart contains the 1-Pack (even with qty 2, 3, etc.), charge ₹70.
+  // Delivery is ONLY free if the customer purchases the 3-Pack or 6-Pack product.
+  const lines = cart?.lines?.nodes || [];
+  const hasFreeBundle = lines.some((line) => {
+    const prodTitle = (line?.merchandise?.product?.title || '').toLowerCase().trim();
+    const prodHandle = (line?.merchandise?.product?.handle || '').toLowerCase().trim();
+    const variantTitle = (line?.merchandise?.title || '').toLowerCase().trim();
+    const packAttr = (line?.attributes?.find((a) => a.key === 'Pack')?.value || '').toLowerCase().trim();
 
-  // Standard shipping fee: ₹70 on orders under ₹399, FREE for ₹399+
-  const shippingFee = subtotal > 0 ? (isFreeShipping ? 0 : 70) : 0;
+    return (
+      prodTitle.includes('3 pack') ||
+      prodTitle.includes('3-pack') ||
+      prodTitle.includes('6 pack') ||
+      prodTitle.includes('6-pack') ||
+      prodHandle.includes('pack-3') ||
+      prodHandle.includes('3-pack') ||
+      prodHandle.includes('6-pack') ||
+      variantTitle.includes('3 pack') ||
+      variantTitle.includes('6 pack') ||
+      packAttr.startsWith('3 pack') ||
+      packAttr.startsWith('6 pack') ||
+      packAttr.includes('30 sticks') ||
+      packAttr.includes('60 sticks')
+    );
+  });
+
+  const isFreeDelivery = subtotal > 0 && hasFreeBundle;
+  const shippingFee = subtotal > 0 ? (isFreeDelivery ? 0 : 70) : 0;
   const estimatedTotal = subtotal + shippingFee;
 
   return (
     <div aria-labelledby={summaryId} className={className}>
-      {/* ─── Free Delivery Progress Bar ─── */}
-      {subtotal > 0 && (
-        <div className="mb-4 p-3.5 rounded-2xl bg-[#fcf8f0] border border-[#eee4d4] font-montserrat">
-          <div className="flex items-center justify-between text-xs mb-1.5">
-            {isFreeShipping ? (
-              <span className="font-bold text-[#15803d] flex items-center gap-1.5">
-                <span>🎉</span>
-                <span>You've unlocked FREE Delivery!</span>
-              </span>
-            ) : (
-              <span className="font-semibold text-[#8b5311]">
-                Add <strong className="text-[#c87a1e]">₹{amountNeeded.toFixed(0)}</strong> more for FREE Delivery
-              </span>
-            )}
-            <span className="font-mono text-[11px] font-bold text-[#8a7a6a]">
-              {progressPercent}%
-            </span>
-          </div>
-
-          <div className="w-full h-2 rounded-full bg-[#ebdccb] overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                isFreeShipping
-                  ? 'bg-gradient-to-r from-[#15803d] to-[#22c55e]'
-                  : 'bg-gradient-to-r from-[#c87a1e] to-[#f5a623]'
-              }`}
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-
-          <div className="mt-1.5 flex items-center justify-between text-[10px] text-[#8a7a6a]">
-            <span>Standard: 3–5 Days (₹70)</span>
-            <span>Free on 3+ Packs (₹399+)</span>
-          </div>
-        </div>
-      )}
-
-      <h4 id={summaryId} className="font-bold text-sm text-[#1a110a] mb-2">Order Summary</h4>
+      <h4 id={summaryId} className="font-bold text-sm text-[#1a110a] mb-2 font-montserrat">Order Summary</h4>
 
       <div className="space-y-1.5 text-xs font-montserrat pb-2 border-b border-[#f0e6d6]">
         {/* Subtotal */}
@@ -89,11 +73,8 @@ export function CartSummary({cart, layout}) {
           <div>
             {subtotal === 0 ? (
               <span className="text-[#8a7a6a]">-</span>
-            ) : isFreeShipping ? (
-              <span className="flex items-center gap-1.5">
-                <span className="line-through text-stone-400 text-[11px]">₹70</span>
-                <span className="font-bold text-[#15803d]">FREE</span>
-              </span>
+            ) : isFreeDelivery ? (
+              <span className="font-bold text-[#15803d]">FREE</span>
             ) : (
               <span className="font-bold text-[#b45309]">+ ₹70</span>
             )}
