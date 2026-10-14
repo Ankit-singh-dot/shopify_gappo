@@ -298,9 +298,7 @@ export default function LandingPage() {
             </FadeIn>
 
             <FadeIn delay={0.1}>
-              <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold leading-[0.95] tracking-tighter text-[#1a110a]">
-                The Hive Awakening.
-              </h2>
+
             </FadeIn>
 
             <FadeIn delay={0.15}>

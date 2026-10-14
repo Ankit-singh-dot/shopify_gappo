@@ -1,37 +1,30 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Await, useLoaderData, Link, useFetcher, data } from 'react-router';
-import { Suspense } from 'react';
+import { useLoaderData, Link, useFetcher, data } from 'react-router';
 import { CartForm } from '@shopify/hydrogen';
 import { useAside } from '~/components/Aside';
-import { motion, useScroll, useTransform, useInView } from 'framer-motion';
-import { HandwrittenGapoo } from '~/components/HandwrittenGapoo';
+import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
 import { AppleLogoReveal } from '~/components/AppleLogoReveal';
-import { CertificateOfAnalysisModal } from '~/components/CertificateOfAnalysisModal';
-import { LabVerifiedSection } from '~/components/LabVerifiedSection';
 import { SnapSqueezeSip } from '~/components/shop/SnapSqueezeSip';
 import { HoneycombPattern } from '~/components/shop/motion';
-import { StickEngineering } from '~/components/shop/StickEngineering';
-import { JarVsStick } from '~/components/shop/JarVsStick';
-import { SensoryNotes } from '~/components/shop/SensoryNotes';
 
-export { SnapSqueezeSip, HoneycombPattern, StickEngineering, JarVsStick, SensoryNotes };
+export { SnapSqueezeSip, HoneycombPattern };
 
 /**
  * @type {Route.MetaFunction}
  */
 export const meta = () => {
   return [
-    { title: 'Gapoo | Honey, finally without the mess' },
+    { title: 'Shop Gapoo Honey Sticks | Snap. Squeeze. Sip.' },
     {
       name: 'description',
       content:
-        'Pure honey infused with natural mint extract in a convenient tear-and-pour stick. No spoons, no sticky jars. 1 Pack ₹189, 3 Pack ₹399, 6 Pack ₹699.',
+        'Pure multifloral honey infused with natural mint in a convenient tear-and-pour stick. No spoons, no sticky jars. 1 Pack ₹189, 3 Pack ₹399, 6 Pack ₹699.',
     },
   ];
 };
 
 /* ─── Reusable Fade-In Wrapper ─── */
-function FadeIn({ children, className = '', delay = 0, direction = 'up', distance = 20 }) {
+function FadeIn({ children, className = '', delay = 0, direction = 'up', distance = 24 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-6%' });
   const dirMap = {
@@ -53,93 +46,11 @@ function FadeIn({ children, className = '', delay = 0, direction = 'up', distanc
   );
 }
 
-/* ─── Horizontal Infinite Marquee ─── */
-function Marquee({ children, speed = 28, className = '' }) {
-  return (
-    <div className={`overflow-hidden whitespace-nowrap ${className}`}>
-      <motion.div
-        className="inline-flex"
-        animate={{ x: ['0%', '-50%'] }}
-        transition={{ duration: speed, repeat: Infinity, ease: 'linear' }}
-      >
-        {children}
-        {children}
-      </motion.div>
-    </div>
-  );
-}
-
-/* ─── Animated Live Counter Component ─── */
-function AnimatedCounter({ target, suffix = '', prefix = '' }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!isInView) return;
-    let start = 0;
-    const end = parseInt(target, 10);
-    if (end === 0) {
-      setCount(0);
-      return;
-    }
-    const duration = 2000;
-    const step = end / (duration / 16);
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= end) {
-        setCount(end);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
-    }, 16);
-    return () => clearInterval(timer);
-  }, [isInView, target]);
-
-  return (
-    <span ref={ref}>
-      {prefix}
-      {count}
-      {suffix}
-    </span>
-  );
-}
-
-/* ─── Scroll Reveal Text Component ─── */
-function RevealWord({ word, progress, range }) {
-  const opacity = useTransform(progress, range, [0.2, 1]);
-  return (
-    <motion.span style={{ opacity }} className="mr-[0.25em] inline-block">
-      {word}
-    </motion.span>
-  );
-}
-
-function ScrollRevealText({ text, className = '' }) {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start 90%', 'end 55%'],
-  });
-
-  const words = text.split(' ');
-  return (
-    <div ref={ref} className={`flex flex-wrap ${className}`}>
-      {words.map((word, i) => {
-        const start = i / words.length;
-        const end = start + 1 / words.length;
-        return <RevealWord key={i} word={word} progress={scrollYProgress} range={[start, end]} />;
-      })}
-    </div>
-  );
-}
-
 /**
  * THREE PRICING TIERS (INTEGRATED WITH SHOPIFY PRODUCTS)
- * 1 Pack: ₹189 (MSRP ₹199 · 10 Sticks · ₹18.9 / stick · Save ₹10)
- * 3 Pack: ₹399 (MSRP ₹597 · 30 Sticks · ₹13.3 / stick · Save ₹198)
- * 6 Pack: ₹699 (MSRP ₹1194 · 60 Sticks · ₹11.6 / stick · Save ₹495)
+ * 1 Pack: ₹189 (MSRP ₹199 · 10 Sticks · + ₹70 Delivery)
+ * 3 Pack: ₹399 (MSRP ₹597 · 30 Sticks · FREE Delivery · Most Popular)
+ * 6 Pack: ₹699 (MSRP ₹1194 · 60 Sticks · FREE Delivery · Best Value)
  */
 const PACK_OPTIONS = [
   {
@@ -157,7 +68,6 @@ const PACK_OPTIONS = [
     bestValue: false,
     freeShipping: false,
     shippingNote: '+ ₹70 Delivery',
-    note: '₹70 Delivery Charges Apply · Free delivery on 3+ packs',
     matchTitles: ['1 pack', '1-pack'],
     matchHandles: ['test2', '1-pack'],
     defaultVariantId: 'gid://shopify/ProductVariant/43245994213427',
@@ -177,7 +87,6 @@ const PACK_OPTIONS = [
     bestValue: false,
     freeShipping: true,
     shippingNote: 'FREE Delivery',
-    note: 'FREE Delivery Included (Saved ₹70)',
     matchTitles: ['3 pack', '3-pack', 'pack-3'],
     matchHandles: ['pack-3', '3-pack'],
     defaultVariantId: 'gid://shopify/ProductVariant/45044237762611',
@@ -197,7 +106,6 @@ const PACK_OPTIONS = [
     bestValue: true,
     freeShipping: true,
     shippingNote: 'FREE Delivery',
-    note: 'FREE Delivery Included (Saved ₹70)',
     matchTitles: ['6 pack', '6-pack'],
     matchHandles: ['6-pack'],
     defaultVariantId: 'gid://shopify/ProductVariant/45044241367091',
@@ -216,45 +124,7 @@ export async function action({ request, context }) {
     if (!email) {
       return data({ error: 'Email is required' }, { status: 400 });
     }
-
-    try {
-      const dummyPassword = Math.random().toString(36).slice(-8) + 'A1!';
-      const CUSTOMER_CREATE_MUTATION = `#graphql
-        mutation customerCreate($input: CustomerCreateInput!) {
-          customerCreate(input: $input) {
-            customer {
-              id
-              email
-            }
-            customerUserErrors {
-              code
-              field
-              message
-            }
-          }
-        }
-      `;
-
-      const response = await context.storefront.mutate(CUSTOMER_CREATE_MUTATION, {
-        variables: {
-          input: {
-            email,
-            password: dummyPassword,
-            acceptsMarketing: true,
-          },
-        },
-      });
-
-      const errors = response?.customerCreate?.customerUserErrors || [];
-      if (errors.length > 0) {
-        console.warn('Newsletter signup warning:', errors);
-      }
-
-      return data({ success: true });
-    } catch (error) {
-      console.error('Newsletter signup error:', error);
-      return data({ error: 'Failed to sign up. Please try again later.' }, { status: 500 });
-    }
+    return data({ success: true });
   }
 
   return data({ error: 'Invalid intent' }, { status: 400 });
@@ -264,52 +134,24 @@ export async function action({ request, context }) {
  * @param {Route.LoaderArgs} args
  */
 export async function loader(args) {
-  const deferredData = loadDeferredData(args);
   const criticalData = await loadCriticalData(args);
-  return { ...deferredData, ...criticalData };
+  return { ...criticalData };
 }
 
-/**
- * Load critical data
- */
 async function loadCriticalData({ context }) {
-  const [{ collections }, productsData] = await Promise.all([
-    context.storefront
-      .query(FEATURED_COLLECTION_QUERY)
-      .catch(() => ({ collections: { nodes: [] } })),
-    context.storefront
-      .query(STORE_PRODUCTS_QUERY)
-      .catch(() => null),
-  ]);
+  const productsData = await context.storefront
+    .query(STORE_PRODUCTS_QUERY)
+    .catch(() => null);
 
   const storeProducts = productsData?.products?.nodes || [];
-
   return {
-    featuredCollection: collections?.nodes?.[0] || null,
     storeProducts,
-  };
-}
-
-/**
- * Load deferred data
- */
-function loadDeferredData({ context }) {
-  const recommendedProducts = context.storefront
-    .query(RECOMMENDED_PRODUCTS_QUERY)
-    .catch((error) => {
-      console.error(error);
-      return null;
-    });
-
-  return {
-    recommendedProducts,
   };
 }
 
 export default function ShopPage() {
   /** @type {LoaderReturnData} */
   const loaderData = useLoaderData();
-  const fetcher = useFetcher();
   const { open } = useAside();
 
   const containerRef = useRef(null);
@@ -318,15 +160,28 @@ export default function ShopPage() {
     offset: ['start start', 'end end'],
   });
 
-  // Parallax transforms across the shop page
+  // Parallax transforms for Hero
   const bearY = useTransform(scrollYProgress, [0, 0.25], ['0%', '35%']);
-  const heroGalleryY = useTransform(scrollYProgress, [0, 0.25], ['0%', '-6%']);
-  const floatingBeeY = useTransform(scrollYProgress, [0, 0.2], ['0px', '-40px']);
-  const storyParallax1 = useTransform(scrollYProgress, [0.35, 0.8], ['0%', '-10%']);
+  const heroGalleryY = useTransform(scrollYProgress, [0, 0.25], ['0%', '-5%']);
+  const floatingBeeY = useTransform(scrollYProgress, [0, 0.2], ['0px', '-35px']);
+
+  // Massive Manifesto Typography Parallax (from home page)
+  const manifestoRef = useRef(null);
+  const { scrollYProgress: manifestoScroll } = useScroll({
+    target: manifestoRef,
+    offset: ['start end', 'end start'],
+  });
+  const manifestoX1 = useTransform(manifestoScroll, [0, 1], ['0%', '-40%']);
+  const manifestoX2 = useTransform(manifestoScroll, [0, 1], ['-20%', '10%']);
+  const manifestoX3 = useTransform(manifestoScroll, [0, 1], ['-10%', '-50%']);
+  const bgCardY1 = useTransform(manifestoScroll, [0, 1], ['-40px', '40px']);
+  const bgCardY2 = useTransform(manifestoScroll, [0, 1], ['45px', '-45px']);
+  const bgCardY3 = useTransform(manifestoScroll, [0, 1], ['-30px', '50px']);
+  const bgCardY4 = useTransform(manifestoScroll, [0, 1], ['35px', '-35px']);
 
   const storeProducts = loaderData?.storeProducts || [];
 
-  // Dynamically resolve each pack option against real Shopify products
+  // Dynamically resolve pack options against real Shopify products
   const resolvedPacks = useMemo(() => {
     return PACK_OPTIONS.map((pack) => {
       const product = storeProducts.find((p) => {
@@ -344,9 +199,11 @@ export default function ShopPage() {
       const shopifyPrice = variant?.price?.amount
         ? Math.round(parseFloat(variant.price.amount))
         : pack.price;
-      const effectiveOriginalPrice = pack.originalPrice ?? (variant?.compareAtPrice?.amount
-        ? Math.round(parseFloat(variant.compareAtPrice.amount))
-        : undefined);
+      const effectiveOriginalPrice =
+        pack.originalPrice ??
+        (variant?.compareAtPrice?.amount
+          ? Math.round(parseFloat(variant.compareAtPrice.amount))
+          : undefined);
       const savings = (effectiveOriginalPrice || 0) - shopifyPrice;
       const savingsText =
         savings > 0 ? `Save ₹${savings.toLocaleString('en-IN')}` : pack.savingsText;
@@ -368,67 +225,53 @@ export default function ShopPage() {
   const [selectedPackIndex, setSelectedPackIndex] = useState(1);
   const activePack = resolvedPacks[selectedPackIndex] || resolvedPacks[0];
 
-  // Bundle Quantity Multiplier
+  // Stepper Multiplier
   const [bundleMultiplier, setBundleMultiplier] = useState(1);
 
-  // Gallery Slide State
-  const [activeSlide, setActiveSlide] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-
-  // Certificate of Analysis Modal State
-  const [isCoaModalOpen, setIsCoaModalOpen] = useState(false);
-
-  // Newsletter Success State
-  const isNewsletterSuccess = fetcher.data?.success;
-
-  const heroSlides = [
-    {
-      src: '/images/gapoo_minted_studio_hero.jpg',
-      alt: 'Gapoo Minted Goodness 10 Honey Sticks with Morning Brew',
-    },
-    {
-      src: '/images/gapoo_hero_pour.jpg',
-      alt: 'Gapoo Snap & Squeeze Pure Amber Mint Honey Pour',
-    },
-    {
-      src: '/images/gapoo_hero_unboxing.jpg',
-      alt: 'Gapoo 10 Single-Serve Honey Sticks Unboxed',
-    },
-    {
-      src: '/images/gapoo_hero_travertine.jpg',
-      alt: 'Gapoo Box and Sachets on Travertine Stone',
-    },
+  // Product pack images mapped to 1-pack, 3-pack, 6-pack
+  const PACK_IMAGES = [
+    '/images/1pack.jpg',
+    '/images/3pack.png',
+    '/images/6pack.png',
   ];
 
-  useEffect(() => {
-    if (isHovered) return;
-    const timer = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 4500);
-    return () => clearInterval(timer);
-  }, [isHovered, heroSlides.length]);
-
-  // Lifestyle Moments
-  const moments = [
-    {
-      step: '01',
-      title: 'Stir into tea',
-      description: 'One stick = one perfectly sweet cup. No spoon, no sticky jar.',
-      image: '/images/moment_tea_clean.jpg',
-    },
-    {
-      step: '02',
-      title: 'Top breakfast',
-      description: 'Drizzle on oats, yogurt or toast. Portion-controlled sweetness.',
-      image: '/images/moment_breakfast_clean.jpg',
-    },
-    {
-      step: '03',
-      title: 'Pocket energy',
-      description: 'Slip a stick in your bag for hikes, runs or the afternoon recharge.',
-      image: '/images/moment_pocket_clean.jpg',
-    },
+  const PACK_TITLES = [
+    '10 Single Sticks · 1 Box',
+    '30 Single Sticks · 3 Boxes',
+    '60 Single Sticks · 6 Boxes',
   ];
+
+  const [slideDirection, setSlideDirection] = useState(1);
+  const lastScrollTime = useRef(0);
+
+  // Wheel scroll interaction on the circle portal
+  const handleCircleWheel = (e) => {
+    const now = Date.now();
+    if (now - lastScrollTime.current < 260) return;
+
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (Math.abs(delta) < 10) return;
+
+    lastScrollTime.current = now;
+    if (delta > 0) {
+      setSlideDirection(1);
+      setSelectedPackIndex((prev) => (prev + 1) % resolvedPacks.length);
+    } else {
+      setSlideDirection(-1);
+      setSelectedPackIndex((prev) => (prev - 1 + resolvedPacks.length) % resolvedPacks.length);
+    }
+  };
+
+  // Drag / swipe gesture handler on the circle portal
+  const handleCircleDragEnd = (event, info) => {
+    if (info.offset.x < -30 || info.velocity.x < -180) {
+      setSlideDirection(1);
+      setSelectedPackIndex((prev) => (prev + 1) % resolvedPacks.length);
+    } else if (info.offset.x > 30 || info.velocity.x > 180) {
+      setSlideDirection(-1);
+      setSelectedPackIndex((prev) => (prev - 1 + resolvedPacks.length) % resolvedPacks.length);
+    }
+  };
 
   const totalSticks = activePack.sticks * bundleMultiplier;
   const totalPrice = activePack.price * bundleMultiplier;
@@ -437,1282 +280,685 @@ export default function ShopPage() {
   return (
     <div ref={containerRef} className="bg-[#fdfaf1] text-[#20140b] relative w-full overflow-clip">
       {/* ============================================================ */}
-      {/* 1. HERO BUY BOX SECTION (CLEAN & BALANCED)                   */}
+      {/* PROLINO-INSPIRED ICONIC HERO SECTION                         */}
+      {/* ============================================================ */}
+      {/* PROLINO-INSPIRED ICONIC HERO SECTION (POLISHED APOTHECARY)   */}
       {/* ============================================================ */}
       <section
         id="buy-now"
-        className="relative pt-16 sm:pt-24 lg:pt-32 pb-24 md:pb-36 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto overflow-visible scroll-mt-36"
+        className="relative pt-4 sm:pt-6 lg:pt-8 pb-16 sm:pb-24 px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto overflow-visible scroll-mt-24"
       >
-        <span id="shop" className="absolute -top-32 left-0 pointer-events-none" />
-
-        {/* Ambient Radial Honey Glow */}
+        {/* Ambient Warm Honey Glow */}
         <div
           className="absolute inset-0 -z-10 pointer-events-none"
           style={{
             background:
-              'radial-gradient(ellipse 70% 60% at 70% 40%, #faecc9 0%, #fcf4e5 50%, #fdfaf1 100%)',
+              'radial-gradient(ellipse 70% 50% at 50% 25%, #fceecb 0%, #fcf5e7 50%, #fdfaf1 100%)',
           }}
         />
 
-        {/* Faint Gapoo Bear Line-art Mascot Watermark with Parallax Drift */}
+        {/* Faint Gapoo Bear Line-art Mascot Watermark */}
         <motion.img
           src="/images/gapoo_bear_mascot_clean.png"
           alt=""
           style={{ y: bearY }}
-          className="absolute -bottom-8 left-6 w-80 h-auto opacity-[0.035] pointer-events-none select-none z-0"
+          className="absolute -bottom-8 left-6 w-88 h-auto opacity-[0.032] pointer-events-none select-none z-0"
         />
 
-        {/* Floating Golden Bee with levitation + parallax */}
-        <motion.div
-          style={{ y: floatingBeeY }}
-          className="hidden md:flex absolute top-12 right-12 z-10 pointer-events-none items-center gap-2 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full border border-[#ebdccb] shadow-sm text-xs font-semibold text-[#8b5311]"
-        >
-          <motion.img
-            src="/images/golden_bee_clean.png"
-            alt=""
-            animate={{ y: [-3, 3, -3], rotate: [-4, 4, -4] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            className="w-4 h-4 object-contain"
-          />
-          <span className="text-[11px] font-bold font-montserrat uppercase tracking-wider">Raw Hive Harvest</span>
-        </motion.div>
+        {/* ========================================================== */}
+        {/* MAIN SPLIT HERO: CIRCULAR PORTAL + BOLD STATEMENT          */}
+        {/* ========================================================== */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          {/* ======================================================== */}
+          {/* LEFT: SCRIPT NOTE + 3 FLOATING STAT BADGES + CIRCLE      */}
+          {/* ======================================================== */}
+          <div className="lg:col-span-6 relative flex flex-col items-center lg:items-end">
+            {/* Handwritten Script Title with Apricot Typography */}
+            <div className="w-full max-w-[480px] mb-3 text-left pl-4 sm:pl-8">
+              <span className="font-apricot italic text-2xl sm:text-3xl font-bold text-[#5c5043] tracking-normal inline-block -rotate-2 select-none">
+                Real Multifloral, Zero Sticky Mess
+              </span>
+            </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center relative z-10">
-          {/* Left Column: Copy & Buy Box */}
-          <div className="lg:col-span-6 space-y-6">
-            {/* Pill Tag with generous breathing room from header */}
-            <div className="pt-4 sm:pt-6 mb-4 sm:mb-6">
-              <div className="inline-flex items-center gap-2 bg-[#faecc9] border border-[#e5cf9d] px-4 py-2 rounded-full text-xs font-bold text-[#8b5311] font-montserrat shadow-xs">
-                <img
-                  src="/images/golden_bee_clean.png"
-                  alt="Golden Bee"
-                  className="w-3.5 h-3.5 object-contain"
-                />
-                <span className="uppercase tracking-wider">10 Single-Serve Sticks · 60g Pack</span>
+            <div className="relative flex items-center justify-center w-full max-w-[480px]">
+              {/* 3 Floating Stat Badges with Dynamic Animated Curved Arrows */}
+              <div className="absolute -left-10 sm:-left-18 lg:-left-26 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-4 sm:gap-6 select-none">
+                {/* Badge 1: Sticks Count */}
+                <div className="relative group">
+                  <motion.div
+                    whileHover={{ scale: 1.08, x: -2 }}
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/95 backdrop-blur-md border border-[#ebdccb]/90 shadow-[0_12px_28px_rgba(26,17,10,0.12)] flex flex-col items-center justify-center text-center p-2 transition-shadow hover:shadow-[0_16px_32px_rgba(200,122,30,0.2)]"
+                  >
+                    <span className="font-apricot font-bold text-2xl sm:text-3xl text-[#1a110a] leading-none">
+                      {activePack.sticks}
+                      <span className="text-sm font-bold text-[#c87a1e]">x</span>
+                    </span>
+                    <span className="text-[8.5px] sm:text-[9.5px] text-[#736555] font-bold uppercase tracking-wider leading-none mt-1">
+                      Single Sticks
+                    </span>
+                  </motion.div>
+
+                  {/* Curved Arrow 1: Arcing Down-Right into the Circle */}
+                  <div className="absolute left-[calc(100%-2px)] top-1/2 -translate-y-1/2 pointer-events-none w-10 sm:w-14 lg:w-20 h-10 overflow-visible z-10">
+                    <svg className="w-full h-full overflow-visible" viewBox="0 0 70 30" fill="none">
+                      <defs>
+                        <marker
+                          id="amber-arrow-1"
+                          viewBox="0 0 10 10"
+                          refX="6"
+                          refY="5"
+                          markerWidth="6"
+                          markerHeight="6"
+                          orient="auto"
+                        >
+                          <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#c87a1e" />
+                        </marker>
+                      </defs>
+                      <circle cx="3" cy="6" r="2.5" fill="#c87a1e" />
+                      <motion.path
+                        key={`arrow-1-${selectedPackIndex}`}
+                        d="M 3 6 C 26 6, 46 16, 64 24"
+                        fill="none"
+                        stroke="#c87a1e"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        markerEnd="url(#amber-arrow-1)"
+                        initial={{ pathLength: 0, opacity: 0 }}
+                        animate={{ pathLength: 1, opacity: 0.9 }}
+                        transition={{ duration: 0.75, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                      />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Badge 2: Added Sugar */}
+                <div className="relative group">
+                  <motion.div
+                    whileHover={{ scale: 1.08, x: -2 }}
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/95 backdrop-blur-md border border-[#ebdccb]/90 shadow-[0_12px_28px_rgba(26,17,10,0.12)] flex flex-col items-center justify-center text-center p-2 transition-shadow hover:shadow-[0_16px_32px_rgba(200,122,30,0.2)]"
+                  >
+                    <span className="font-apricot font-bold text-2xl sm:text-3xl text-[#1a110a] leading-none">
+                      0<span className="text-sm font-bold text-[#c87a1e]">%</span>
+                    </span>
+                    <span className="text-[8.5px] sm:text-[9.5px] text-[#736555] font-bold uppercase tracking-wider leading-none mt-1">
+                      Added Sugar
+                    </span>
+                  </motion.div>
+
+                  {/* Curved Arrow 2: Arcing Horizontally into the Circle */}
+                  <div className="absolute left-[calc(100%-2px)] top-1/2 -translate-y-1/2 pointer-events-none w-10 sm:w-14 lg:w-20 h-10 overflow-visible z-10">
+                    <svg className="w-full h-full overflow-visible" viewBox="0 0 70 30" fill="none">
+                      <defs>
+                        <marker
+                          id="amber-arrow-2"
+                          viewBox="0 0 10 10"
+                          refX="6"
+                          refY="5"
+                          markerWidth="6"
+                          markerHeight="6"
+                          orient="auto"
+                        >
+                          <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#c87a1e" />
+                        </marker>
+                      </defs>
+                      <circle cx="3" cy="15" r="2.5" fill="#c87a1e" />
+                      <motion.path
+                        key={`arrow-2-${selectedPackIndex}`}
+                        d="M 3 15 C 24 10, 44 20, 64 15"
+                        fill="none"
+                        stroke="#c87a1e"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        markerEnd="url(#amber-arrow-2)"
+                        initial={{ pathLength: 0, opacity: 0 }}
+                        animate={{ pathLength: 1, opacity: 0.9 }}
+                        transition={{ duration: 0.75, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                      />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Badge 3: Price Per Cup */}
+                <div className="relative group">
+                  <motion.div
+                    whileHover={{ scale: 1.08, x: -2 }}
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/95 backdrop-blur-md border border-[#ebdccb]/90 shadow-[0_12px_28px_rgba(26,17,10,0.12)] flex flex-col items-center justify-center text-center p-2 transition-shadow hover:shadow-[0_16px_32px_rgba(200,122,30,0.2)]"
+                  >
+                    <span className="font-apricot font-bold text-xl sm:text-2xl text-[#1a110a] leading-none">
+                      {activePack.pricePerStick}
+                    </span>
+                    <span className="text-[8.5px] sm:text-[9.5px] text-[#736555] font-bold uppercase tracking-wider leading-none mt-1">
+                      Per Cup
+                    </span>
+                  </motion.div>
+
+                  {/* Curved Arrow 3: Arcing Up-Right into the Circle */}
+                  <div className="absolute left-[calc(100%-2px)] top-1/2 -translate-y-1/2 pointer-events-none w-10 sm:w-14 lg:w-20 h-10 overflow-visible z-10">
+                    <svg className="w-full h-full overflow-visible" viewBox="0 0 70 30" fill="none">
+                      <defs>
+                        <marker
+                          id="amber-arrow-3"
+                          viewBox="0 0 10 10"
+                          refX="6"
+                          refY="5"
+                          markerWidth="6"
+                          markerHeight="6"
+                          orient="auto"
+                        >
+                          <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#c87a1e" />
+                        </marker>
+                      </defs>
+                      <circle cx="3" cy="24" r="2.5" fill="#c87a1e" />
+                      <motion.path
+                        key={`arrow-3-${selectedPackIndex}`}
+                        d="M 3 24 C 26 24, 46 14, 64 6"
+                        fill="none"
+                        stroke="#c87a1e"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        markerEnd="url(#amber-arrow-3)"
+                        initial={{ pathLength: 0, opacity: 0 }}
+                        animate={{ pathLength: 1, opacity: 0.9 }}
+                        transition={{ duration: 0.75, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Center-Left Circular Portal (with Wheel Scroll & Drag Swipe) */}
+              <div
+                onWheel={handleCircleWheel}
+                className="relative w-[280px] h-[280px] sm:w-[400px] sm:h-[400px] lg:w-[440px] lg:h-[440px] rounded-full overflow-hidden border-[4px] sm:border-[6px] border-white shadow-[0_25px_60px_rgba(26,17,10,0.14)] bg-[#f7efe1] group cursor-grab active:cursor-grabbing select-none"
+              >
+                {/* Floating Pack Format Plaque (Top Center) */}
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex items-center gap-2 bg-[#1a110a]/85 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/25 text-white font-montserrat shadow-md whitespace-nowrap">
+                  <span className="w-2 h-2 rounded-full bg-[#f5a623] animate-pulse" />
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#fbbf24]">
+                    {PACK_TITLES[selectedPackIndex]}
+                  </span>
+                </div>
+
+                {/* Left & Right Switcher Chevron Buttons */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSlideDirection(-1);
+                    setSelectedPackIndex(
+                      (prev) => (prev - 1 + resolvedPacks.length) % resolvedPacks.length
+                    );
+                  }}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white/95 backdrop-blur-md shadow-[0_4px_14px_rgba(0,0,0,0.12)] border border-[#ebdccb]/60 flex items-center justify-center text-[#1a110a] hover:bg-[#c87a1e] hover:text-white transition-all cursor-pointer font-bold text-xl select-none opacity-85 hover:opacity-100"
+                  aria-label="Previous pack"
+                >
+                  ‹
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSlideDirection(1);
+                    setSelectedPackIndex((prev) => (prev + 1) % resolvedPacks.length);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white/95 backdrop-blur-md shadow-[0_4px_14px_rgba(0,0,0,0.12)] border border-[#ebdccb]/60 flex items-center justify-center text-[#1a110a] hover:bg-[#c87a1e] hover:text-white transition-all cursor-pointer font-bold text-xl select-none opacity-85 hover:opacity-100"
+                  aria-label="Next pack"
+                >
+                  ›
+                </button>
+
+                {/* Animated Image mapped to active pack with Drag */}
+                <motion.div
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={handleCircleDragEnd}
+                  className="w-full h-full relative"
+                >
+                  <AnimatePresence custom={slideDirection} mode="wait">
+                    <motion.img
+                      key={selectedPackIndex}
+                      src={PACK_IMAGES[selectedPackIndex]}
+                      alt={activePack.title}
+                      custom={slideDirection}
+                      variants={{
+                        enter: (dir) => ({ x: dir > 0 ? 50 : -50, opacity: 0, scale: 0.95 }),
+                        center: { x: 0, opacity: 1, scale: 1 },
+                        exit: (dir) => ({ x: dir > 0 ? -50 : 50, opacity: 0, scale: 0.95 }),
+                      }}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                      className="w-full h-full object-cover select-none pointer-events-none"
+                      draggable={false}
+                    />
+                  </AnimatePresence>
+                </motion.div>
+
+                {/* Ambient vignette */}
+                <div className="absolute inset-0 bg-radial from-transparent via-transparent to-black/15 pointer-events-none" />
+
+                {/* Bottom 3 Pill Dots corresponding to 1 Pack, 3 Pack, 6 Pack */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-[#1a110a]/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 shadow-md select-none">
+                  {resolvedPacks.map((p, idx) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => {
+                        setSlideDirection(idx > selectedPackIndex ? 1 : -1);
+                        setSelectedPackIndex(idx);
+                      }}
+                      className={`h-2 rounded-full transition-all cursor-pointer ${
+                        selectedPackIndex === idx
+                          ? 'w-6 bg-[#f5a623]'
+                          : 'w-2 bg-white/50 hover:bg-white'
+                      }`}
+                      aria-label={p.name}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* Headline */}
+            {/* Hint text below circle */}
+            <div className="w-full max-w-[480px] text-center mt-3">
+              <span className="text-[11px] font-semibold text-[#8c7e6e] inline-flex items-center gap-1.5">
+                <span>Scroll or swipe circle to switch pack</span>
+                <span className="text-xs">⟷</span>
+              </span>
+            </div>
+          </div>
+
+          {/* ======================================================== */}
+          {/* RIGHT: BOLD STATEMENT + INGREDIENTS + PURCHASE DOCK      */}
+          {/* ======================================================== */}
+          <div className="lg:col-span-6 space-y-6">
+            {/* Grand Headline with Signature Apricot Brand Typography */}
             <div>
-              <h1 className="font-apricot text-4xl sm:text-5xl lg:text-[60px] leading-[1.05] font-bold text-[#1a110a] tracking-tight">
-                Honey, finally<br />without the mess.
+              <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.25em] uppercase text-[#c87a1e] block mb-2 font-montserrat">
+                Single-Serve Multifloral Nectar
+              </span>
+              <h1 className="font-apricot font-bold text-5xl sm:text-6xl lg:text-[76px] leading-[0.94] tracking-tight text-[#1a110a]">
+                <span className="text-[#c87a1e] block">Raw Honey</span>
+                <span className="block">Meets</span>
+                <span className="block">Zero Mess<span className="text-[#c87a1e]">.</span></span>
               </h1>
-              <p className="mt-3 text-base text-[#5c5247] leading-relaxed max-w-lg font-montserrat font-normal">
-                Gapoo honey sticks pack real honey infused with natural mint extract into a convenient tear-and-pour stick. No sticky jars. No spoons. Just snap, squeeze, and sip.
+              <p className="mt-4 sm:mt-5 text-base sm:text-lg text-[#5c5043] leading-relaxed max-w-lg font-montserrat font-medium">
+                Our Gapoo Single-Serve Stick blends raw multifloral honey with cold-steeped garden mint into a mess-free tear-and-pour stick. No spoons, no sticky jars, no countertop drips. Maximum daily ritual.
               </p>
             </div>
 
-            {/* ─── 3-TIER PACK SELECTOR CARDS ─── */}
-            <div className="space-y-2.5 font-montserrat pt-1">
-              <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-[#736555] mb-1">
-                <span>Select Pack Option</span>
-                <span className="text-[#c87a1e]">Snap · Squeeze · Sip</span>
-              </div>
+            {/* Flavor / Botanical Pills (like Prolino's Aromatic Cardamom, Kesar Warmth...) */}
+            <div className="flex flex-wrap items-center gap-2 pt-1 font-montserrat">
+              <span className="px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-[#ebdccb] text-xs font-bold text-[#2a1e14] shadow-2xs hover:border-[#c87a1e] transition-colors">
+                • Garden Mint Infusion
+              </span>
+              <span className="px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-[#ebdccb] text-xs font-bold text-[#2a1e14] shadow-2xs hover:border-[#c87a1e] transition-colors">
+                • Raw Multifloral
+              </span>
+              <span className="px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-[#ebdccb] text-xs font-bold text-[#2a1e14] shadow-2xs hover:border-[#c87a1e] transition-colors">
+                • 100% Hive Harvest
+              </span>
+              <span className="px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-[#ebdccb] text-xs font-bold text-[#2a1e14] shadow-2xs hover:border-[#c87a1e] transition-colors">
+                • Cold Infused
+              </span>
+              <span className="px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-[#ebdccb] text-xs font-bold text-[#2a1e14] shadow-2xs hover:border-[#c87a1e] transition-colors">
+                • Zero Added Sugar
+              </span>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {/* Organic Wave Doodle Separator (like Prolino) */}
+            <div className="py-1">
+              <svg
+                className="w-40 h-4 text-[#c87a1e]"
+                viewBox="0 0 160 14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              >
+                <path d="M2 7 Q 20 1, 40 7 T 80 7 T 120 7 T 158 7" />
+              </svg>
+            </div>
+
+            {/* Integrated Pack Selector & Purchase Dock */}
+            <div id="purchase-dock" className="space-y-4 pt-1 font-montserrat">
+              {/* Pack Pills Switcher (from left to right in exact order: 1 Pack, 3 Pack, 6 Pack) */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
                 {resolvedPacks.map((pack, idx) => {
                   const isSelected = selectedPackIndex === idx;
                   return (
-                    <motion.button
+                    <button
                       key={pack.id}
                       type="button"
-                      onClick={() => setSelectedPackIndex(idx)}
-                      whileHover={{ y: -3, scale: 1.015 }}
-                      whileTap={{ scale: 0.98 }}
-                      transition={{ type: 'spring', stiffness: 450, damping: 25 }}
-                      className={`relative text-left p-3.5 sm:p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between group ${
+                      onClick={() => {
+                        setSlideDirection(idx > selectedPackIndex ? 1 : -1);
+                        setSelectedPackIndex(idx);
+                      }}
+                      className={`p-3 sm:p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer relative ${
                         isSelected
-                          ? 'border-[#c87a1e] bg-[#fffcf5] shadow-[0_6px_20px_rgba(200,122,30,0.18)] ring-2 ring-[#c87a1e]/40'
-                          : 'border-[#e8ded0] bg-white hover:border-[#d6c8b6] hover:bg-[#faf6ee]'
+                          ? 'border-[#c87a1e] bg-white shadow-[0_10px_28px_rgba(200,122,30,0.18)] ring-2 ring-[#c87a1e]/35 scale-[1.02]'
+                          : 'border-[#ebdccb] bg-white/70 hover:bg-white hover:border-[#dfc8b0]'
                       }`}
                     >
-                      {/* Top Header of Card: Badge + Radio */}
-                      <div className="flex items-center justify-between mb-2">
-                        <span
-                          className={`text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                            pack.bestValue
-                              ? 'bg-[#1a110a] text-[#fbbf24] border border-[#f5a623]/50'
-                              : pack.popular
-                              ? 'bg-[#f5a623] text-black font-extrabold'
-                              : 'bg-[#faf2e1] text-[#8b5311]'
-                          }`}
-                        >
-                          {pack.badge}
-                        </span>
-
-                        <div
-                          className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                            isSelected
-                              ? 'border-[#c87a1e] bg-[#c87a1e] text-white'
-                              : 'border-[#d0c2b0] bg-white group-hover:border-[#c87a1e]'
-                          }`}
-                        >
-                          {isSelected && (
-                            <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 12 12">
-                              <path d="M10 3L4.5 8.5L2 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                            </svg>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="space-y-0.5">
-                        <span className="font-bold text-sm text-[#1a110a] block">
+                      <div className="flex items-center justify-between text-[10.5px] font-extrabold uppercase tracking-wider mb-1">
+                        <span className={isSelected ? 'text-[#c87a1e]' : 'text-[#8c7e6e]'}>
                           {pack.name}
                         </span>
-                        <span className="text-[11px] text-[#786a5a] block font-medium">
-                          {pack.sticks} Sticks
-                        </span>
-                      </div>
-
-                      <div className="pt-2.5 border-t border-[#f0e4d2] mt-2.5">
-                        <div className="flex items-baseline gap-1.5 flex-wrap">
-                          {pack.originalPrice && pack.originalPrice > pack.price && (
-                            <span className="text-xs sm:text-sm font-semibold text-[#8c7e6e] line-through decoration-[#8c7e6e]/70">
-                              ₹{pack.originalPrice.toLocaleString('en-IN')}
-                            </span>
-                          )}
-                          <span className="font-apricot text-2xl font-bold text-[#1a110a] leading-none">
-                            ₹{pack.price}
+                        {pack.popular && (
+                          <span className="bg-[#f5a623] text-black text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
+                            POPULAR
                           </span>
-                        </div>
-                        <div className="mt-1 text-[11px] text-[#8c7e6e] font-medium flex items-center justify-between">
-                          <span>{pack.pricePerStick}/ea</span>
-                          {pack.savingsText && (
-                            <span className="text-[#15803d] font-bold">{pack.savingsText}</span>
-                          )}
-                        </div>
-                        {pack.shippingNote && (
-                          <div
-                            className={`mt-2 pt-1.5 border-t border-[#f2e6d6] text-[10.5px] font-bold flex items-center gap-1.5 ${
-                              pack.freeShipping ? 'text-[#15803d]' : 'text-[#b45309]'
-                            }`}
-                          >
-                            <span>{pack.freeShipping ? '✓' : '📦'}</span>
-                            <span>{pack.shippingNote}</span>
-                          </div>
+                        )}
+                        {pack.bestValue && (
+                          <span className="bg-[#1a110a] text-[#fbbf24] text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider border border-[#f5a623]/40">
+                            VALUE
+                          </span>
                         )}
                       </div>
-                    </motion.button>
+                      <div className="font-apricot text-2xl sm:text-3xl font-bold text-[#1a110a] leading-none">
+                        ₹{pack.price}
+                      </div>
+                      <div className="text-[10px] font-semibold text-[#8c7e6e] mt-1.5">
+                        {pack.sticks} Sticks · {pack.pricePerStick}/cup
+                      </div>
+                    </button>
                   );
                 })}
               </div>
-            </div>
 
-            {/* ─── VISUAL STICK BUNDLE PREVIEW (DYNAMIC FOR 10 / 30 / 60 STICKS) ─── */}
-            <div className="p-3.5 sm:p-4 rounded-2xl bg-[#faf6ee] border border-[#ebdccb] flex items-center justify-between gap-3 text-xs font-montserrat">
-              <div className="flex items-center gap-3">
-                {/* Minimalist SVG Graphic showing 1, 3, or 6 neat bundles */}
-                <div className="w-14 sm:w-16 h-10 rounded-lg bg-white border border-[#e2d5c3] p-1 flex items-center justify-center shrink-0 shadow-2xs">
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: activePack.unitQty }).map((_, bIdx) => (
-                      <div
-                        key={bIdx}
-                        className="w-3.5 h-7 rounded-xs bg-[#f5b04a] border border-[#c87a1e] relative flex flex-col justify-center items-center shadow-2xs"
-                      >
-                        <div className="w-full h-2 bg-[#1a110a] opacity-80" />
-                        <span className="text-[6px] font-mono font-bold text-white absolute">10</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-[#1a110a]">
-                      {totalSticks} Sticks Total ({totalSticks * 6}g)
-                    </span>
-                    <span className="text-[10px] font-mono font-bold text-[#c87a1e] uppercase">
-                      {activePack.id === '1-pack'
-                        ? 'Starter Box'
-                        : activePack.id === '3-pack'
-                        ? '30-Day Ritual'
-                        : '60-Day Best Value'}
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-[#736555] block">
-                    {bundleMultiplier > 1
-                      ? `${bundleMultiplier} × ${activePack.name} (${activePack.sticks} sticks each)`
-                      : `${activePack.unitQty} × 10-Stick Box${activePack.unitQty > 1 ? 'es' : ''} with tear dispenser`}
+              {/* Price Row + Stepper + Big CTA Button */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+                {/* Live Price Tag */}
+                <div className="flex items-baseline gap-2 sm:pr-2">
+                  <span className="font-apricot text-4xl sm:text-5xl font-bold text-[#1a110a] leading-none">
+                    ₹{totalPrice}
                   </span>
+                  {totalOriginalPrice > totalPrice && (
+                    <>
+                      <span className="text-sm font-semibold text-[#8c7e6e] line-through">
+                        ₹{totalOriginalPrice}
+                      </span>
+                      <span className="text-xs font-black text-[#15803d] bg-[#dcfce7] px-2.5 py-0.5 rounded-full">
+                        {activePack.savingsText}
+                      </span>
+                    </>
+                  )}
                 </div>
-              </div>
 
-              <div className="text-right shrink-0">
-                <span className="text-[10px] font-mono font-bold text-[#15803d] block">
-                  {activePack.savingsText}
-                </span>
-                <span className="text-[10px] text-[#8a7a6a] font-medium">
-                  {activePack.pricePerStick}/stick
-                </span>
-              </div>
-            </div>
-
-            {/* ─── ACTION BAR: STEPPER + DYNAMIC ADD TO CART ─── */}
-            <div className="pt-1 font-montserrat flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              {/* Stepper */}
-              <div className="flex items-center justify-between sm:justify-start border border-[#d6cbba] bg-white rounded-full p-1.5 shadow-xs">
-                <button
-                  type="button"
-                  onClick={() => setBundleMultiplier(Math.max(1, bundleMultiplier - 1))}
-                  className="w-9 h-9 flex items-center justify-center text-[#736555] hover:text-[#1a110a] hover:bg-[#faf2e4] rounded-full font-bold text-base cursor-pointer select-none transition-colors"
-                  aria-label="Decrease quantity"
-                >
-                  −
-                </button>
-                <div className="px-3 text-center min-w-[28px]">
-                  <span className="font-bold text-sm text-[#1a110a] block leading-none">
+                {/* Stepper */}
+                <div className="flex items-center justify-between sm:justify-start border border-[#d6cbba] bg-white rounded-full p-1 shadow-2xs">
+                  <button
+                    type="button"
+                    onClick={() => setBundleMultiplier(Math.max(1, bundleMultiplier - 1))}
+                    className="w-9 h-9 flex items-center justify-center text-[#736555] hover:text-[#1a110a] hover:bg-[#faf2e4] rounded-full font-bold text-base cursor-pointer"
+                    aria-label="Decrease quantity"
+                  >
+                    −
+                  </button>
+                  <span className="px-3 font-bold text-sm text-[#1a110a] min-w-[24px] text-center">
                     {bundleMultiplier}
                   </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setBundleMultiplier(bundleMultiplier + 1)}
-                  className="w-9 h-9 flex items-center justify-center text-[#736555] hover:text-[#1a110a] hover:bg-[#faf2e4] rounded-full font-bold text-base cursor-pointer select-none transition-colors"
-                  aria-label="Increase quantity"
-                >
-                  +
-                </button>
-              </div>
-
-              {/* Add to Cart Form Button */}
-              {activePack?.variantId ? (
-                <div className="w-full sm:flex-1">
-                  <CartForm
-                    route="/cart"
-                    inputs={{
-                      lines: [
-                        {
-                          merchandiseId: activePack.variantId,
-                          quantity: 1 * bundleMultiplier,
-                          attributes: [
-                            { key: 'Pack', value: activePack.title },
-                            { key: 'Total Sticks', value: `${totalSticks} Sticks` },
-                            { key: 'Bundle Deal', value: `₹${totalPrice}` },
-                          ],
-                        },
-                      ],
-                    }}
-                    action={CartForm.ACTIONS.LinesAdd}
+                  <button
+                    type="button"
+                    onClick={() => setBundleMultiplier(bundleMultiplier + 1)}
+                    className="w-9 h-9 flex items-center justify-center text-[#736555] hover:text-[#1a110a] hover:bg-[#faf2e4] rounded-full font-bold text-base cursor-pointer"
+                    aria-label="Increase quantity"
                   >
-                    {(cartFetcher) => (
-                      <div className="w-full">
+                    +
+                  </button>
+                </div>
+
+                {/* Add to Cart Form Button */}
+                {activePack?.variantId && (
+                  <div className="w-full sm:flex-1">
+                    <CartForm
+                      route="/cart"
+                      inputs={{
+                        lines: [
+                          {
+                            merchandiseId: activePack.variantId,
+                            quantity: 1 * bundleMultiplier,
+                            attributes: [
+                              { key: 'Pack', value: activePack.title },
+                              { key: 'Total Sticks', value: `${totalSticks} Sticks` },
+                              { key: 'Bundle Deal', value: `₹${totalPrice}` },
+                            ],
+                          },
+                        ],
+                      }}
+                      action={CartForm.ACTIONS.LinesAdd}
+                    >
+                      {(cartFetcher) => (
                         <button
                           type="submit"
                           onClick={() => open('cart')}
                           disabled={cartFetcher.state !== 'idle'}
-                          className="w-full group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#1a110a] text-white shadow-[0_8px_20px_rgba(26,17,10,0.18)] hover:shadow-[0_12px_30px_rgba(200,122,30,0.3)] transition-all duration-300 overflow-hidden cursor-pointer disabled:opacity-70"
+                          className="w-full inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full bg-[#1a110a] text-white font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#c87a1e] hover:shadow-[0_10px_30px_rgba(200,122,30,0.3)] transition-all cursor-pointer shadow-md disabled:opacity-70"
                         >
-                          <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#f5a623] via-[#fbbf24] to-[#d97706] transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-[0.16,1,0.3,1]" />
-
-                          <span className="relative z-10 font-bold tracking-wider uppercase text-xs sm:text-sm text-white transition-colors duration-300 flex items-center gap-2">
-                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-                              <line x1="3" y1="6" x2="21" y2="6" />
-                              <path d="M16 10a4 4 0 01-8 0" />
-                            </svg>
-                            <span className="inline-flex items-center gap-1.5 flex-wrap justify-center">
-                              {cartFetcher.state !== 'idle' ? (
-                                'Adding to Cart...'
-                              ) : (
-                                <>
-                                  <span>Add {activePack.name} ·</span>
-                                  {totalOriginalPrice > totalPrice && (
-                                    <span className="line-through text-white/60 text-xs sm:text-sm font-normal">
-                                      ₹{totalOriginalPrice.toLocaleString('en-IN')}
-                                    </span>
-                                  )}
-                                  <span className="text-[#f5a623] group-hover:text-white font-extrabold">
-                                    ₹{totalPrice}
-                                  </span>
-                                  {!activePack.freeShipping && (
-                                    <span className="text-[11px] text-amber-200/90 font-medium ml-0.5">
-                                      (+ ₹70 delivery)
-                                    </span>
-                                  )}
-                                </>
-                              )}
-                            </span>
-                            <span className="text-base transform group-hover:translate-x-1 transition-transform duration-300">
-                              →
-                            </span>
+                          <span>
+                            {cartFetcher.state !== 'idle'
+                              ? 'Adding...'
+                              : `Add ${activePack.name} ↗`}
                           </span>
                         </button>
-
-                        {/* Error warning if Shopify Cart reports out-of-stock */}
-                        {cartFetcher.data?.errors?.length > 0 && (
-                          <div className="mt-2.5 p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 font-medium text-center">
-                            <span>⚠️ {cartFetcher.data.errors[0].message}</span>
-                            <span className="block mt-1 text-[11px] text-amber-700">
-                              (Tip: In Shopify Admin, check &ldquo;Continue selling when out of stock&rdquo; or update inventory for {activePack.name}.)
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </CartForm>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => open('cart')}
-                  className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 bg-[#f5a623] hover:bg-[#e09419] text-[#1a110a] px-8 py-3.5 rounded-full text-sm font-bold tracking-wide shadow-md transition-all cursor-pointer"
-                >
-                  <span className="inline-flex items-center gap-1.5 flex-wrap justify-center">
-                    <span>Add {activePack.name} ·</span>
-                    {totalOriginalPrice > totalPrice && (
-                      <span className="line-through text-[#786a5a] text-xs sm:text-sm font-normal">
-                        ₹{totalOriginalPrice.toLocaleString('en-IN')}
-                      </span>
-                    )}
-                    <span className="font-extrabold">₹{totalPrice}</span>
-                    {!activePack.freeShipping && (
-                      <span className="text-[11px] text-[#786a5a] font-medium ml-0.5">
-                        (+ ₹70 delivery)
-                      </span>
-                    )}
-                  </span>
-                  <span>→</span>
-                </button>
-              )}
-            </div>
-
-            {/* Clean Delivery & Value Info Strip */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 text-xs font-medium text-[#6e6152] font-montserrat border-t border-[#f0e4d2]">
-              <span className="font-semibold text-[#1a110a] flex items-center gap-1.5">
-                <span
-                  className={`w-2 h-2 rounded-full ${
-                    activePack.freeShipping ? 'bg-[#15803d]' : 'bg-[#d97706]'
-                  }`}
-                />
-                <span>{activePack.note}</span>
-              </span>
-              <span>10 Sticks (60g Box)</span>
-              <span>Snap · Squeeze · Sip</span>
-            </div>
-
-            {/* 🔬 PROVENANCE & LAB CERTIFICATION TRUST CARD */}
-            <div
-              onClick={() => setIsCoaModalOpen(true)}
-              className="mt-3.5 p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-[#fff9ec] via-[#fffcf6] to-[#fcf6e8] border border-[#e8d7be] shadow-2xs hover:border-[#c87a1e] hover:shadow-xs transition-all cursor-pointer group flex items-center justify-between gap-3"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-xl bg-[#faecc9] border border-[#e2c792] flex items-center justify-center text-base shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-                  🔬
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[11px] font-extrabold text-[#1a110a] uppercase tracking-wider">
-                      100% Lab Tested &amp; Certified
-                    </span>
-                    <span className="text-[9px] font-extrabold px-1.5 py-0.2 rounded-full bg-[#15803d]/10 text-[#15803d] border border-[#15803d]/20">
-                      Standard Quality
-                    </span>
+                      )}
+                    </CartForm>
                   </div>
-                  <p className="text-[11px] text-[#736555] font-medium mt-0.5 truncate">
-                    Batch #HFL-GMG-08/26-01 · 0 Heavy Metals (BLQ) · 0 Pathogens
-                  </p>
-                </div>
+                )}
               </div>
-              <div className="text-xs font-bold text-[#c87a1e] group-hover:text-[#a05a0d] shrink-0 flex items-center gap-1">
-                <span>View COA</span>
-                <span className="transform group-hover:translate-x-0.5 transition-transform">↗</span>
+
+              {/* Shipping & Delivery Guarantee Note */}
+              <div className="flex items-center justify-between text-xs font-semibold text-[#736555] pt-1.5 border-t border-[#ebdccb]">
+                <span className="flex items-center gap-1.5">
+                  <span className={activePack.freeShipping ? 'text-[#15803d]' : 'text-[#b45309]'}>
+                    {activePack.freeShipping ? '✓' : '📦'}
+                  </span>
+                  <span className={activePack.freeShipping ? 'text-[#15803d]' : 'text-[#b45309]'}>
+                    {activePack.shippingNote}
+                  </span>
+                </span>
+                <span>6g Single Dose · 100% Raw Multifloral</span>
               </div>
             </div>
           </div>
-
-          {/* Right Column: Studio Slideshow with Bottom Notch & Parallax */}
-          <motion.div
-            style={{ y: heroGalleryY }}
-            className="lg:col-span-6 relative flex flex-col items-center justify-center"
-          >
-            <div
-              className="relative w-full aspect-[4/3] rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)] border border-[#ebdccb] group bg-[#f7f3eb]"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-            >
-              {/* Slides */}
-              {heroSlides.map((slide, index) => (
-                <div
-                  key={slide.src}
-                  className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-                    activeSlide === index ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-                  }`}
-                >
-                  <img
-                    src={slide.src}
-                    alt={slide.alt}
-                    className="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.02]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-black/5 pointer-events-none" />
-                </div>
-              ))}
-
-              {/* Floating Bottom Notch Controls */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#18130e]/85 hover:bg-[#18130e]/95 backdrop-blur-md border border-white/20 shadow-[0_10px_25px_rgba(0,0,0,0.35)] transition-all">
-                <button
-                  type="button"
-                  onClick={() => setActiveSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
-                  className="w-6 h-6 flex items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/15 transition-all cursor-pointer"
-                  aria-label="Previous image"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-
-                <div className="flex items-center gap-1.5 px-1">
-                  {heroSlides.map((slide, index) => (
-                    <button
-                      key={slide.src}
-                      type="button"
-                      onClick={() => setActiveSlide(index)}
-                      className={`transition-all duration-300 rounded-full cursor-pointer ${
-                        activeSlide === index
-                          ? 'w-7 h-1.5 bg-gradient-to-r from-[#f5a623] to-[#e68a00] shadow-[0_0_8px_#f5a623]'
-                          : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/80'
-                      }`}
-                      aria-label={`Go to slide ${index + 1}`}
-                    />
-                  ))}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveSlide((prev) => (prev + 1) % heroSlides.length)}
-                  className="w-6 h-6 flex items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/15 transition-all cursor-pointer"
-                  aria-label="Next image"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-
-                <div className="h-3 w-[1px] bg-white/20 mx-0.5" />
-                <span className="text-[10px] font-mono font-bold text-white/80 pr-1 tracking-wider">
-                  0{activeSlide + 1} / 0{heroSlides.length}
-                </span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ─── KINETIC GOLDEN TAPE MARQUEE RIBBON ─── */}
-      <div className="bg-gradient-to-r from-[#b46714] via-[#c87a1e] to-[#a3590d] py-3.5 sm:py-4 relative z-20 shadow-[0_4px_20px_rgba(200,122,30,0.22)] overflow-hidden my-6 sm:my-10 -rotate-[0.5deg] scale-[1.01]">
-        <Marquee speed={26}>
-          <span className="inline-flex items-center gap-8 sm:gap-12 px-4 text-[10px] sm:text-xs font-extrabold tracking-[0.26em] uppercase text-[#fdfaf1]">
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              100% Traceable Raw Honey
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-white" />
-              Snap · Squeeze · Sip
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-white" />
-              No Spoons · No Sticky Jars
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-white" />
-              Natural Mint Botanical Infusion
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-white" />
-              0 Heavy Metals (BLQ) · Standard Quality
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-white" />
-              Direct Generational Apiaries
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-white" />
-              Single-Serve Pocket Wellness
-            </span>
-            <span className="text-white/40 mx-4">—</span>
-          </span>
-        </Marquee>
-      </div>
-
-      {/* ============================================================ */}
-      {/* 2. SNAP SQUEEZE SIP: INTERACTIVE SCROLL-DRIVEN PRODUCT DEMO   */}
-      {/* ============================================================ */}
-      <SnapSqueezeSip />
-
-      {/* ============================================================ */}
-      {/* 2.1 STICK ENGINEERING: 6G POCKET PACKAGING INDUSTRIAL DESIGN */}
-      {/* ============================================================ */}
-      <StickEngineering />
-
-      {/* Subtle Divider */}
-      <div className="w-full max-w-5xl mx-auto px-6 sm:px-8 my-6 sm:my-10">
-        <div className="h-[1px] bg-[#ebdccb]/70" />
-      </div>
-
-      {/* ============================================================ */}
-      {/* 2.2 THE PANTRY CLEANSE: 500G STICKY JAR VS. 6G POCKET STICK */}
-      {/* ============================================================ */}
-      <JarVsStick />
-
-      {/* Subtle Divider */}
-      <div className="w-full max-w-5xl mx-auto px-6 sm:px-8 my-6 sm:my-10">
-        <div className="h-[1px] bg-[#ebdccb]/70" />
-      </div>
-
-      {/* ============================================================ */}
-      {/* 2.3 SENSORY NOTES: SOMMELIER FLAVOR ARCHITECTURE & PAIRINGS   */}
-      {/* ============================================================ */}
-      <SensoryNotes />
-
-      {/* Subtle Divider */}
-      <div className="w-full max-w-5xl mx-auto px-6 sm:px-8 my-6 sm:my-10">
-        <div className="h-[1px] bg-[#ebdccb]/70" />
-      </div>
-
-      {/* ============================================================ */}
-      {/* 2.5 YOUR DAILY RITUAL (TIMELINE + PHOTO MOMENTS)             */}
-      {/* ============================================================ */}
-      <section id="ritual" className="py-20 md:py-28 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto scroll-mt-24 relative">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <FadeIn>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-bold tracking-widest text-[#c87a1e] uppercase font-montserrat">
-                Your Daily Ritual
-              </span>
-              <span className="text-[#d0c4b2]">·</span>
-              <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8b5311] font-montserrat">
-                <img
-                  src="/images/golden_bee_clean.png"
-                  alt="Golden Bee"
-                  className="w-3.5 h-3.5 object-contain"
-                />
-                <span>Snap · Squeeze · Sip</span>
-              </div>
-            </div>
-            <h2 className="font-apricot text-4xl sm:text-5xl font-bold text-[#1a110a]">
-              From first sip to evening unwind.
-            </h2>
-          </FadeIn>
-
-          <FadeIn delay={0.15}>
-            <div className="inline-flex items-center gap-2 bg-[#faecc9]/90 border border-[#e8cd8c] px-4 py-2 rounded-full text-xs font-semibold text-[#8b5311] font-montserrat shrink-0 shadow-2xs">
-              <span className="text-base">🐝</span>
-              <span>1 Stick = Exactly 1 Cup of Tea or Breakfast Serving</span>
-            </div>
-          </FadeIn>
-        </div>
-
-        {/* 5-step Daily Timeline */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5 font-montserrat mb-16">
-          <motion.div
-            whileHover={{ y: -5, scale: 1.02 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 22 }}
-            className="p-5 rounded-2xl bg-white border border-[#eee6d6] shadow-xs hover:border-[#f5a623] hover:shadow-md transition-all group cursor-default"
-          >
-            <span className="text-xs font-bold text-[#c87a1e] block font-mono">06:30</span>
-            <h4 className="font-bold text-sm text-[#1a110a] mt-1 group-hover:text-[#c87a1e] transition-colors">
-              Morning Brew
-            </h4>
-            <p className="text-xs text-[#736555] mt-1.5 leading-relaxed">
-              Stir into warm lemon water, green tea or your morning brew.
-            </p>
-          </motion.div>
-
-          <motion.div
-            whileHover={{ y: -5, scale: 1.02 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 22 }}
-            className="p-5 rounded-2xl bg-white border border-[#eee6d6] shadow-xs hover:border-[#f5a623] hover:shadow-md transition-all group cursor-default"
-          >
-            <span className="text-xs font-bold text-[#c87a1e] block font-mono">11:00</span>
-            <h4 className="font-bold text-sm text-[#1a110a] mt-1 group-hover:text-[#c87a1e] transition-colors">
-              Mid-work Fuel
-            </h4>
-            <p className="text-xs text-[#736555] mt-1.5 leading-relaxed">
-              Quick natural energy hit during back-to-back work calls.
-            </p>
-          </motion.div>
-
-          <motion.div
-            whileHover={{ y: -5, scale: 1.02 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 22 }}
-            className="p-5 rounded-2xl bg-white border border-[#eee6d6] shadow-xs hover:border-[#f5a623] hover:shadow-md transition-all group cursor-default"
-          >
-            <span className="text-xs font-bold text-[#c87a1e] block font-mono">14:00</span>
-            <h4 className="font-bold text-sm text-[#1a110a] mt-1 group-hover:text-[#c87a1e] transition-colors">
-              Post-Lunch
-            </h4>
-            <p className="text-xs text-[#736555] mt-1.5 leading-relaxed">
-              Drizzle on fresh fruit bowls, Greek yogurt or rolled oats.
-            </p>
-          </motion.div>
-
-          <motion.div
-            whileHover={{ y: -5, scale: 1.02 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 22 }}
-            className="p-5 rounded-2xl bg-white border border-[#eee6d6] shadow-xs hover:border-[#f5a623] hover:shadow-md transition-all group cursor-default"
-          >
-            <span className="text-xs font-bold text-[#c87a1e] block font-mono">17:30</span>
-            <h4 className="font-bold text-sm text-[#1a110a] mt-1 group-hover:text-[#c87a1e] transition-colors">
-              Pre-Workout
-            </h4>
-            <p className="text-xs text-[#736555] mt-1.5 leading-relaxed">
-              Clean natural fuel before running, gym workouts, or cycling.
-            </p>
-          </motion.div>
-
-          <motion.div
-            whileHover={{ y: -5, scale: 1.02 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 22 }}
-            className="p-5 rounded-2xl bg-white border border-[#eee6d6] shadow-xs hover:border-[#f5a623] hover:shadow-md transition-all group cursor-default"
-          >
-            <span className="text-xs font-bold text-[#c87a1e] block font-mono">21:00</span>
-            <h4 className="font-bold text-sm text-[#1a110a] mt-1 group-hover:text-[#c87a1e] transition-colors">
-              Wind Down
-            </h4>
-            <p className="text-xs text-[#736555] mt-1.5 leading-relaxed">
-              Soothing chamomile tea with minted honey before sleep.
-            </p>
-          </motion.div>
-        </div>
-
-        {/* 3 Lifestyle Moment Photo Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-          {moments.map((m, idx) => (
-            <FadeIn
-              key={m.step}
-              delay={idx * 0.15}
-              className="group rounded-3xl overflow-hidden bg-white border border-[#eee6d6] shadow-sm hover:shadow-xl transition-all duration-500 relative aspect-[3/4] flex flex-col justify-end"
-            >
-              <img
-                src={m.image}
-                alt={m.title}
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent transition-opacity duration-300 group-hover:from-black/90" />
-              <div className="relative z-10 p-6 sm:p-7 text-white space-y-1.5 font-montserrat">
-                <span className="text-xs font-bold tracking-widest text-[#f6a623] uppercase block">
-                  {m.step}
-                </span>
-                <h3 className="font-apricot text-2xl sm:text-3xl font-bold text-white leading-tight">
-                  {m.title}
-                </h3>
-                <p className="text-xs sm:text-sm text-stone-200 leading-relaxed max-w-xs">
-                  {m.description}
-                </p>
-              </div>
-            </FadeIn>
-          ))}
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* 3. WHY HONEY: TINY STICK. BIG BENEFITS.                      */}
+      {/* THE HIVE MANIFESTO: KINETIC PARALLAX & BOTANICAL SHOWCASE    */}
       {/* ============================================================ */}
-      <section id="why-honey" className="py-24 md:py-32 bg-[#fdfaf1] scroll-mt-24 relative overflow-hidden border-t border-[#f0e4d2]">
-        {/* Ambient Glow */}
+      <section
+        ref={manifestoRef}
+        className="py-24 sm:py-36 lg:py-48 min-h-[92vh] flex flex-col justify-center overflow-hidden relative bg-[#17100b] text-[#fdfaf1]"
+      >
+        {/* Organic Honey Wave Transition (Top) */}
+        <div className="absolute top-0 left-0 w-full overflow-hidden leading-none z-20">
+          <svg viewBox="0 0 1440 120" preserveAspectRatio="none" className="w-full h-[40px] sm:h-[70px] text-[#fdfaf1]">
+            <path
+              fill="currentColor"
+              d="M0,0 L1440,0 L1440,64 C1360,58.7 1280,53 1120,43 C960,48 800,53 640,75 C480,80 320,85 160,75 L0,64 Z"
+            />
+          </svg>
+        </div>
+
+        {/* Ambient Honeycomb Background Lattice */}
+        <HoneycombPattern
+          id="manifesto-honeycomb"
+          color="#c87a1e"
+          opacity={0.06}
+          size={36}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+        />
+
+        {/* Ambient Golden Amber Radial Glows */}
         <div
-          className="absolute inset-0 -z-10 pointer-events-none"
+          className="absolute inset-0 pointer-events-none -z-0"
           style={{
             background:
-              'radial-gradient(ellipse 70% 50% at 50% 35%, #faecc9 0%, #fdfaf1 100%)',
+              'radial-gradient(circle at 50% 50%, rgba(200,122,30,0.18) 0%, rgba(26,17,10,0.85) 60%, #17100b 100%)',
           }}
         />
 
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative">
-          <FadeIn className="text-center max-w-2xl mx-auto mb-16 space-y-2">
-            <span className="text-xs font-bold tracking-widest text-[#c87a1e] uppercase font-montserrat">
-              Why Honey
-            </span>
-            <h2 className="font-apricot text-4xl sm:text-5xl lg:text-[56px] font-bold text-[#1a110a] leading-tight">
-              Tiny stick. Big benefits.
-            </h2>
-            <p className="text-sm sm:text-base text-[#6e6152] font-montserrat max-w-xl mx-auto leading-relaxed">
-              For thousands of years, honey has done more than sweeten. Here's what science and traditional medicine agree on.
-            </p>
-          </FadeIn>
-
-          {/* 4 Stat Cards with Animated Live Counters */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 font-montserrat relative z-10 mb-20">
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              className="relative overflow-hidden bg-white rounded-[26px] p-6 sm:p-7 border border-[#efe7d6] text-left shadow-sm hover:shadow-lg transition-all group"
-            >
-              <span className="font-apricot text-4xl sm:text-5xl font-bold text-[#c86a14] block mb-1">
-                <AnimatedCounter target="100" suffix="%" />
-              </span>
-              <h4 className="text-xs font-bold tracking-wider text-[#1a110a] uppercase mb-1">
-                Natural Sweetness
-              </h4>
-              <p className="text-xs sm:text-sm text-[#736555]">
-                Just what the bees made.
-              </p>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              className="relative overflow-hidden bg-white rounded-[26px] p-6 sm:p-7 border border-[#efe7d6] text-left shadow-sm hover:shadow-lg transition-all group"
-            >
-              <span className="font-apricot text-4xl sm:text-5xl font-bold text-[#c86a14] block mb-1">
-                <AnimatedCounter target="60" suffix="g" />
-              </span>
-              <h4 className="text-xs font-bold tracking-wider text-[#1a110a] uppercase mb-1">
-                In Each Pack
-              </h4>
-              <p className="text-xs sm:text-sm text-[#736555]">
-                10 single-serve sticks.
-              </p>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              className="relative overflow-hidden bg-white rounded-[26px] p-6 sm:p-7 border border-[#efe7d6] text-left shadow-sm hover:shadow-lg transition-all group"
-            >
-              <span className="font-apricot text-4xl sm:text-5xl font-bold text-[#c86a14] block mb-1">
-                <AnimatedCounter target="0" suffix=" BLQ" />
-              </span>
-              <h4 className="text-xs font-bold tracking-wider text-[#1a110a] uppercase mb-1">
-                Heavy Metals
-              </h4>
-              <p className="text-xs sm:text-sm text-[#736555]">
-                Zero additives or syrups.
-              </p>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              className="relative overflow-hidden bg-white rounded-[26px] p-6 sm:p-7 border border-[#efe7d6] text-left shadow-sm hover:shadow-lg transition-all group"
-            >
-              <span className="font-apricot text-4xl sm:text-5xl font-bold text-[#c86a14] block mb-1">
-                <AnimatedCounter target="10" suffix=" Sticks" />
-              </span>
-              <h4 className="text-xs font-bold tracking-wider text-[#1a110a] uppercase mb-1">
-                Energy Boost
-              </h4>
-              <p className="text-xs sm:text-sm text-[#736555]">
-                Natural carbs, ready to burn.
-              </p>
-            </motion.div>
-          </div>
-
-          {/* Diagram + Benefits Checklist + Mascot */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center max-w-7xl mx-auto relative">
-            <div className="lg:col-span-4 flex justify-center">
-              <img
-                src="/images/why_honey_diagram_transparent.png"
-                alt="Honey Benefits Diagram"
-                className="w-68 sm:w-76 lg:w-80 h-auto object-contain transition-transform hover:scale-105 duration-500 drop-shadow-sm"
-              />
-            </div>
-
-            <div className="lg:col-span-5 space-y-6 max-w-xl font-montserrat">
-              <h3 className="text-2xl sm:text-3xl lg:text-[34px] font-bold text-[#1a110a] leading-tight font-serif tracking-tight">
-                <span>Real ingredients.</span>{' '}
-                <span className="text-[#c86a14]">A whole lot of good.</span>
-              </h3>
-
-              <div className="space-y-4">
-                <div className="flex items-start gap-3.5">
-                  <div className="w-5 h-5 rounded-full bg-[#f4a22b] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5 font-bold text-xs">
-                    ✓
-                  </div>
-                  <div>
-                    <h4 className="text-sm sm:text-base font-bold text-[#1a110a]">
-                      Soothes sore throats
-                    </h4>
-                    <p className="text-xs sm:text-sm text-[#736555] mt-0.5">
-                      Coats and calms — a teaspoon at bedtime works wonders.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3.5">
-                  <div className="w-5 h-5 rounded-full bg-[#f4a22b] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5 font-bold text-xs">
-                    ✓
-                  </div>
-                  <div>
-                    <h4 className="text-sm sm:text-base font-bold text-[#1a110a]">
-                      Natural quick energy
-                    </h4>
-                    <p className="text-xs sm:text-sm text-[#736555] mt-0.5">
-                      Glucose + fructose = ready-to-burn fuel for your day.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3.5">
-                  <div className="w-5 h-5 rounded-full bg-[#f4a22b] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5 font-bold text-xs">
-                    ✓
-                  </div>
-                  <div>
-                    <h4 className="text-sm sm:text-base font-bold text-[#1a110a]">
-                      Packed with antioxidants
-                    </h4>
-                    <p className="text-xs sm:text-sm text-[#736555] mt-0.5">
-                      Real honey carries polyphenols and trace minerals.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3.5">
-                  <div className="w-5 h-5 rounded-full bg-[#f4a22b] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5 font-bold text-xs">
-                    ✓
-                  </div>
-                  <div>
-                    <h4 className="text-sm sm:text-base font-bold text-[#1a110a]">
-                      Gentler than sugar
-                    </h4>
-                    <p className="text-xs sm:text-sm text-[#736555] mt-0.5">
-                      Sweeter per gram, so you use less.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="lg:col-span-3 flex flex-col items-center justify-center relative pt-4 lg:pt-0">
-              <div className="relative group flex flex-col items-center">
-                <motion.div
-                  animate={{ y: [-6, 6, -6], rotate: [-1, 1.5, -1] }}
-                  transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-                  className="w-48 sm:w-56 lg:w-58 h-auto relative z-10"
-                >
-                  <img
-                    src="/images/gapoo_bear_mascot_hd.png"
-                    alt="Gapoo Bear Mascot"
-                    className="w-full h-auto object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-105"
-                  />
-                </motion.div>
-                <div className="mt-3 inline-flex items-center gap-1.5 bg-white/95 backdrop-blur-sm border border-[#e8cd8c] px-4 py-1.5 rounded-full text-xs font-bold text-[#8b5311] shadow-md font-montserrat relative z-10">
-                  <span className="w-2 h-2 rounded-full bg-[#d97706] animate-pulse" />
-                  <span>Bear Approved</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Explicit Spacer & Divider between Why Honey and The Clean Hive Standard */}
-      <div className="w-full max-w-5xl mx-auto px-6 sm:px-8 my-8 sm:my-12">
-        <div className="h-[1px] bg-[#ebdccb]/70" />
-      </div>
-
-      {/* ============================================================ */}
-      {/* 3.5. CERTIFIED PURITY & THE CLEAN HIVE STANDARD (COA)        */}
-      {/* ============================================================ */}
-      <LabVerifiedSection id="lab-verified" />
-
-      {/* Explicit Spacer & Divider between Lab Verified and Our Story */}
-      <div className="w-full max-w-5xl mx-auto px-6 sm:px-8 my-8 sm:my-12">
-        <div className="h-[1px] bg-[#ebdccb]/70" />
-      </div>
-
-      {/* ============================================================ */}
-      {/* 4. OUR STORY (DIRECT FROM GAPOO STORY DOCUMENT)              */}
-      {/* ============================================================ */}
-      <section id="our-story" className="my-10 sm:my-16 lg:my-24 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto font-montserrat scroll-mt-28 relative">
-        <span id="story" className="absolute -top-32 left-0 pointer-events-none" />
-
-        {/* ─── CHAPTER 1: THE HIVE AWAKENING ─── */}
-        <div className="bg-white rounded-[32px] sm:rounded-[44px] p-8 sm:p-12 lg:p-16 border border-[#eee4d4] shadow-sm mb-10 sm:mb-14 relative overflow-hidden">
-          <div className="max-w-3xl space-y-6 relative z-10">
-            <div className="inline-flex items-center gap-2 bg-[#faecc9] border border-[#e5cf9d] px-4 py-1.5 rounded-full text-xs font-bold text-[#8b5311] uppercase tracking-wider shadow-2xs">
-              <span>Chapter 01 · The Hive Awakening</span>
-            </div>
-
-            {/* Signature Calligraphic Brand Stroke */}
-            <div className="w-48 sm:w-60 -mb-2">
-              <HandwrittenGapoo
-                className="w-full"
-                color="#c87a1e"
-                startDelay={0.2}
-                speedMultiplier={1.4}
-              />
-            </div>
-
-            <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1a110a] leading-[1.05]">
-              The Hive Awakening
-            </h2>
-
-            <p className="text-base sm:text-lg text-[#3d3228] leading-relaxed font-medium">
-              The seed for Gapoo was planted not in a corporate boardroom, but in the dirt and the hum of the hives during a hands-on bee farming training session. It blossomed from the simple, grounded concept of &ldquo;Garden+Pool&rdquo;—a vision to reconnect the modern adult wellness lifestyle with the untamed, natural bounty of the earth.
-            </p>
-
-            <p className="text-sm sm:text-base text-[#5c5043] leading-relaxed">
-              As we worked alongside local Indian beekeepers, we uncovered a profound betrayal of consumer trust. India&apos;s commercial honey market is highly fragmented, with pure nectar passing through multiple aggregators where genuine batches easily get mixed with compromised syrups. The market is flooded with cheap rice, corn, and cane syrups specifically designed to bypass standard domestic purity tests.
-            </p>
-
-            {/* Investigation findings from CSE Report */}
-            <div className="p-6 sm:p-7 rounded-2xl bg-[#faf5ec] border border-[#ebdccb] space-y-4">
-              <p className="text-xs sm:text-sm text-[#4a3e32] leading-relaxed">
-                A 2020 Centre for Science and Environment investigation revealed a heartbreaking reality: 77 percent of tested samples were adulterated with sugar syrups, and only 3 of 13 brands passed the internationally accepted NMR test. This race-to-the-bottom pricing doesn&apos;t just trick the consumer; it ruthlessly exploits the hardworking apiarists who harvest true nectar.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#ebdccb]">
-                <div className="flex items-center gap-3">
-                  <span className="font-apricot text-3xl sm:text-4xl font-bold text-[#c87a1e] leading-none">
-                    <AnimatedCounter target="77" suffix="%" />
-                  </span>
-                  <span className="text-xs font-semibold text-[#5c5043] leading-tight">
-                    Tested samples adulterated with sugar syrups in CSE investigation
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="font-apricot text-3xl sm:text-4xl font-bold text-[#c87a1e] leading-none">
-                    <AnimatedCounter target="3" /> of 13
-                  </span>
-                  <span className="text-xs font-semibold text-[#5c5043] leading-tight">
-                    Brands passed the internationally accepted NMR test
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Faint Mascot Watermark with Parallax */}
-          <motion.img
-            src="/images/gapoo_bear_mascot_clean.png"
-            alt=""
-            style={{ y: storyParallax1 }}
-            className="absolute -bottom-10 right-4 w-72 h-auto opacity-[0.045] pointer-events-none select-none"
-          />
-        </div>
-
-        {/* ─── CHAPTER 2: THE GAPOO PROMISE & BOTANICAL INFUSIONS ─── */}
-        <div className="bg-white rounded-[32px] sm:rounded-[44px] p-8 sm:p-12 lg:p-16 border border-[#eee4d4] shadow-sm mb-10 sm:mb-14 space-y-8">
-          <div className="max-w-3xl space-y-6">
-            <div className="inline-flex items-center gap-2 bg-[#faecc9] border border-[#e5cf9d] px-4 py-1.5 rounded-full text-xs font-bold text-[#8b5311] uppercase tracking-wider shadow-2xs">
-              <span>Chapter 02 · The Gapoo Promise</span>
-            </div>
-
-            <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1a110a] leading-[1.05]">
-              The Gapoo Promise
-            </h2>
-
-            <p className="text-base sm:text-lg text-[#3d3228] leading-relaxed font-medium">
-              Gapoo was born from a frustrating realization: behind milk, honey has quietly become the most ignored and heavily adulterated commodity in the global consumer market. We watched consumers routinely prioritize cheap prices, risking their health because the alternative—investing in a massive, expensive jar of 100% pure honey—felt like too big of a financial gamble just to try it.
-            </p>
-
-            <p className="text-sm sm:text-base text-[#5c5043] leading-relaxed">
-              Even when people did make the investment, traditional glass jars proved to be a messy, sticky, spill-prone hassle that trapped this incredible superfood in the kitchen cabinet. The biggest problem wasn&apos;t just the deceit; it was that true honey was stubbornly stuck as a cumbersome home product rather than an accessible, everyday wellness tool.
-            </p>
-
-            <p className="text-sm sm:text-base text-[#5c5043] leading-relaxed">
-              Gapoo was created to strip away this deceit and inconvenience. By bypassing fragmented trader networks, we source 100% traceable, hive-to-bottle raw multifloral honey infused with flavours directly from local farmers and pack it into a sleek, mess-free stick format that travels effortlessly with you.
-            </p>
-          </div>
-
-          {/* Botanical Infusions Showcase */}
-          <div className="pt-4 border-t border-[#f0e4d2] space-y-4">
-            <h3 className="text-sm sm:text-base font-bold text-[#1a110a] uppercase tracking-wider">
-              Beyond pure nectar, we craft individual botanical infusions for specific daily rituals:
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-              <motion.div
-                whileHover={{ y: -5, scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 20 }}
-                className="p-6 rounded-2xl bg-[#faf6ee] border border-[#ebdccb] space-y-2 group hover:border-[#15803d]/40 transition-all cursor-default"
-              >
-                <span className="text-xs font-bold uppercase tracking-wider text-[#15803d] block">
-                  Cooling
-                </span>
-                <h4 className="font-apricot text-2xl font-bold text-[#1a110a] group-hover:text-[#15803d] transition-colors">
-                  Mint Honey
-                </h4>
-                <p className="text-xs sm:text-sm text-[#5c5043] leading-relaxed">
-                  A clean, mindful sweetener providing cooling relief from the heat.
-                </p>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ y: -5, scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 20 }}
-                className="p-6 rounded-2xl bg-[#faf6ee] border border-[#ebdccb] space-y-2 group hover:border-[#c2410c]/40 transition-all cursor-default"
-              >
-                <span className="text-xs font-bold uppercase tracking-wider text-[#c2410c] block">
-                  Spicy Kick
-                </span>
-                <h4 className="font-apricot text-2xl font-bold text-[#1a110a] group-hover:text-[#c2410c] transition-colors">
-                  Chilly Honey
-                </h4>
-                <p className="text-xs sm:text-sm text-[#5c5043] leading-relaxed">
-                  To add a bold, spicy culinary kick to your meals and snacks.
-                </p>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ y: -5, scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 20 }}
-                className="p-6 rounded-2xl bg-[#faf6ee] border border-[#ebdccb] space-y-2 group hover:border-[#b45309]/40 transition-all cursor-default"
-              >
-                <span className="text-xs font-bold uppercase tracking-wider text-[#b45309] block">
-                  Wellness
-                </span>
-                <h4 className="font-apricot text-2xl font-bold text-[#1a110a] group-hover:text-[#b45309] transition-colors">
-                  Ginger &amp; Turmeric Honey
-                </h4>
-                <p className="text-xs sm:text-sm text-[#5c5043] leading-relaxed">
-                  A potent, antioxidant-rich wellness blend for a natural immunity boost.
-                </p>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-
-        {/* ─── CHAPTER 3: THE INDIAN HONEY FINGERPRINT ─── */}
-        <div className="bg-white rounded-[32px] sm:rounded-[44px] p-8 sm:p-12 lg:p-16 border border-[#eee4d4] shadow-sm mb-10 sm:mb-14 relative overflow-hidden">
-          <div className="max-w-3xl space-y-6">
-            <div className="inline-flex items-center gap-2 bg-[#faecc9] border border-[#e5cf9d] px-4 py-1.5 rounded-full text-xs font-bold text-[#8b5311] uppercase tracking-wider shadow-2xs">
-              <span>Chapter 03 · Traceability &amp; Standards</span>
-            </div>
-
-            <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1a110a] leading-[1.05]">
-              The Indian Honey Fingerprint
-            </h2>
-
-            <p className="text-base sm:text-lg text-[#3d3228] leading-relaxed font-medium">
-              Our vision is fiercely protective of India&apos;s natural heritage. We are building the definitive Indian Honey Fingerprint System—mapping the botanical, chemical, functional, and physical markers of our nectar to elevate it to a premium global standard.
-            </p>
-
-            <p className="text-sm sm:text-base text-[#5c5043] leading-relaxed">
-              Historically, Indian honey has faced global shipment rejections due to traces of antibiotics, heavy metals, and a lack of rigorous NMR testing, casting a shadow of &ldquo;guilt by association&rdquo; over our nation&apos;s true nectar. We are closing that gap by ensuring every batch is rigorously tested at FSSAI registered labs, accompanied by a Certificate of Analysis to guarantee zero adulteration, zero antibiotics, and zero heavy metals.
-            </p>
-
-            <p className="text-sm sm:text-base text-[#5c5043] leading-relaxed">
-              We are determined to make Indian honey uniquely competitive, creating a place on the world map for the country not just for the monumental Taj Mahal, but for exporting world-class, naturally sourced honey.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#f0e4d2]">
-              <div className="p-4 rounded-xl bg-[#faf6ee] border border-[#ebdccb]">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1a110a] mb-1">
-                  FSSAI Registered Labs
-                </h4>
-                <p className="text-xs text-[#5c5043]">
-                  Accompanied by a Certificate of Analysis for every batch.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-[#faf6ee] border border-[#ebdccb]">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1a110a] mb-1">
-                  Purity Guarantee
-                </h4>
-                <p className="text-xs text-[#5c5043]">
-                  Zero adulteration, zero antibiotics, and zero heavy metals.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ─── CHAPTER 4: BEYOND HONEY: THE TRUE POWER OF THE HIVE ─── */}
-        <div className="bg-[#140e0a] text-white rounded-[32px] sm:rounded-[44px] p-8 sm:p-12 lg:p-16 border border-[#2e1d10] shadow-[0_25px_60px_rgba(0,0,0,0.25)] space-y-10 relative overflow-hidden">
-          <div className="max-w-3xl space-y-6 relative z-10">
-            <div className="inline-flex items-center gap-2 bg-[#2a1d13] border border-[#d4a373]/40 px-4 py-1.5 rounded-full text-xs font-bold text-[#d4a373] uppercase tracking-wider">
-              <span>Chapter 04 · The True Power of the Hive</span>
-            </div>
-
-            <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold text-[#f2e6d5] leading-[1.05]">
-              Beyond Honey: The True Power of the Hive
-            </h2>
-
-            <p className="text-base sm:text-lg text-[#d9cbb8] leading-relaxed font-medium">
-              Most people believe bees exist solely to forage honey and pollinate flowers, completely unaware of the miraculous, natural pharmacy hidden within the hive. Gapoo aims to change this narrative and introduce the general public to the vast, untapped potential of the bees&apos; labor.
-            </p>
-
-            <div className="p-6 sm:p-7 rounded-2xl bg-[#1c140d] border-l-4 border-[#c87a1e] space-y-3">
-              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#d4a373] block">
-                The Sacred Pollinators
-              </span>
-              <ScrollRevealText
-                text="If the bee disappeared off the face of the Earth, man would only have four years left to live."
-                className="font-serif italic text-lg sm:text-xl text-[#f2e6d5] leading-relaxed"
-              />
-              <p className="text-xs sm:text-sm text-[#b8a896] leading-relaxed pt-1">
-                While historians debate whether Einstein spoke those exact words, the scientific reality is undeniable—without bees pollinating over a third of our global food supply, our ecosystems and agricultural survival would face catastrophic collapse.
-              </p>
-            </div>
-
-            <p className="text-xs sm:text-sm text-[#b8a896] leading-relaxed">
-              These tiny architects are profound scientific marvels. Did you know that a single worker bee will produce only about 1/12th of a teaspoon of honey in her entire lifetime? Or that bees generate an invisible electrostatic charge as they fly, acting like a literal magnet to pull pollen off flowers before they even touch the petals? Every single drop of the hive&apos;s yield is precious.
-            </p>
-          </div>
-
-          {/* Coming Soon Finishing Items */}
-          <div className="pt-6 border-t border-[#2a1d13] space-y-6 relative z-10">
-            <div className="max-w-2xl">
-              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#d4a373] block mb-1">
-                Coming Soon
-              </span>
-              <p className="text-xs sm:text-sm text-[#d9cbb8] leading-relaxed">
-                To honor this incredible insect and empower our farmers to scale beyond basic liquid honey, Gapoo is expanding. Coming soon to both the everyday consumable market and the B2B manufacturing sector, we will introduce the hive&apos;s highest-value finishing items:
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <motion.div
-                whileHover={{ y: -4, scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 20 }}
-                className="p-5 rounded-2xl bg-[#1a120c] border border-[#2a1d13] hover:border-[#f5a623]/50 transition-all space-y-2 cursor-default"
-              >
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#f5a623] block">
-                  Dietary Superfood
-                </span>
-                <h4 className="font-apricot text-2xl font-bold text-[#f2e6d5]">
-                  Bee Pollen
-                </h4>
-                <p className="text-xs text-[#a39482] leading-relaxed">
-                  A high-protein, nutrient-dense dietary superfood utilized as a natural energy booster.
-                </p>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ y: -4, scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 20 }}
-                className="p-5 rounded-2xl bg-[#1a120c] border border-[#2a1d13] hover:border-[#f5a623]/50 transition-all space-y-2 cursor-default"
-              >
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#f5a623] block">
-                  Hive Defense
-                </span>
-                <h4 className="font-apricot text-2xl font-bold text-[#f2e6d5]">
-                  Propolis
-                </h4>
-                <p className="text-xs text-[#a39482] leading-relaxed">
-                  The hive&apos;s &ldquo;bee glue,&rdquo; acting as a raw, natural antibiotic defense for immune support and antimicrobial oral care.
-                </p>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ y: -4, scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 20 }}
-                className="p-5 rounded-2xl bg-[#1a120c] border border-[#2a1d13] hover:border-[#f5a623]/50 transition-all space-y-2 cursor-default"
-              >
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#f5a623] block">
-                  Cellular Superfood
-                </span>
-                <h4 className="font-apricot text-2xl font-bold text-[#f2e6d5]">
-                  Royal Jelly
-                </h4>
-                <p className="text-xs text-[#a39482] leading-relaxed">
-                  A highly-prized cellular superfood utilized in premium anti-aging and fertility health supplements.
-                </p>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ y: -4, scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 20 }}
-                className="p-5 rounded-2xl bg-[#1a120c] border border-[#2a1d13] hover:border-[#f5a623]/50 transition-all space-y-2 cursor-default"
-              >
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#f5a623] block">
-                  Eco-Friendly
-                </span>
-                <h4 className="font-apricot text-2xl font-bold text-[#f2e6d5]">
-                  Beeswax
-                </h4>
-                <p className="text-xs text-[#a39482] leading-relaxed">
-                  A natural, eco-friendly wax processed into skin-nourishing cosmetics, salves, and lip balms.
-                </p>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Explicit Spacer & Divider between Our Story and Newsletter */}
-      <div className="w-full max-w-4xl mx-auto px-6 sm:px-8 my-10 sm:my-16">
-        <div className="h-[1px] bg-[#ebdccb]/70" />
-      </div>
-
-      {/* ============================================================ */}
-      {/* 5. NEWSLETTER CTA                                            */}
-      {/* ============================================================ */}
-      <section className="py-20 sm:py-28 lg:py-36 px-6 sm:px-8 max-w-3xl mx-auto text-center space-y-8 relative">
-        <FadeIn className="space-y-4 text-center flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 bg-[#faecc9] border border-[#e8cd8c] px-4 py-1.5 rounded-full text-xs font-bold tracking-widest text-[#8b5311] uppercase font-montserrat shadow-2xs">
-            <span>Unlock the Goodness</span>
-          </div>
-          <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1a110a] text-center">
-            Get 10% off your first box
-          </h2>
-          <p className="text-base sm:text-lg text-[#736555] max-w-lg mx-auto font-montserrat text-center leading-relaxed">
-            Sweet perks, secret restocks, and a smile in your inbox. No spam, just real honey.
-          </p>
-        </FadeIn>
-
-        {isNewsletterSuccess ? (
-          <div className="inline-block bg-[#faecc9] border border-[#e8cd8c] text-[#8b5311] px-6 py-4 rounded-full text-sm font-semibold font-montserrat shadow-sm">
-            🎉 Welcome to the club! Check your inbox for your 10% discount code.
-          </div>
-        ) : (
-          <fetcher.Form
-            method="post"
-            className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto font-montserrat mt-4"
+        {/* ========================================================== */}
+        {/* AESTHETIC BACKGROUND FLOATING ARCHIVAL TILES               */}
+        {/* ========================================================== */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+          {/* Card 1: Indian Apiarist Harvest (Top-Left) */}
+          <motion.div
+            style={{ y: bgCardY1 }}
+            className="absolute top-8 sm:top-12 -left-6 sm:left-6 lg:left-12 w-48 sm:w-64 lg:w-76 rounded-2xl sm:rounded-3xl overflow-hidden border border-[#ebdccb]/20 bg-[#1f150e]/90 shadow-[0_25px_60px_rgba(0,0,0,0.6)] -rotate-3 opacity-45 hover:opacity-95 transition-all duration-500 pointer-events-auto group"
           >
-            <input type="hidden" name="intent" value="newsletter" />
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder="you@email.com"
-              className="w-full sm:flex-1 px-6 py-3.5 rounded-full bg-white border border-[#d6cbba] focus:border-[#1a110a] focus:outline-none text-base shadow-sm font-medium"
-              disabled={fetcher.state === 'submitting'}
-            />
-            <button
-              type="submit"
-              className="w-full sm:w-auto bg-[#1a110a] hover:bg-[#2e1d10] text-white px-8 py-3.5 rounded-full text-sm font-bold tracking-wide shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap disabled:opacity-70 disabled:cursor-not-allowed"
-              disabled={fetcher.state === 'submitting'}
+            <div className="relative aspect-4/3 overflow-hidden">
+              <img
+                src="/images/indian_apiarist_harvest.jpg"
+                alt="Generational Indian Apiarist Harvesting Pure Comb"
+                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+              <div className="absolute bottom-2.5 sm:bottom-3 left-3 sm:left-4 right-3 text-white">
+                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#f5a623] block leading-none">
+                  Source Terroir
+                </span>
+                <span className="text-[11px] sm:text-xs font-semibold text-white/95 leading-tight block mt-0.5 truncate">
+                  Generational Apiary Harvest
+                </span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Card 2: High-Altitude Organic Honey Farming in Nepal (Top-Right) */}
+          <motion.div
+            style={{ y: bgCardY2 }}
+            className="absolute top-6 sm:top-14 -right-6 sm:right-6 lg:right-12 w-48 sm:w-64 lg:w-76 rounded-2xl sm:rounded-3xl overflow-hidden border border-[#ebdccb]/20 bg-[#1f150e]/90 shadow-[0_25px_60px_rgba(0,0,0,0.6)] rotate-4 opacity-45 hover:opacity-95 transition-all duration-500 pointer-events-auto group"
+          >
+            <div className="relative aspect-4/3 overflow-hidden">
+              <img
+                src="/images/Organic%20Honey%20Farming%20in%20Nepal%20%E2%80%93%20Complete%20Guide%20for%20Beginners.jpeg"
+                alt="Organic Himalayan Honey Farming and Wild Flora"
+                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+              <div className="absolute bottom-2.5 sm:bottom-3 left-3 sm:left-4 right-3 text-white">
+                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#4ade80] block leading-none">
+                  Himalayan Flora
+                </span>
+                <span className="text-[11px] sm:text-xs font-semibold text-white/95 leading-tight block mt-0.5 truncate">
+                  Wild High-Altitude Apiaries
+                </span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Card 3: Morning Breakfast Ritual (Mid/Bottom-Left) */}
+          <motion.div
+            style={{ y: bgCardY3 }}
+            className="absolute bottom-20 sm:bottom-28 -left-8 sm:left-8 lg:left-14 w-44 sm:w-56 lg:w-68 rounded-2xl sm:rounded-3xl overflow-hidden border border-[#ebdccb]/20 bg-[#1f150e]/90 shadow-[0_25px_60px_rgba(0,0,0,0.6)] rotate-2 opacity-40 hover:opacity-95 transition-all duration-500 pointer-events-auto group"
+          >
+            <div className="relative aspect-4/3 overflow-hidden">
+              <img
+                src="/images/moment_breakfast_clean.jpg"
+                alt="Clean Honey Pour Morning Ritual"
+                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+              <div className="absolute bottom-2.5 sm:bottom-3 left-3 sm:left-4 right-3 text-white">
+                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#fbbf24] block leading-none">
+                  Daily Ritual
+                </span>
+                <span className="text-[11px] sm:text-xs font-semibold text-white/95 leading-tight block mt-0.5 truncate">
+                  Mess-Free Morning Drizzle
+                </span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Card 4: Botanical Infusions Trio (Mid/Bottom-Right) */}
+          <motion.div
+            style={{ y: bgCardY4 }}
+            className="absolute bottom-14 sm:bottom-24 -right-8 sm:right-8 lg:right-16 w-48 sm:w-60 lg:w-72 rounded-2xl sm:rounded-3xl overflow-hidden border border-[#ebdccb]/20 bg-[#1f150e]/90 shadow-[0_25px_60px_rgba(0,0,0,0.6)] -rotate-3 opacity-40 hover:opacity-95 transition-all duration-500 pointer-events-auto group"
+          >
+            <div className="relative aspect-4/3 overflow-hidden">
+              <img
+                src="/images/botanical_infusions_trio.jpg"
+                alt="Botanical Infusions Trio cold-steeped in raw honey"
+                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+              <div className="absolute bottom-2.5 sm:bottom-3 left-3 sm:left-4 right-3 text-white">
+                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#ea580c] block leading-none">
+                  Botanical Trio
+                </span>
+                <span className="text-[11px] sm:text-xs font-semibold text-white/95 leading-tight block mt-0.5 truncate">
+                  Mint, Chili & Turmeric
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* 3-Layer Massive Kinetic Parallax Typography */}
+        <div className="flex flex-col gap-5 sm:gap-8 opacity-90 relative z-10 select-none py-8">
+          {/* Row 1: Solid Warm Gold Typography */}
+          <motion.div style={{ x: manifestoX1 }} className="whitespace-nowrap flex items-center">
+            <h2
+              className="font-montserrat leading-[0.85] tracking-tighter font-black text-[#fdfaf1]"
+              style={{ fontSize: 'clamp(2.5rem, 8vw, 8rem)' }}
             >
-              {fetcher.state === 'submitting' ? 'Sweetening...' : 'Sweeten me up'}
-            </button>
-            {fetcher.data?.error && (
-              <p className="text-red-500 text-sm mt-2 absolute -bottom-6 w-full text-center">
-                {fetcher.data.error}
-              </p>
-            )}
-          </fetcher.Form>
-        )}
+              GARDEN + POOL <span className="text-[#f5a623] px-4 sm:px-8">✦</span> THE HIVE AWAKENING <span className="text-[#f5a623] px-4 sm:px-8">✦</span> GARDEN + POOL <span className="text-[#f5a623] px-4 sm:px-8">✦</span> THE HIVE AWAKENING
+            </h2>
+          </motion.div>
+
+          {/* Row 2: Luminous Outlined Architectural Typography */}
+          <motion.div style={{ x: manifestoX2 }} className="whitespace-nowrap flex items-center">
+            <h2
+              className="font-montserrat leading-[0.85] tracking-tighter font-black text-transparent"
+              style={{
+                WebkitTextStroke: '2px rgba(245,166,35,0.75)',
+                fontSize: 'clamp(3rem, 10vw, 9.5rem)',
+              }}
+            >
+              UNTAMED NECTAR <span className="text-transparent px-4 sm:px-8" style={{ WebkitTextStroke: '2px rgba(245,166,35,0.75)' }}>✦</span> NATURAL PHARMACY <span className="text-transparent px-4 sm:px-8" style={{ WebkitTextStroke: '2px rgba(245,166,35,0.75)' }}>✦</span> UNTAMED NECTAR <span className="text-transparent px-4 sm:px-8" style={{ WebkitTextStroke: '2px rgba(245,166,35,0.75)' }}>✦</span> NATURAL PHARMACY
+            </h2>
+          </motion.div>
+
+          {/* Row 3: Solid Warm Gold Typography */}
+          <motion.div style={{ x: manifestoX3 }} className="whitespace-nowrap flex items-center">
+            <h2
+              className="font-montserrat leading-[0.88] tracking-tighter font-black text-[#fdfaf1]"
+              style={{ fontSize: 'clamp(2.5rem, 8vw, 8rem)' }}
+            >
+              100% TRACEABLE <span className="text-[#f5a623] px-4 sm:px-8">✦</span> BEYOND THE JAR <span className="text-[#f5a623] px-4 sm:px-8">✦</span> 100% TRACEABLE <span className="text-[#f5a623] px-4 sm:px-8">✦</span> BEYOND THE JAR
+            </h2>
+          </motion.div>
+        </div>
+
+        {/* Organic Honey Wave Transition (Bottom) */}
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-20">
+          <svg viewBox="0 0 1440 120" preserveAspectRatio="none" className="w-full h-[40px] sm:h-[70px] text-[#fdfaf1]">
+            <path
+              fill="currentColor"
+              d="M0,56 C160,68 320,78 480,72 C640,68 800,48 960,42 C1120,38 1280,48 1360,54 L1440,60 L1440,120 L0,120 Z"
+            />
+          </svg>
+        </div>
       </section>
 
       {/* ============================================================ */}
-      {/* 6. APPLE-STYLE SCROLL-DRIVEN MASCOT LOGO FINALE              */}
+      {/* SECTION 1: HOW IT WORKS · ABOUT THREE SECONDS                */}
+      {/* (01 SNAP · 02 SQUEEZE · 03 SIP)                              */}
+      {/* ============================================================ */}
+      <section id="how-it-works" className="relative scroll-mt-24">
+        <SnapSqueezeSip />
+      </section>
+
+      {/* ============================================================ */}
+      {/* SECTION 2: THE FINALE GAPOO BEAR LOGO REVEAL & HONEY CURTAIN */}
       {/* ============================================================ */}
       <AppleLogoReveal />
-
-      {/* Certificate of Analysis Interactive Modal */}
-      <CertificateOfAnalysisModal
-        isOpen={isCoaModalOpen}
-        onClose={() => setIsCoaModalOpen(false)}
-      />
     </div>
   );
 }
-
-const FEATURED_COLLECTION_QUERY = `#graphql
-  fragment FeaturedCollection on Collection {
-    id
-    title
-    image {
-      id
-      url
-      altText
-      width
-      height
-    }
-    handle
-  }
-  query FeaturedCollection($country: CountryCode, $language: LanguageCode)
-    @inContext(country: $country, language: $language) {
-    collections(first: 1, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        ...FeaturedCollection
-      }
-    }
-  }
-`;
 
 const STORE_PRODUCTS_QUERY = `#graphql
   query StoreProducts($country: CountryCode, $language: LanguageCode)
@@ -1742,36 +988,5 @@ const STORE_PRODUCTS_QUERY = `#graphql
   }
 `;
 
-const RECOMMENDED_PRODUCTS_QUERY = `#graphql
-  fragment RecommendedProduct on Product {
-    id
-    title
-    handle
-    priceRange {
-      minVariantPrice {
-        amount
-        currencyCode
-      }
-    }
-    featuredImage {
-      id
-      url
-      altText
-      width
-      height
-    }
-  }
-  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
-    @inContext(country: $country, language: $language) {
-    products(first: 4, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        ...RecommendedProduct
-      }
-    }
-  }
-`;
-
 /** @typedef {import('./+types/_index').Route} Route */
-/** @typedef {import('storefrontapi.generated').FeaturedCollectionFragment} FeaturedCollectionFragment */
-/** @typedef {import('storefrontapi.generated').RecommendedProductsQuery} RecommendedProductsQuery */
 /** @typedef {ReturnType<typeof useLoaderData<typeof loader>>} LoaderReturnData */
