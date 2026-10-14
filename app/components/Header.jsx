@@ -22,7 +22,7 @@ export function Header({ header, isLoggedIn, cart, publicStoreDomain }) {
             />
           </div>
           <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#1a110a] group-hover:text-[#c87a1e] transition-colors leading-none">
-            gapoo<span className="text-[#c87a1e]">.</span>
+            Gapoo<span className="text-[#c87a1e]">.</span>
           </span>
         </Link>
 
