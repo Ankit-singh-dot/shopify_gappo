@@ -121,7 +121,7 @@ function CartEmpty({ hidden = false }) {
       <div className="mt-8 pt-6 border-t border-[#ede3d0] w-full grid grid-cols-2 gap-3 text-left">
         <div className="flex items-center gap-2 text-[11px] text-[#736555]">
           <span className="text-base">🚚</span>
-          <span>Free shipping over ₹500</span>
+          <span>Free delivery over ₹399</span>
         </div>
         <div className="flex items-center gap-2 text-[11px] text-[#736555]">
           <span className="text-base">🌿</span>

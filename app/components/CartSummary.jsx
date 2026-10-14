@@ -14,19 +14,101 @@ export function CartSummary({cart, layout}) {
   const giftCardHeadingId = useId();
   const giftCardInputId = useId();
 
+  const subtotal = cart?.cost?.subtotalAmount?.amount
+    ? parseFloat(cart.cost.subtotalAmount.amount)
+    : 0;
+
+  // Free delivery threshold: 3+ packs (₹399 and above)
+  const FREE_SHIPPING_THRESHOLD = 399;
+  const isFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
+  const amountNeeded = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const progressPercent = Math.min(100, Math.round((subtotal / FREE_SHIPPING_THRESHOLD) * 100));
+
+  // Standard shipping fee: ₹70 on orders under ₹399, FREE for ₹399+
+  const shippingFee = subtotal > 0 ? (isFreeShipping ? 0 : 70) : 0;
+  const estimatedTotal = subtotal + shippingFee;
+
   return (
     <div aria-labelledby={summaryId} className={className}>
-      <h4 id={summaryId}>Totals</h4>
-      <dl role="group" className="cart-subtotal">
-        <dt>Subtotal</dt>
-        <dd>
-          {cart?.cost?.subtotalAmount?.amount ? (
-            <span>₹{parseFloat(cart.cost.subtotalAmount.amount).toFixed(2).replace(/\.00$/, '')}</span>
-          ) : (
-            '-'
-          )}
-        </dd>
-      </dl>
+      {/* ─── Free Delivery Progress Bar ─── */}
+      {subtotal > 0 && (
+        <div className="mb-4 p-3.5 rounded-2xl bg-[#fcf8f0] border border-[#eee4d4] font-montserrat">
+          <div className="flex items-center justify-between text-xs mb-1.5">
+            {isFreeShipping ? (
+              <span className="font-bold text-[#15803d] flex items-center gap-1.5">
+                <span>🎉</span>
+                <span>You've unlocked FREE Delivery!</span>
+              </span>
+            ) : (
+              <span className="font-semibold text-[#8b5311]">
+                Add <strong className="text-[#c87a1e]">₹{amountNeeded.toFixed(0)}</strong> more for FREE Delivery
+              </span>
+            )}
+            <span className="font-mono text-[11px] font-bold text-[#8a7a6a]">
+              {progressPercent}%
+            </span>
+          </div>
+
+          <div className="w-full h-2 rounded-full bg-[#ebdccb] overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-500 ${
+                isFreeShipping
+                  ? 'bg-gradient-to-r from-[#15803d] to-[#22c55e]'
+                  : 'bg-gradient-to-r from-[#c87a1e] to-[#f5a623]'
+              }`}
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+
+          <div className="mt-1.5 flex items-center justify-between text-[10px] text-[#8a7a6a]">
+            <span>Standard: 3–5 Days (₹70)</span>
+            <span>Free on 3+ Packs (₹399+)</span>
+          </div>
+        </div>
+      )}
+
+      <h4 id={summaryId} className="font-bold text-sm text-[#1a110a] mb-2">Order Summary</h4>
+
+      <div className="space-y-1.5 text-xs font-montserrat pb-2 border-b border-[#f0e6d6]">
+        {/* Subtotal */}
+        <div className="flex items-center justify-between">
+          <span className="text-[#6b5d4f]">Subtotal</span>
+          <span className="font-bold text-[#1a110a]">
+            {subtotal > 0 ? `₹${subtotal.toFixed(0)}` : '-'}
+          </span>
+        </div>
+
+        {/* Shipping Line Item */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[#6b5d4f]">Standard Delivery</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#f3ece0] text-[#736555] font-mono">
+              3–5 Days
+            </span>
+          </div>
+          <div>
+            {subtotal === 0 ? (
+              <span className="text-[#8a7a6a]">-</span>
+            ) : isFreeShipping ? (
+              <span className="flex items-center gap-1.5">
+                <span className="line-through text-stone-400 text-[11px]">₹70</span>
+                <span className="font-bold text-[#15803d]">FREE</span>
+              </span>
+            ) : (
+              <span className="font-bold text-[#b45309]">+ ₹70</span>
+            )}
+          </div>
+        </div>
+
+        {/* Estimated Total */}
+        <div className="flex items-center justify-between pt-2 mt-1 border-t border-[#f5ece0] text-sm">
+          <span className="font-bold text-[#1a110a]">Estimated Total</span>
+          <span className="font-apricot text-xl font-bold text-[#1a110a]">
+            {subtotal > 0 ? `₹${estimatedTotal.toFixed(0)}` : '-'}
+          </span>
+        </div>
+      </div>
+
       <CartDiscounts
         discountCodes={cart?.discountCodes}
         discountsHeadingId={discountsHeadingId}
@@ -37,15 +119,18 @@ export function CartSummary({cart, layout}) {
         giftCardHeadingId={giftCardHeadingId}
         giftCardInputId={giftCardInputId}
       />
-      <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
+      <CartCheckoutActions
+        checkoutUrl={cart?.checkoutUrl}
+        estimatedTotal={estimatedTotal > 0 ? estimatedTotal.toFixed(0) : undefined}
+      />
     </div>
   );
 }
 
 /**
- * @param {{checkoutUrl?: string}}
+ * @param {{checkoutUrl?: string; estimatedTotal?: string}}
  */
-function CartCheckoutActions({checkoutUrl}) {
+function CartCheckoutActions({checkoutUrl, estimatedTotal}) {
   if (!checkoutUrl) return null;
 
   return (
@@ -55,7 +140,9 @@ function CartCheckoutActions({checkoutUrl}) {
         target="_self"
         className="w-full py-3.5 px-6 rounded-full bg-[#18181b] hover:bg-[#27272a] text-white text-sm font-bold tracking-wide shadow-md transition-all hover:scale-[1.02] active:scale-98 text-center flex items-center justify-center gap-2 cursor-pointer no-underline font-montserrat"
       >
-        <span className="text-amber-50">Continue to Checkout</span>
+        <span className="text-amber-50">
+          Continue to Checkout {estimatedTotal ? `· ₹${estimatedTotal}` : ''}
+        </span>
         <span className="text-amber-50">&rarr;</span>
       </a>
       <div className="flex items-center justify-center gap-2 mt-3 text-[11px] text-[#736555] font-montserrat">
@@ -67,7 +154,7 @@ function CartCheckoutActions({checkoutUrl}) {
           Secure Checkout
         </span>
         <span>•</span>
-        <span>Satisfaction Guaranteed</span>
+        <span>Standard Delivery (3–5 Days)</span>
       </div>
     </div>
   );
