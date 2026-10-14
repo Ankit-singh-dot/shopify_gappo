@@ -108,6 +108,7 @@ export default function OurStoryPage() {
               ['bg-[#10b981]', '100% Raw & Single-Origin'],
               ['bg-[#c87a1e]', 'Generational Indian Apiaries'],
               ['bg-[#10b981]', 'Zero Added Syrups'],
+              ['bg-[#15803d]', 'COA Lab Certified (0 Heavy Metals)'],
             ].map(([dot, label]) => (
               <span
                 key={label}
@@ -229,10 +230,20 @@ export default function OurStoryPage() {
                 </p>
               </div>
               <div className={SUB_CARD}>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1a110a]">Purity Guarantee</h4>
-                <p className="text-xs sm:text-sm leading-relaxed text-[#5c5043]">
-                  Zero adulteration, zero antibiotics, and zero heavy metals.
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1a110a]">Purity Guarantee</h4>
+                  <span className="text-[10px] font-extrabold text-[#15803d] bg-[#15803d]/10 px-2 py-0.5 rounded-full">✓ COA Verified</span>
+                </div>
+                <p className="text-xs sm:text-sm leading-relaxed text-[#5c5043] mt-1">
+                  Zero adulteration, zero heavy metals (BLQ), and certified Standard Quality (Batch #HFL-GMG-08/26-01).
                 </p>
+                <Link
+                  to="/shop#lab-verified"
+                  className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-[#c87a1e] hover:underline"
+                >
+                  <span>Inspect Lab Report (COA)</span>
+                  <span>→</span>
+                </Link>
               </div>
             </div>
           </div>

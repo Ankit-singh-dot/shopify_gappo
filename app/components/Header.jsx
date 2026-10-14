@@ -28,7 +28,7 @@ export function Header({ header, isLoggedIn, cart, publicStoreDomain }) {
           {[
             { href: '/shop', label: 'Shop Sticks' },
             { href: '/story', label: 'Our Story' },
-            { href: '/#the-hive', label: 'The Hive Future' },
+            { href: '/shop#lab-verified', label: 'Lab Certified (COA)' },
             { href: '/shop#why-honey', label: 'Why Honey' },
           ].map((item) => (
             <a
@@ -90,8 +90,9 @@ export function HeaderMenu({
       <a href="/story" onClick={close} className="hover:text-black no-underline hover:no-underline">
         Our Story
       </a>
-      <a href="/#the-hive" onClick={close} className="hover:text-black no-underline hover:no-underline">
-        The Hive Future
+      <a href="/shop#lab-verified" onClick={close} className="hover:text-black no-underline hover:no-underline flex items-center justify-between">
+        <span>Lab Certified (COA)</span>
+        <span className="text-[10px] bg-[#15803d]/10 text-[#15803d] px-2 py-0.5 rounded-full font-bold">✓ Verified</span>
       </a>
       <a href="/shop#why-honey" onClick={close} className="hover:text-black no-underline hover:no-underline">
         Why Honey
