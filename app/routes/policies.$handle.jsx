@@ -56,8 +56,6 @@ export async function loader({params, context}) {
           </ul>
           <p>Please reach out to our dedicated care team within <strong>48 hours of delivery</strong> at <a href="mailto:support@gapoo.in" class="text-[#c87a1e] font-semibold underline">support@gapoo.in</a> with your Order ID and clear photos of the damaged items and outer box. Upon review, we will promptly dispatch a <strong>free replacement box at zero extra cost</strong> or issue a <strong>full refund</strong> back to your original payment method.</p>
 
-          <h2>Subscribe &amp; Save (Recurring Subscriptions)</h2>
-          <p>If you enjoy Gapoo through our Subscribe &amp; Save program, you maintain complete freedom. You may pause, skip, or cancel your upcoming scheduled deliveries at any time before the renewal date with zero cancellation fees. Once an individual subscription order has been dispatched from our facility, it cannot be recalled or returned due to consumable food regulations.</p>
 
           <h2>Order Cancellations Prior to Dispatch</h2>
           <p>If you placed an order by mistake or wish to modify your details, you may cancel free of charge prior to fulfillment dispatch by emailing <a href="mailto:support@gapoo.in" class="text-[#c87a1e] font-semibold underline">support@gapoo.in</a>. Once handoff to our courier partners has occurred, parcels in transit cannot be recalled.</p>

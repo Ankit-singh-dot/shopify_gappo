@@ -26,10 +26,6 @@ const FAQ_ITEMS = [
     q: 'What is your return & replacement policy for consumable honey sticks?',
     a: 'Because Gapoo Honey Sticks are consumable, edible food items (pure unpasteurized raw honey), we cannot accept physical returns once an order is delivered for food hygiene and health safety reasons. However, your peace of mind is fully guaranteed: if your parcel arrives damaged, leaking, or crushed in courier transit, email support@gapoo.in within 48 hours with photos and we will immediately dispatch a free replacement box or issue a full refund.',
   },
-  {
-    q: 'How does Subscribe & Save work, and can I cancel anytime?',
-    a: 'Subscribe & Save delivers fresh boxes of Gapoo sticks directly to your door on a recurring monthly schedule so your daily ritual never runs dry. You have complete flexibility: you can pause, skip a cycle, or cancel anytime before your next renewal date with zero cancellation fees directly via support@gapoo.in.',
-  },
 ];
 
 export function FAQSection({ id = 'faq' }) {
