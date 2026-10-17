@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { AppleLogoReveal } from '~/components/AppleLogoReveal';
 import { CertificateOfAnalysisModal } from '~/components/CertificateOfAnalysisModal';
+import { FAQSection, ContactAndWholesaleSection } from '~/components/StoryHelpSections';
 
 /**
  * @type {Route.MetaFunction}
@@ -589,6 +590,12 @@ export default function OurStoryPage() {
             </div>
           </div>
         </section>
+
+        {/* ─── FREQUENTLY ASKED QUESTIONS (FAQ) ─── */}
+        <FAQSection id="faq" />
+
+        {/* ─── CONTACT US & WHOLESALE ─── */}
+        <ContactAndWholesaleSection contactId="contact" wholesaleId="wholesale" />
       </main>
 
       {/* ════════════════════════════════════════════════════════════ */}

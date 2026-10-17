@@ -6,6 +6,8 @@ import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'fra
 import { AppleLogoReveal } from '~/components/AppleLogoReveal';
 import { SnapSqueezeSip } from '~/components/shop/SnapSqueezeSip';
 import { HoneycombPattern } from '~/components/shop/motion';
+import { JarVsStick } from '~/components/shop/JarVsStick';
+import { LabVerifiedSection } from '~/components/LabVerifiedSection';
 
 export { SnapSqueezeSip, HoneycombPattern };
 
@@ -273,8 +275,21 @@ export default function ShopPage() {
     }
   };
 
+  const [purchaseType, setPurchaseType] = useState('one-time');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('mode') === 'subscribe' || window.location.hash === '#subscribe') {
+        setPurchaseType('subscribe');
+      }
+    }
+  }, []);
+
+  const isSubscribe = purchaseType === 'subscribe';
+  const packEffectivePrice = isSubscribe ? Math.round(activePack.price * 0.9) : activePack.price;
   const totalSticks = activePack.sticks * bundleMultiplier;
-  const totalPrice = activePack.price * bundleMultiplier;
+  const totalPrice = packEffectivePrice * bundleMultiplier;
   const totalOriginalPrice = (activePack.originalPrice || activePack.price) * bundleMultiplier;
 
   return (
@@ -667,6 +682,52 @@ export default function ShopPage() {
                 })}
               </div>
 
+              {/* Purchase Mode Toggle: One-Time Purchase vs Subscribe & Save */}
+              <div className="bg-[#f0e6d8] p-1 rounded-2xl flex items-center gap-1 font-montserrat">
+                <button
+                  type="button"
+                  onClick={() => setPurchaseType('one-time')}
+                  className={`flex-1 py-2 sm:py-2.5 px-3 rounded-xl text-xs font-bold transition-all text-center cursor-pointer ${
+                    !isSubscribe
+                      ? 'bg-white text-[#1a110a] shadow-xs'
+                      : 'text-[#736555] hover:text-[#1a110a]'
+                  }`}
+                >
+                  One-Time Purchase
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPurchaseType('subscribe')}
+                  className={`flex-1 py-2 sm:py-2.5 px-3 rounded-xl text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer ${
+                    isSubscribe
+                      ? 'bg-[#1a110a] text-[#fbbf24] shadow-xs'
+                      : 'text-[#736555] hover:text-[#1a110a]'
+                  }`}
+                >
+                  <span>Subscribe &amp; Save</span>
+                  <span className="text-[10px] bg-[#f5a623] text-black px-1.5 py-0.5 rounded-full font-black leading-none">
+                    10% OFF
+                  </span>
+                </button>
+              </div>
+
+              {/* Subscribe & Save Consumable Food Notice */}
+              {isSubscribe && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-3.5 rounded-2xl bg-[#faecc9]/75 border border-[#e5cf9d] text-xs text-[#8b5311] space-y-1 font-montserrat"
+                >
+                  <div className="flex items-center gap-1.5 font-bold">
+                    <span>🔄</span>
+                    <span>Delivered every 30 days · Save extra 10% · Pause or cancel anytime</span>
+                  </div>
+                  <p className="text-[11px] text-[#78460d] leading-relaxed">
+                    <strong>🌿 Consumable Product Health Notice:</strong> Because pure raw honey is an edible, consumable wellness product, delivered boxes cannot be returned for food safety reasons. You have total freedom to pause, change frequency, or cancel your subscription anytime prior to renewal.
+                  </p>
+                </motion.div>
+              )}
+
               {/* Price Row + Stepper + Big CTA Button */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
                 {/* Live Price Tag */}
@@ -674,13 +735,13 @@ export default function ShopPage() {
                   <span className="font-apricot text-4xl sm:text-5xl font-bold text-[#1a110a] leading-none">
                     ₹{totalPrice}
                   </span>
-                  {totalOriginalPrice > totalPrice && (
+                  {(totalOriginalPrice > totalPrice || isSubscribe) && (
                     <>
                       <span className="text-sm font-semibold text-[#8c7e6e] line-through">
                         ₹{totalOriginalPrice}
                       </span>
                       <span className="text-xs font-black text-[#15803d] bg-[#dcfce7] px-2.5 py-0.5 rounded-full">
-                        {activePack.savingsText}
+                        {isSubscribe ? 'Save 10% Subscribed' : activePack.savingsText}
                       </span>
                     </>
                   )}
@@ -721,6 +782,7 @@ export default function ShopPage() {
                             quantity: 1 * bundleMultiplier,
                             attributes: [
                               { key: 'Pack', value: activePack.title },
+                              { key: 'Purchase Option', value: isSubscribe ? 'Subscribe & Save (10% OFF · Recurring)' : 'One-Time Purchase' },
                               { key: 'Total Sticks', value: `${totalSticks} Sticks` },
                               { key: 'Bundle Deal', value: `₹${totalPrice}` },
                             ],
@@ -945,6 +1007,7 @@ export default function ShopPage() {
       </section>
 
       {/* ============================================================ */}
+      {/* ============================================================ */}
       {/* SECTION 1: HOW IT WORKS · ABOUT THREE SECONDS                */}
       {/* (01 SNAP · 02 SQUEEZE · 03 SIP)                              */}
       {/* ============================================================ */}
@@ -953,7 +1016,17 @@ export default function ShopPage() {
       </section>
 
       {/* ============================================================ */}
-      {/* SECTION 2: THE FINALE GAPOO BEAR LOGO REVEAL & HONEY CURTAIN */}
+      {/* SECTION 2: WHY HONEY · THE PANTRY CLEANSE                    */}
+      {/* ============================================================ */}
+      <JarVsStick id="why-honey" />
+
+      {/* ============================================================ */}
+      {/* SECTION 3: LAB VERIFIED · 100% PURITY & COA ANALYSIS         */}
+      {/* ============================================================ */}
+      <LabVerifiedSection id="lab-verified" className="border-t border-[#ebd8b0]/60" />
+
+      {/* ============================================================ */}
+      {/* SECTION 4: THE FINALE GAPOO BEAR LOGO REVEAL & HONEY CURTAIN */}
       {/* ============================================================ */}
       <AppleLogoReveal />
     </div>

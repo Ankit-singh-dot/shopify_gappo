@@ -47,7 +47,7 @@ const COMPARISON_ROWS = [
   },
 ];
 
-export function JarVsStick() {
+export function JarVsStick({ id = 'why-honey' }) {
   const [cupsPerDay, setCupsPerDay] = useState(2);
 
   // Annual friction math
@@ -56,7 +56,7 @@ export function JarVsStick() {
   const minutesSaved = Math.round((cupsPerDay * 365 * 40) / 60);
 
   return (
-    <section className="py-20 sm:py-28 lg:py-32 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto relative font-montserrat">
+    <section id={id} className="py-20 sm:py-28 lg:py-32 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto relative font-montserrat scroll-mt-24">
       {/* Section Header */}
       <div className="max-w-3xl mb-12 sm:mb-16">
         <div className="inline-flex items-center gap-2 bg-[#faecc9] border border-[#e5cf9d] px-4 py-1.5 rounded-full text-xs font-bold text-[#8b5311] shadow-2xs mb-4">

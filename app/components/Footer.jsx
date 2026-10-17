@@ -1,10 +1,69 @@
-import { Link } from 'react-router';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { Link, useFetcher } from 'react-router';
+
+function NewsletterForm() {
+  const fetcher = useFetcher();
+  const [email, setEmail] = useState('');
+  const isSubmitting = fetcher.state !== 'idle';
+  const data = fetcher.data;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email) return;
+    fetcher.submit({ email }, { method: 'POST', action: '/api/newsletter' });
+  };
+
+  return (
+    <div className="mt-12 max-w-md">
+      <form onSubmit={handleSubmit} className="relative group">
+        <input 
+          type="email" 
+          name="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Join the hive (Email Address)" 
+          disabled={isSubmitting}
+          className="w-full bg-transparent border-b border-white/20 py-4 pl-2 pr-12 text-white placeholder-white/40 focus:outline-none focus:border-[#c87a1e] transition-colors font-medium disabled:opacity-50"
+        />
+        <button 
+          type="submit"
+          disabled={isSubmitting}
+          className="absolute right-0 top-1/2 -translate-y-1/2 text-white/50 hover:text-[#c87a1e] transition-colors p-2 cursor-pointer disabled:opacity-50"
+          aria-label="Subscribe to newsletter"
+        >
+          {isSubmitting ? (
+            <span className="w-5 h-5 block border-2 border-white/30 border-t-[#c87a1e] rounded-full animate-spin" />
+          ) : (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          )}
+        </button>
+      </form>
+
+      {/* Success / Error Feedback */}
+      {data?.success && (
+        <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#86efac]">
+          <span>✓</span>
+          <span>{data.message}</span>
+        </div>
+      )}
+      {data?.error && (
+        <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#fca5a5]">
+          <span>✕</span>
+          <span>{data.error}</span>
+        </div>
+      )}
+    </div>
+  );
+}
 
 /**
  * @param {FooterProps}
  */
-export function Footer({footer, header, publicStoreDomain}) {
+export function Footer() {
   return (
     <footer className="bg-[#1a110a] text-white pt-24 pb-12 relative overflow-hidden border-t border-[#c87a1e]">
       
@@ -23,16 +82,7 @@ export function Footer({footer, header, publicStoreDomain}) {
                </p>
                
                {/* Newsletter Input */}
-               <div className="relative mt-12 max-w-md group">
-                 <input 
-                   type="email" 
-                   placeholder="Join the hive (Email Address)" 
-                   className="w-full bg-transparent border-b border-white/20 py-4 pl-2 pr-12 text-white placeholder-white/40 focus:outline-none focus:border-[#c87a1e] transition-colors font-medium"
-                 />
-                 <button className="absolute right-0 top-1/2 -translate-y-1/2 text-white/50 group-hover:text-[#c87a1e] transition-colors p-2">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                 </button>
-               </div>
+               <NewsletterForm />
             </div>
 
             {/* Links Columns */}
@@ -42,7 +92,7 @@ export function Footer({footer, header, publicStoreDomain}) {
                  <ul className="space-y-5 text-[#d4c9bc] font-medium text-sm sm:text-base">
                    <li><Link to="/shop" className="hover:text-white transition-colors relative inline-block group"><span>All Products</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
                    <li><Link to="/shop" className="hover:text-white transition-colors relative inline-block group"><span>Minted Goodness</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
-                   <li><Link to="/shop" className="hover:text-white transition-colors relative inline-block group"><span>Subscribe & Save</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
+                   <li><Link to="/shop?mode=subscribe#purchase-dock" className="hover:text-white transition-colors relative inline-block group"><span>Subscribe & Save</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
                    <li><Link to="/shop" className="hover:text-white transition-colors relative inline-block group"><span>Gift Cards</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
                  </ul>
                </div>
@@ -60,10 +110,10 @@ export function Footer({footer, header, publicStoreDomain}) {
                <div className="space-y-8 col-span-2 sm:col-span-1">
                  <h4 className="font-montserrat font-bold tracking-[0.25em] uppercase text-[#c87a1e] text-xs">Help</h4>
                  <ul className="space-y-5 text-[#d4c9bc] font-medium text-sm sm:text-base">
-                   <li><a href="#" className="hover:text-white transition-colors relative inline-block group"><span>FAQ</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></a></li>
+                   <li><Link to="/story#faq" className="hover:text-white transition-colors relative inline-block group"><span>FAQ</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
                    <li><Link to="/policies/shipping-policy" className="hover:text-white transition-colors relative inline-block group"><span>Shipping & Returns</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
-                   <li><a href="#" className="hover:text-white transition-colors relative inline-block group"><span>Contact Us</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></a></li>
-                   <li><a href="#" className="hover:text-white transition-colors relative inline-block group"><span>Wholesale</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></a></li>
+                   <li><Link to="/story#contact" className="hover:text-white transition-colors relative inline-block group"><span>Contact Us</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
+                   <li><Link to="/story#wholesale" className="hover:text-white transition-colors relative inline-block group"><span>Wholesale</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
                  </ul>
                </div>
             </div>
@@ -78,15 +128,17 @@ export function Footer({footer, header, publicStoreDomain}) {
             </div>
             
             <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-10">
+               <Link to="/policies/refund-policy" className="hover:text-white transition-colors">Return Policy</Link>
+               <Link to="/policies/shipping-policy" className="hover:text-white transition-colors">Shipping Policy</Link>
                <Link to="/policies/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
                <Link to="/policies/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
                
                {/* Social Icons */}
                <div className="flex items-center gap-5 sm:ml-4">
-                  <a href="#" className="text-[#8a7d70] hover:text-[#c87a1e] transition-colors">
+                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-[#8a7d70] hover:text-[#c87a1e] transition-colors">
                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
                   </a>
-                  <a href="#" className="text-[#8a7d70] hover:text-[#c87a1e] transition-colors">
+                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-[#8a7d70] hover:text-[#c87a1e] transition-colors">
                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                   </a>
                </div>

@@ -28,7 +28,25 @@ export function SmoothScroll({ children }) {
     rafId = requestAnimationFrame(raf);
     window.lenis = lenis;
 
+    // Handle initial hash scroll if arriving with #anchor
+    const scrollToHash = () => {
+      if (window.location.hash) {
+        const target = document.querySelector(window.location.hash);
+        if (target) {
+          lenis.scrollTo(target, { offset: -90, duration: 1.2 });
+        }
+      }
+    };
+    const timer = setTimeout(scrollToHash, 300);
+
+    const onHashChange = () => {
+      scrollToHash();
+    };
+    window.addEventListener('hashchange', onHashChange);
+
     return () => {
+      clearTimeout(timer);
+      window.removeEventListener('hashchange', onHashChange);
       cancelAnimationFrame(rafId);
       lenis.destroy();
       delete window.lenis;
