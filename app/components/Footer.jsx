@@ -1,64 +1,4 @@
-import { useState } from 'react';
-import { Link, useFetcher } from 'react-router';
-
-function NewsletterForm() {
-  const fetcher = useFetcher();
-  const [email, setEmail] = useState('');
-  const isSubmitting = fetcher.state !== 'idle';
-  const data = fetcher.data;
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!email) return;
-    fetcher.submit({ email }, { method: 'POST', action: '/api/newsletter' });
-  };
-
-  return (
-    <div className="mt-12 max-w-md">
-      <form onSubmit={handleSubmit} className="relative group">
-        <input 
-          type="email" 
-          name="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Join the hive (Email Address)" 
-          disabled={isSubmitting}
-          className="w-full bg-transparent border-b border-white/20 py-4 pl-2 pr-12 text-white placeholder-white/40 focus:outline-none focus:border-[#c87a1e] transition-colors font-medium disabled:opacity-50"
-        />
-        <button 
-          type="submit"
-          disabled={isSubmitting}
-          className="absolute right-0 top-1/2 -translate-y-1/2 text-white/50 hover:text-[#c87a1e] transition-colors p-2 cursor-pointer disabled:opacity-50"
-          aria-label="Subscribe to newsletter"
-        >
-          {isSubmitting ? (
-            <span className="w-5 h-5 block border-2 border-white/30 border-t-[#c87a1e] rounded-full animate-spin" />
-          ) : (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          )}
-        </button>
-      </form>
-
-      {/* Success / Error Feedback */}
-      {data?.success && (
-        <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#86efac]">
-          <span>✓</span>
-          <span>{data.message}</span>
-        </div>
-      )}
-      {data?.error && (
-        <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#fca5a5]">
-          <span>✕</span>
-          <span>{data.error}</span>
-        </div>
-      )}
-    </div>
-  );
-}
+import { Link } from 'react-router';
 
 /**
  * @param {FooterProps}
@@ -72,7 +12,7 @@ export function Footer() {
          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 mb-24">
             
             {/* Brand Column */}
-            <div id="join-the-hive" className="lg:col-span-5 space-y-8 scroll-mt-24">
+            <div className="lg:col-span-5 space-y-8">
                <img src="/images/gapoo_bear_mascot_hd.png" alt="Gapoo Bear" className="w-20 h-20 sm:w-24 sm:h-24 object-contain filter invert brightness-200 opacity-90" />
                <h3 className="font-montserrat font-black text-3xl sm:text-4xl lg:text-5xl text-white tracking-tighter leading-[1.1] max-w-sm uppercase">
                  The hive awakening.
@@ -80,9 +20,6 @@ export function Footer() {
                <p className="text-[#a39585] max-w-sm text-lg leading-relaxed font-medium">
                  100% traceable, hive-to-bottle raw botanical honey and the untapped natural pharmacy of the hive. Born from Garden+Pool.
                </p>
-               
-               {/* Newsletter Input */}
-               <NewsletterForm />
             </div>
 
             {/* Links Columns */}
@@ -91,24 +28,7 @@ export function Footer() {
                  <h4 className="font-montserrat font-bold tracking-[0.25em] uppercase text-[#c87a1e] text-xs">Shop</h4>
                  <ul className="space-y-5 text-[#d4c9bc] font-medium text-sm sm:text-base">
                    <li><Link to="/shop" className="hover:text-white transition-colors relative inline-block group"><span>All Products</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
-                   <li>
-                     <a 
-                       href="#join-the-hive" 
-                       onClick={(e) => {
-                         const el = document.getElementById('join-the-hive');
-                         if (el) {
-                           e.preventDefault();
-                           el.scrollIntoView({ behavior: 'smooth' });
-                           const input = el.querySelector('input[type="email"]');
-                           if (input) input.focus();
-                         }
-                       }} 
-                       className="hover:text-white transition-colors relative inline-block group"
-                     >
-                       <span>Subscribe &amp; Save (Join the Hive)</span>
-                       <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span>
-                     </a>
-                   </li>
+                   <li><Link to="/shop?mode=subscribe#purchase-dock" className="hover:text-white transition-colors relative inline-block group"><span>Subscribe &amp; Save</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
                  </ul>
                </div>
 
