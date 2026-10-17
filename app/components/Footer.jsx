@@ -72,7 +72,7 @@ export function Footer() {
          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 mb-24">
             
             {/* Brand Column */}
-            <div className="lg:col-span-5 space-y-8">
+            <div id="join-the-hive" className="lg:col-span-5 space-y-8 scroll-mt-24">
                <img src="/images/gapoo_bear_mascot_hd.png" alt="Gapoo Bear" className="w-20 h-20 sm:w-24 sm:h-24 object-contain filter invert brightness-200 opacity-90" />
                <h3 className="font-montserrat font-black text-3xl sm:text-4xl lg:text-5xl text-white tracking-tighter leading-[1.1] max-w-sm uppercase">
                  The hive awakening.
@@ -91,9 +91,24 @@ export function Footer() {
                  <h4 className="font-montserrat font-bold tracking-[0.25em] uppercase text-[#c87a1e] text-xs">Shop</h4>
                  <ul className="space-y-5 text-[#d4c9bc] font-medium text-sm sm:text-base">
                    <li><Link to="/shop" className="hover:text-white transition-colors relative inline-block group"><span>All Products</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
-                   <li><Link to="/shop" className="hover:text-white transition-colors relative inline-block group"><span>Minted Goodness</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
-                   <li><Link to="/shop?mode=subscribe#purchase-dock" className="hover:text-white transition-colors relative inline-block group"><span>Subscribe & Save</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
-                   <li><Link to="/shop" className="hover:text-white transition-colors relative inline-block group"><span>Gift Cards</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
+                   <li>
+                     <a 
+                       href="#join-the-hive" 
+                       onClick={(e) => {
+                         const el = document.getElementById('join-the-hive');
+                         if (el) {
+                           e.preventDefault();
+                           el.scrollIntoView({ behavior: 'smooth' });
+                           const input = el.querySelector('input[type="email"]');
+                           if (input) input.focus();
+                         }
+                       }} 
+                       className="hover:text-white transition-colors relative inline-block group"
+                     >
+                       <span>Subscribe &amp; Save (Join the Hive)</span>
+                       <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span>
+                     </a>
+                   </li>
                  </ul>
                </div>
 

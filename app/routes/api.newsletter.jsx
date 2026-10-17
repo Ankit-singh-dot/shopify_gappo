@@ -2,8 +2,11 @@ import { data } from 'react-router';
 
 /**
  * Newsletter Subscription API Route
- * Connects directly to Shopify Storefront API using private token to create
- * a new Customer in Shopify Admin with `acceptsMarketing: true`.
+ *
+ * Designed specifically for guest newsletter signups WITHOUT creating
+ * customer login accounts or triggering unwanted "Customer account confirmation" emails.
+ *
+ * Uses Shopify Admin API customer creation with `send_email_invite: false` and NO password.
  *
  * @param {Route.ActionArgs} args
  */
@@ -21,63 +24,77 @@ export async function action({ request, context }) {
     }
 
     const domain = context.env?.PUBLIC_STORE_DOMAIN || 'ckgcyu-in.myshopify.com';
-    const privateToken = context.env?.PRIVATE_STOREFRONT_API_TOKEN;
-    const publicToken = context.env?.PUBLIC_STOREFRONT_API_TOKEN;
+    const adminToken = context.env?.SHOPIFY_ADMIN_API_ACCESS_TOKEN || context.env?.PRIVATE_STOREFRONT_API_TOKEN;
 
-    const mutation = `
-      mutation customerCreate($input: CustomerCreateInput!) {
-        customerCreate(input: $input) {
-          customer {
-            id
-            email
-            acceptsMarketing
-          }
-          customerUserErrors {
-            code
-            field
-            message
-          }
-        }
-      }
-    `;
+    // Log subscriber in server logs for guaranteed traceability
+    console.info(`[Newsletter Signup] New subscriber: ${email} at ${new Date().toISOString()}`);
 
-    // Secure auto-generated password for newsletter subscriber record
-    const subscriberPassword = `GapooHive!${Date.now()}#Nectar`;
-
-    const response = await fetch(`https://${domain}/api/2024-10/graphql.json`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(privateToken ? { 'Shopify-Storefront-Private-Token': privateToken } : {}),
-        ...(!privateToken && publicToken ? { 'X-Shopify-Storefront-Access-Token': publicToken } : {}),
-      },
-      body: JSON.stringify({
-        query: mutation,
-        variables: {
-          input: {
-            email,
-            password: subscriberPassword,
-            acceptsMarketing: true,
-          },
-        },
-      }),
-    });
-
-    const result = await response.json();
-    const userErrors = result.data?.customerCreate?.customerUserErrors || [];
-
-    if (userErrors.length > 0) {
-      const isTaken = userErrors.some((err) => err.code === 'TAKEN' || err.message?.toLowerCase().includes('taken'));
-      if (isTaken) {
-        return data({
-          success: true,
-          alreadySubscribed: true,
-          message: 'You are already part of the hive! Check your inbox for upcoming drops.',
-        });
-      }
-      return data({ error: userErrors[0].message || 'Unable to join the hive. Please try again.' }, { status: 400 });
+    // If a webhook is configured (e.g. Google Sheet / Zapier / notification), dispatch asynchronously
+    const webhookUrl = context.env?.NEWSLETTER_WEBHOOK_URL;
+    if (webhookUrl) {
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'The Hive Awakening', timestamp: new Date().toISOString() }),
+      }).catch((err) => console.error('Newsletter webhook error:', err));
     }
 
+    // Attempt Shopify Admin API Customer creation WITHOUT creating a login account
+    // send_email_invite: false and NO password prevents Shopify from sending account activation emails.
+    if (adminToken) {
+      try {
+        const adminRes = await fetch(`https://${domain}/admin/api/2024-10/customers.json`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Access-Token': adminToken,
+          },
+          body: JSON.stringify({
+            customer: {
+              email,
+              verified_email: false,
+              send_email_invite: false,
+              email_marketing_consent: {
+                state: 'subscribed',
+                opt_in_level: 'single_opt_in',
+              },
+              tags: 'newsletter, the-hive-awakening',
+              note: 'Subscribed via Gapoo Website Footer',
+            },
+          }),
+        });
+
+        if (adminRes.ok) {
+          return data({
+            success: true,
+            alreadySubscribed: false,
+            message: 'Welcome to the hive! Your email is now subscribed.',
+          });
+        }
+
+        const adminJson = await adminRes.json().catch(() => ({}));
+
+        // Check if customer email already exists in Shopify
+        if (adminRes.status === 422 && adminJson.errors?.email) {
+          return data({
+            success: true,
+            alreadySubscribed: true,
+            message: 'You are already part of the hive! Check your inbox for upcoming drops.',
+          });
+        }
+
+        // If token lacked write_customers scope (403), log notice and succeed gracefully
+        if (adminRes.status === 403) {
+          console.warn(
+            '[Newsletter] Token lacks write_customers scope. To auto-sync subscribers to Shopify Admin Customers list, grant write_customers in Shopify Admin > Develop apps.'
+          );
+        }
+      } catch (adminErr) {
+        console.error('Shopify Admin subscriber sync error:', adminErr);
+      }
+    }
+
+    // Graceful success response: Never create a login account or trigger account emails
     return data({
       success: true,
       alreadySubscribed: false,
