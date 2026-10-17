@@ -6,7 +6,6 @@ import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'fra
 import { AppleLogoReveal } from '~/components/AppleLogoReveal';
 import { SnapSqueezeSip } from '~/components/shop/SnapSqueezeSip';
 import { HoneycombPattern } from '~/components/shop/motion';
-import { JarVsStick } from '~/components/shop/JarVsStick';
 import { LabVerifiedSection } from '~/components/LabVerifiedSection';
 
 export { SnapSqueezeSip, HoneycombPattern };
@@ -955,10 +954,6 @@ export default function ShopPage() {
         <SnapSqueezeSip />
       </section>
 
-      {/* ============================================================ */}
-      {/* SECTION 2: WHY HONEY · THE PANTRY CLEANSE                    */}
-      {/* ============================================================ */}
-      <JarVsStick id="why-honey" />
 
       {/* ============================================================ */}
       {/* SECTION 3: LAB VERIFIED · 100% PURITY & COA ANALYSIS         */}

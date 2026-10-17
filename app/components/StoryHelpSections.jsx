@@ -227,7 +227,7 @@ export function ContactAndWholesaleSection({ contactId = 'contact', wholesaleId 
                       id="contact-name"
                       type="text"
                       required
-                      placeholder="e.g. Ankit Singh"
+                      placeholder="Your name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl bg-white border border-[#ebdccb] text-[#1a110a] placeholder-[#998b7c] focus:outline-none focus:border-[#c87a1e] text-sm"
@@ -242,7 +242,7 @@ export function ContactAndWholesaleSection({ contactId = 'contact', wholesaleId 
                       id="contact-email"
                       type="email"
                       required
-                      placeholder="e.g. ankit@gapoo.in"
+                      placeholder="you@email.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl bg-white border border-[#ebdccb] text-[#1a110a] placeholder-[#998b7c] focus:outline-none focus:border-[#c87a1e] text-sm"
