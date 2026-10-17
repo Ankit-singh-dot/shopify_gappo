@@ -78,16 +78,18 @@ img {
 * components/Aside
 * --------------------------------------------------
 */
-@media (max-width: 45em) {
-  html:has(.overlay.expanded) {
-    overflow: hidden;
-  }
+html:has(.overlay.expanded),
+body:has(.overlay.expanded) {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
 }
 
 aside {
   background: #fdfaf1;
   box-shadow: -12px 0 40px rgba(26, 22, 18, 0.22), 0 0 0 1px rgba(232, 205, 140, 0.3);
   height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
   width: min(440px, 100vw);
   position: fixed;
   right: 0;
@@ -143,8 +145,12 @@ aside header h2 {
 }
 
 aside main {
-  flex: 1;
+  flex: 1 1 0%;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   padding: 0;
   margin: 0;
   display: flex;
@@ -336,12 +342,26 @@ button.reset:hover:not(:has(> *)) {
   background: #fdfaf1;
 }
 
+aside .cart-main {
+  height: auto;
+  min-height: 100%;
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow: visible;
+}
+
 .cart-details {
   display: flex;
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
   padding: 1.25rem;
+}
+
+aside .cart-details {
+  overflow: visible;
+  min-height: 0;
+  padding: 1.25rem 1.25rem 5rem;
 }
 
 .cart-line {

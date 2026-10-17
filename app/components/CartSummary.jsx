@@ -1,6 +1,7 @@
 import {CartForm, Money} from '@shopify/hydrogen';
 import {useEffect, useId, useRef, useState} from 'react';
-import {useFetcher} from 'react-router';
+import {useFetcher, Link} from 'react-router';
+import {useAside} from '~/components/Aside';
 
 /**
  * @param {CartSummaryProps}
@@ -112,6 +113,7 @@ export function CartSummary({cart, layout}) {
  * @param {{checkoutUrl?: string; estimatedTotal?: string}}
  */
 function CartCheckoutActions({checkoutUrl, estimatedTotal}) {
+  const {close} = useAside();
   if (!checkoutUrl) return null;
 
   return (
@@ -136,6 +138,16 @@ function CartCheckoutActions({checkoutUrl, estimatedTotal}) {
         </span>
         <span>•</span>
         <span>Standard Delivery (3–5 Days)</span>
+      </div>
+      <div className="mt-3 pt-2.5 border-t border-[#ede3d0]/80 flex justify-center">
+        <Link
+          to="/story#coa"
+          onClick={close}
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#f4ebe1] hover:bg-[#faecc9] border border-[#ebdccb] text-[#5c5247] hover:text-[#1a1612] text-[11px] font-semibold transition-all shadow-2xs group cursor-pointer"
+        >
+          <span>🔬 Certificate of Analysis (COA)</span>
+          <span className="text-[10px] text-[#c87a1e] font-bold group-hover:translate-x-0.5 transition-transform">↗</span>
+        </Link>
       </div>
     </div>
   );

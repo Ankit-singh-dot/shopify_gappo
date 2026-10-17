@@ -92,10 +92,16 @@ export function HeaderMenu({
       <a href="/story" onClick={close} className="hover:text-black no-underline hover:no-underline">
         Our Story
       </a>
-      <a href="/shop#lab-verified" onClick={close} className="hover:text-black no-underline hover:no-underline flex items-center justify-between">
+      <Link
+        to="/story#coa"
+        onClick={close}
+        className="hover:text-black no-underline hover:no-underline flex items-center justify-between"
+      >
         <span>Lab Certified (COA)</span>
-        <span className="text-[10px] bg-[#15803d]/10 text-[#15803d] px-2 py-0.5 rounded-full font-bold">✓ Verified</span>
-      </a>
+        <span className="text-[10px] bg-[#faecc9] border border-[#e2c792] text-[#8b5311] px-2 py-0.5 rounded-full font-bold">
+          View ↗
+        </span>
+      </Link>
     </nav>
   );
 }

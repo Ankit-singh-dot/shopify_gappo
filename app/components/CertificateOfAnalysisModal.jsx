@@ -12,10 +12,12 @@ export function CertificateOfAnalysisModal({ isOpen, onClose }) {
     };
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
     }
     return () => {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, onClose]);
@@ -23,7 +25,7 @@ export function CertificateOfAnalysisModal({ isOpen, onClose }) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto font-montserrat">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto font-montserrat overscroll-contain">
           {/* Backdrop Blur */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -114,7 +116,7 @@ export function CertificateOfAnalysisModal({ isOpen, onClose }) {
             </div>
 
             {/* Modal Body */}
-            <div className="p-5 sm:p-8 overflow-y-auto space-y-6">
+            <div className="p-5 sm:p-8 overflow-y-auto space-y-6 overscroll-contain">
               {activeTab === 'summary' ? (
                 <>
                   {/* Hero Verdict Banner */}

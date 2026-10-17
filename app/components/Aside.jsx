@@ -24,6 +24,9 @@ export function Aside({children, heading, type}) {
     const abortController = new AbortController();
 
     if (expanded) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+
       document.addEventListener(
         'keydown',
         function handler(event) {
@@ -34,7 +37,11 @@ export function Aside({children, heading, type}) {
         {signal: abortController.signal},
       );
     }
-    return () => abortController.abort();
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      abortController.abort();
+    };
   }, [close, expanded]);
 
   return (
@@ -97,7 +104,7 @@ export function Aside({children, heading, type}) {
             </svg>
           </button>
         </header>
-        <main className="flex-1 overflow-y-auto bg-[#fdfaf1]">{children}</main>
+        <main className="flex-1 min-h-0 overflow-y-auto bg-[#fdfaf1] flex flex-col overscroll-contain">{children}</main>
       </aside>
     </div>
   );

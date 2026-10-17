@@ -32,6 +32,7 @@ function getLineItemChildrenMap(lines) {
  * @param {CartMainProps}
  */
 export function CartMain({ layout, cart: originalCart }) {
+  const { close } = useAside();
   // The useOptimisticCart hook applies pending actions to the cart
   // so the user immediately sees feedback when they modify the cart.
   const cart = useOptimisticCart(originalCart);
@@ -54,6 +55,23 @@ export function CartMain({ layout, cart: originalCart }) {
         <p id="cart-lines" className="sr-only">
           Line items
         </p>
+
+        {/* Minimal Lab Certified COA Trust Bar */}
+        <div className="mb-3 px-3 py-2 rounded-xl bg-[#faecc9]/50 border border-[#edd5a6] flex items-center justify-between text-xs font-montserrat shrink-0">
+          <div className="flex items-center gap-1.5 text-[#5c5247]">
+            <span className="text-[#15803d] font-bold">✓</span>
+            <span className="font-semibold text-[#2c2218]">Lab Tested Batch</span>
+          </div>
+          <Link
+            to="/story#coa"
+            onClick={close}
+            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#c87a1e] hover:text-[#9e5c0f] underline underline-offset-2 transition-colors cursor-pointer"
+          >
+            <span>View Certificate</span>
+            <span>↗</span>
+          </Link>
+        </div>
+
         <div>
           <ul aria-labelledby="cart-lines">
             {(cart?.lines?.nodes ?? []).map((line) => {
@@ -107,9 +125,9 @@ function CartEmpty({ hidden = false }) {
         Single-serve honey sticks are waiting for you — real minted goodness with zero sticky mess.
       </p>
 
-      {/* Action button linking directly to hero product showcase */}
+      {/* Action button linking directly to shop */}
       <a
-        href="#buy-now"
+        href="/shop"
         onClick={close}
         className="w-full py-3.5 px-6 rounded-full bg-[#18181b] hover:bg-[#27272a] text-white text-xs sm:text-sm font-bold tracking-wide shadow-md transition-all hover:scale-105 active:scale-95 text-center flex items-center justify-center gap-2 cursor-pointer no-underline"
       >
@@ -127,6 +145,17 @@ function CartEmpty({ hidden = false }) {
           <span className="text-base">🌿</span>
           <span>Minted Goodness</span>
         </div>
+      </div>
+
+      {/* Minimal Certificate Link in Empty Cart */}
+      <div className="mt-4 pt-3 border-t border-[#ede3d0] w-full flex justify-center">
+        <Link
+          to="/story#coa"
+          onClick={close}
+          className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#8c7e6e] hover:text-[#c87a1e] transition-colors cursor-pointer"
+        >
+          <span>🔬 View Lab Certificate of Analysis ↗</span>
+        </Link>
       </div>
     </div>
   );

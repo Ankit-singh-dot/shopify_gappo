@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
 import { HandwrittenGapoo } from '~/components/HandwrittenGapoo';
-import { LabVerifiedSection } from '~/components/LabVerifiedSection';
+
 
 /**
  * @type {Route.MetaFunction}
@@ -923,10 +923,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════════════ */}
-      {/* 5.6 THE CLEAN HIVE STANDARD — Certificate of Analysis (COA)  */}
-      {/* ════════════════════════════════════════════════════════════ */}
-      <LabVerifiedSection id="lab-verified" className="border-t border-[#ebd8b0]" />
+
 
       {/* ════════════════════════════════════════════════════════════ */}
       {/* 6. FINAL MONUMENTAL CTA — Balanced Spacing & Proportions    */}

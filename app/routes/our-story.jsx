@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { AppleLogoReveal } from '~/components/AppleLogoReveal';
@@ -61,6 +61,25 @@ export default function OurStoryPage() {
 
   const tickerX1 = useTransform(scrollYProgress, [0, 1], ['0%', '-35%']);
   const tickerX2 = useTransform(scrollYProgress, [0, 1], ['-35%', '0%']);
+
+  // Automatically scroll to and open Certificate of Analysis modal if accessed via #coa
+  useEffect(() => {
+    const handleHashCheck = () => {
+      if (typeof window === 'undefined') return;
+      const hash = window.location.hash.toLowerCase();
+      if (hash === '#coa' || hash === '#certificate' || hash === '#lab-verified') {
+        const el = document.getElementById('coa');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        setIsCoaOpen(true);
+      }
+    };
+
+    handleHashCheck();
+    window.addEventListener('hashchange', handleHashCheck);
+    return () => window.removeEventListener('hashchange', handleHashCheck);
+  }, []);
 
   return (
     <div
@@ -376,7 +395,7 @@ export default function OurStoryPage() {
         </section>
 
         {/* ─── CHAPTER 3: THE INDIAN HONEY FINGERPRINT & NMR LAB STANDARDS ─── */}
-        <section className={SECTION_CONTAINER}>
+        <section id="coa" className={`${SECTION_CONTAINER} scroll-mt-28`}>
           <div className={CARD_LIGHT}>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               <div className="lg:col-span-7 flex flex-col gap-5 sm:gap-6">

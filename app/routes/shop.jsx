@@ -6,7 +6,7 @@ import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'fra
 import { AppleLogoReveal } from '~/components/AppleLogoReveal';
 import { SnapSqueezeSip } from '~/components/shop/SnapSqueezeSip';
 import { HoneycombPattern } from '~/components/shop/motion';
-import { LabVerifiedSection } from '~/components/LabVerifiedSection';
+
 
 export { SnapSqueezeSip, HoneycombPattern };
 
@@ -955,10 +955,6 @@ export default function ShopPage() {
       </section>
 
 
-      {/* ============================================================ */}
-      {/* SECTION 3: LAB VERIFIED · 100% PURITY & COA ANALYSIS         */}
-      {/* ============================================================ */}
-      <LabVerifiedSection id="lab-verified" className="border-t border-[#ebd8b0]/60" />
 
       {/* ============================================================ */}
       {/* SECTION 4: THE FINALE GAPOO BEAR LOGO REVEAL & HONEY CURTAIN */}
