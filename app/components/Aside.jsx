@@ -26,6 +26,10 @@ export function Aside({children, heading, type}) {
     if (expanded) {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
+      document.documentElement.classList.add('lenis-stopped');
+      if (typeof window !== 'undefined' && window.lenis) {
+        window.lenis.stop();
+      }
 
       document.addEventListener(
         'keydown',
@@ -40,6 +44,10 @@ export function Aside({children, heading, type}) {
     return () => {
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
+      document.documentElement.classList.remove('lenis-stopped');
+      if (typeof window !== 'undefined' && window.lenis) {
+        window.lenis.start();
+      }
       abortController.abort();
     };
   }, [close, expanded]);
@@ -60,7 +68,11 @@ export function Aside({children, heading, type}) {
         }}
         aria-label="Close drawer overlay"
       />
-      <aside>
+      <aside
+        data-lenis-prevent="true"
+        onWheel={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
+      >
         <header className="flex items-center justify-between px-6 py-4 border-b border-[#ede3d0] bg-[#fdfaf1]/95 backdrop-blur-sm shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-[#e8cd8c] p-0.5 bg-white shadow-xs">
@@ -104,7 +116,14 @@ export function Aside({children, heading, type}) {
             </svg>
           </button>
         </header>
-        <main className="flex-1 min-h-0 overflow-y-auto bg-[#fdfaf1] flex flex-col overscroll-contain">{children}</main>
+        <main
+          data-lenis-prevent="true"
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+          className="flex-1 min-h-0 overflow-y-auto bg-[#fdfaf1] flex flex-col overscroll-contain"
+        >
+          {children}
+        </main>
       </aside>
     </div>
   );

@@ -5,7 +5,7 @@ export function CertificateOfAnalysisModal({ isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('summary'); // 'summary' | 'documents'
   const [activeDocPage, setActiveDocPage] = useState(1);
 
-  // Close on ESC key
+  // Lock scroll, halt Lenis & handle ESC key
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
@@ -13,11 +13,19 @@ export function CertificateOfAnalysisModal({ isOpen, onClose }) {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
+      document.documentElement.classList.add('lenis-stopped');
+      if (typeof window !== 'undefined' && window.lenis) {
+        window.lenis.stop();
+      }
       window.addEventListener('keydown', handleKeyDown);
     }
     return () => {
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
+      document.documentElement.classList.remove('lenis-stopped');
+      if (typeof window !== 'undefined' && window.lenis) {
+        window.lenis.start();
+      }
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, onClose]);
@@ -25,7 +33,12 @@ export function CertificateOfAnalysisModal({ isOpen, onClose }) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto font-montserrat overscroll-contain">
+        <div
+          data-lenis-prevent="true"
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto font-montserrat overscroll-contain"
+        >
           {/* Backdrop Blur */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -38,11 +51,14 @@ export function CertificateOfAnalysisModal({ isOpen, onClose }) {
 
           {/* Modal Card */}
           <motion.div
+            data-lenis-prevent="true"
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
             initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-4xl bg-[#fdfaf1] rounded-3xl border border-[#e8d7be] shadow-[0_25px_60px_-15px_rgba(26,17,10,0.35)] overflow-hidden flex flex-col max-h-[92vh] z-10"
+            className="relative w-full max-w-4xl bg-[#fdfaf1] rounded-3xl border border-[#e8d7be] shadow-[0_25px_60px_-15px_rgba(26,17,10,0.35)] overflow-hidden flex flex-col max-h-[92vh] z-10 overscroll-contain"
           >
             {/* Modal Header */}
             <div className="px-5 sm:px-8 py-5 border-b border-[#eee1ce] bg-[#faf3e3] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -116,7 +132,12 @@ export function CertificateOfAnalysisModal({ isOpen, onClose }) {
             </div>
 
             {/* Modal Body */}
-            <div className="p-5 sm:p-8 overflow-y-auto space-y-6 overscroll-contain">
+            <div
+              data-lenis-prevent="true"
+              onWheel={(e) => e.stopPropagation()}
+              onTouchMove={(e) => e.stopPropagation()}
+              className="p-5 sm:p-8 overflow-y-auto space-y-6 overscroll-contain"
+            >
               {activeTab === 'summary' ? (
                 <>
                   {/* Hero Verdict Banner */}
