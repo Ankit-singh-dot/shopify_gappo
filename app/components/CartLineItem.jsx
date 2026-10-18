@@ -55,13 +55,16 @@ export function CartLineItem({layout, line, childrenMap}) {
           <div className="text-xs font-bold text-[#b45309] mt-0.5">
             <ProductPrice price={line?.cost?.totalAmount} />
           </div>
-          {selectedOptions.length > 0 && (
+          {/* Filter out Shopify's auto-generated 'Default Title' */}
+          {selectedOptions?.some((opt) => opt.value && opt.value !== 'Default Title' && opt.name !== 'Title') && (
             <ul className="text-[11px] text-[#736555] mt-0.5 list-none p-0">
-              {selectedOptions.map((option) => (
-                <li key={option.name}>
-                  {option.name}: {option.value}
-                </li>
-              ))}
+              {selectedOptions
+                .filter((option) => option.value && option.value !== 'Default Title' && option.name !== 'Title')
+                .map((option) => (
+                  <li key={option.name}>
+                    {option.name}: {option.value}
+                  </li>
+                ))}
             </ul>
           )}
           {line?.attributes?.length > 0 && (
