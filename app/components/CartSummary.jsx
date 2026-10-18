@@ -140,14 +140,15 @@ function CartCheckoutActions({checkoutUrl, estimatedTotal}) {
         <span>Standard Delivery (3–5 Days)</span>
       </div>
       <div className="mt-3 pt-2.5 border-t border-[#ede3d0]/80 flex justify-center">
-        <Link
-          to="/story#coa"
-          onClick={close}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#f4ebe1] hover:bg-[#faecc9] border border-[#ebdccb] text-[#5c5247] hover:text-[#1a1612] text-[11px] font-semibold transition-all shadow-2xs group cursor-pointer"
+        <a
+          href="/gapoo-coa-certificate.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#f4ebe1] hover:bg-[#faecc9] border border-[#ebdccb] text-[#5c5247] hover:text-[#1a1612] text-[11px] font-semibold transition-all shadow-2xs group cursor-pointer no-underline"
         >
-          <span>🔬 Certificate of Analysis (COA)</span>
+          <span>🔬 Batch Certificate of Analysis (COA PDF)</span>
           <span className="text-[10px] text-[#c87a1e] font-bold group-hover:translate-x-0.5 transition-transform">↗</span>
-        </Link>
+        </a>
       </div>
     </div>
   );

@@ -92,16 +92,18 @@ export function HeaderMenu({
       <a href="/story" onClick={close} className="hover:text-black no-underline hover:no-underline">
         Our Story
       </a>
-      <Link
-        to="/story#coa"
+      <a
+        href="/gapoo-coa-certificate.pdf"
+        target="_blank"
+        rel="noopener noreferrer"
         onClick={close}
         className="hover:text-black no-underline hover:no-underline flex items-center justify-between"
       >
         <span>Lab Certified (COA)</span>
         <span className="text-[10px] bg-[#faecc9] border border-[#e2c792] text-[#8b5311] px-2 py-0.5 rounded-full font-bold">
-          View ↗
+          PDF ↗
         </span>
-      </Link>
+      </a>
     </nav>
   );
 }

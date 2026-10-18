@@ -34,8 +34,8 @@ export function Footer() {
                <div className="space-y-8">
                  <h4 className="font-montserrat font-bold tracking-[0.25em] uppercase text-[#c87a1e] text-xs">Learn &amp; Trust</h4>
                  <ul className="space-y-5 text-[#d4c9bc] font-medium text-sm sm:text-base">
-                   <li><Link to="/story" className="hover:text-white transition-colors relative inline-block group"><span>Our Story (4 Chapters)</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
-                   <li><Link to="/story#coa" className="hover:text-white transition-colors relative inline-block group text-amber-300"><span>🔬 Lab Certified (COA) ↗</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
+                   <li><Link to="/story" className="hover:text-white transition-colors relative inline-block group"><span>Our Story (3 Chapters)</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></Link></li>
+                   <li><a href="/gapoo-coa-certificate.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors relative inline-block group text-amber-300"><span>🔬 Lab Certified (COA PDF) ↗</span><span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#c87a1e] group-hover:w-full transition-all duration-300"></span></a></li>
                  </ul>
                </div>
 

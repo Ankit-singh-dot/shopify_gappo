@@ -56,20 +56,30 @@ export function CartMain({ layout, cart: originalCart }) {
           Line items
         </p>
 
-        {/* Minimal Lab Certified COA Trust Bar */}
-        <div className="mb-3 px-3 py-2 rounded-xl bg-[#faecc9]/50 border border-[#edd5a6] flex items-center justify-between text-xs font-montserrat shrink-0">
-          <div className="flex items-center gap-1.5 text-[#5c5247]">
-            <span className="text-[#15803d] font-bold">✓</span>
-            <span className="font-semibold text-[#2c2218]">Lab Tested Batch</span>
+        {/* Lab Certified Batch COA (Direct PDF) */}
+        <div className="mb-3 px-3 py-2.5 rounded-xl bg-[#fdfaf5] border border-[#ebdccb] flex items-center justify-between text-xs font-montserrat shadow-2xs shrink-0">
+          <div className="flex items-center gap-2 text-[#2c2218] min-w-0">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#10b981]/15 text-[#10b981] text-xs font-bold shrink-0">
+              ✓
+            </span>
+            <div className="truncate">
+              <span className="font-bold text-[#1a110a] block text-[11px] sm:text-xs">
+                Lab Verified Batch
+              </span>
+              <span className="text-[10px] text-[#736555] block">
+                0 Heavy Metals · Raw Hive Nectar
+              </span>
+            </div>
           </div>
-          <Link
-            to="/story#coa"
-            onClick={close}
-            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#c87a1e] hover:text-[#9e5c0f] underline underline-offset-2 transition-colors cursor-pointer"
+          <a
+            href="/gapoo-coa-certificate.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#faecc9] hover:bg-[#f6dfa7] border border-[#e2c792] text-[#8b5311] hover:text-[#6a3e0b] text-[10px] sm:text-[11px] font-bold tracking-wide transition-all shadow-2xs shrink-0 cursor-pointer no-underline"
           >
-            <span>View Certificate</span>
-            <span>↗</span>
-          </Link>
+            <span>📜 COA (PDF)</span>
+            <span className="text-xs">↗</span>
+          </a>
         </div>
 
         <div>
@@ -147,15 +157,20 @@ function CartEmpty({ hidden = false }) {
         </div>
       </div>
 
-      {/* Minimal Certificate Link in Empty Cart */}
-      <div className="mt-4 pt-3 border-t border-[#ede3d0] w-full flex justify-center">
-        <Link
-          to="/story#coa"
-          onClick={close}
-          className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#8c7e6e] hover:text-[#c87a1e] transition-colors cursor-pointer"
+      {/* Lab Certificate PDF in Empty Cart */}
+      <div className="mt-4 pt-3 border-t border-[#ede3d0] w-full flex flex-col items-center gap-1 text-center">
+        <a
+          href="/gapoo-coa-certificate.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#fdfaf5] hover:bg-[#faecc9] border border-[#ebdccb] text-[11px] font-bold text-[#8b5311] transition-all cursor-pointer no-underline shadow-2xs"
         >
-          <span>🔬 View Lab Certificate of Analysis ↗</span>
-        </Link>
+          <span>📜 Inspect Batch Certificate of Analysis (PDF)</span>
+          <span className="text-xs">↗</span>
+        </a>
+        <span className="text-[10px] text-[#8c7e6e]">
+          Batch #HFL-GMG-08/26-01 · FSSAI Accredited Testing
+        </span>
       </div>
     </div>
   );

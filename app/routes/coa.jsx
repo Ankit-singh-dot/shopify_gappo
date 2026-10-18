@@ -1,7 +1,7 @@
 import { redirect } from 'react-router';
 
 export function loader() {
-  return redirect('/story#coa');
+  return redirect('/gapoo-coa-certificate.pdf');
 }
 
 export default function CoaRedirect() {

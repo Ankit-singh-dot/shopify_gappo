@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { AppleLogoReveal } from '~/components/AppleLogoReveal';
-import { CertificateOfAnalysisModal } from '~/components/CertificateOfAnalysisModal';
 import { FAQSection, ContactAndWholesaleSection } from '~/components/StoryHelpSections';
 
 /**
@@ -51,7 +50,6 @@ function FadeIn({ children, className = '', delay = 0, y = 20 }) {
 }
 
 export default function OurStoryPage() {
-  const [isCoaOpen, setIsCoaOpen] = useState(false);
   const containerRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
@@ -62,24 +60,7 @@ export default function OurStoryPage() {
   const tickerX1 = useTransform(scrollYProgress, [0, 1], ['0%', '-35%']);
   const tickerX2 = useTransform(scrollYProgress, [0, 1], ['-35%', '0%']);
 
-  // Automatically scroll to and open Certificate of Analysis modal if accessed via #coa
-  useEffect(() => {
-    const handleHashCheck = () => {
-      if (typeof window === 'undefined') return;
-      const hash = window.location.hash.toLowerCase();
-      if (hash === '#coa' || hash === '#certificate' || hash === '#lab-verified') {
-        const el = document.getElementById('coa');
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-        setIsCoaOpen(true);
-      }
-    };
-
-    handleHashCheck();
-    window.addEventListener('hashchange', handleHashCheck);
-    return () => window.removeEventListener('hashchange', handleHashCheck);
-  }, []);
+  
 
   return (
     <div
@@ -290,7 +271,7 @@ export default function OurStoryPage() {
         <div className="py-6 sm:py-8 bg-[#faecd0] border-y border-[#ebd8b0] overflow-hidden -mx-5 sm:-mx-8 lg:-mx-12 select-none">
           <motion.div style={{ x: tickerX1 }} className="whitespace-nowrap flex items-center">
             <span className="font-montserrat font-black text-2xl sm:text-3xl lg:text-4xl uppercase tracking-[0.2em] text-[#1a110a]">
-              GARDEN + POOL <span className="text-[#c87a1e] px-4">✦</span> THE HIVE AWAKENING <span className="text-[#c87a1e] px-4">✦</span> 100% TRACEABLE ORIGIN <span className="text-[#c87a1e] px-4">✦</span> BOTANICAL INFUSIONS <span className="text-[#c87a1e] px-4">✦</span> THE INDIAN HONEY FINGERPRINT <span className="text-[#c87a1e] px-4">✦</span> REAL MULTIFLORAL <span className="text-[#c87a1e] px-4">✦</span>
+              GARDEN + POOL <span className="text-[#c87a1e] px-4">✦</span> THE HIVE AWAKENING <span className="text-[#c87a1e] px-4">✦</span> 100% TRACEABLE ORIGIN <span className="text-[#c87a1e] px-4">✦</span> BOTANICAL INFUSIONS <span className="text-[#c87a1e] px-4">✦</span> 100% UNADULTERATED RAW NECTAR <span className="text-[#c87a1e] px-4">✦</span> REAL MULTIFLORAL <span className="text-[#c87a1e] px-4">✦</span>
             </span>
           </motion.div>
           <motion.div style={{ x: tickerX2 }} className="whitespace-nowrap flex items-center mt-2 opacity-75">
@@ -298,7 +279,7 @@ export default function OurStoryPage() {
               className="font-montserrat font-black text-2xl sm:text-3xl lg:text-4xl uppercase tracking-[0.2em] text-transparent"
               style={{ WebkitTextStroke: '1.5px #1a110a' }}
             >
-              UNTAMED NECTAR <span className="text-[#c87a1e] px-4">✦</span> BEYOND THE JAR <span className="text-[#c87a1e] px-4">✦</span> ZERO ADDED SUGAR <span className="text-[#c87a1e] px-4">✦</span> NATURAL PHARMACY <span className="text-[#c87a1e] px-4">✦</span> COA LAB VERIFIED <span className="text-[#c87a1e] px-4">✦</span>
+              UNTAMED NECTAR <span className="text-[#c87a1e] px-4">✦</span> BEYOND THE JAR <span className="text-[#c87a1e] px-4">✦</span> ZERO ADDED SUGAR <span className="text-[#c87a1e] px-4">✦</span> NATURAL PHARMACY <span className="text-[#c87a1e] px-4">✦</span> 100% RAW & UNFILTERED <span className="text-[#c87a1e] px-4">✦</span>
             </span>
           </motion.div>
         </div>
@@ -394,102 +375,13 @@ export default function OurStoryPage() {
           </div>
         </section>
 
-        {/* ─── CHAPTER 3: THE INDIAN HONEY FINGERPRINT & NMR LAB STANDARDS ─── */}
-        <section id="coa" className={`${SECTION_CONTAINER} scroll-mt-28`}>
-          <div className={CARD_LIGHT}>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-              <div className="lg:col-span-7 flex flex-col gap-5 sm:gap-6">
-                <span className={CHAPTER_PILL}>Chapter 03 · Traceability &amp; Standards</span>
-                <h2 className={H2}>The Indian Honey Fingerprint.</h2>
-                <p className={LEAD}>
-                  Our vision is fiercely protective of India&apos;s natural heritage. We are building the definitive Indian Honey Fingerprint System—mapping the botanical, chemical, functional, and physical markers of our nectar to elevate it to a premium global benchmark.
-                </p>
-                <p className={BODY}>
-                  Historically, Indian honey has faced global shipment rejections due to traces of antibiotics, heavy metals, and a lack of rigorous NMR testing, casting a shadow of &ldquo;guilt by association&rdquo; over our nation&apos;s true nectar. We are closing that gap by ensuring every batch is tested at FSSAI registered laboratories, accompanied by an open Certificate of Analysis to guarantee zero adulteration, zero antibiotics, and zero heavy metals.
-                </p>
-                <p className={BODY}>
-                  We are determined to make Indian honey uniquely competitive, creating a place on the world map for the country not just for the monumental Taj Mahal, but for exporting world-class, naturally sourced honey.
-                </p>
-
-                {/* Direct Action Pill to Open Interactive COA Modal */}
-                <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsCoaOpen(true)}
-                    className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-[#1a110a] text-white text-xs sm:text-sm font-bold tracking-wider uppercase hover:bg-[#c87a1e] transition-all cursor-pointer shadow-md hover:shadow-lg hover:-translate-y-0.5"
-                  >
-                    <span>📜 Inspect Batch Certificate of Analysis (COA)</span>
-                    <span className="text-[#f5a623]">↗</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Visual Card: NMR Lab Test */}
-              <div className="lg:col-span-5 relative flex flex-col items-center">
-                <div className="relative w-full rounded-3xl overflow-hidden border-2 border-[#ebdccb] shadow-xl group">
-                  <img
-                    src="/images/honey_nmr_lab_test.jpg"
-                    alt="NMR Spectroscopic Lab Testing of Gapoo Honey"
-                    className="w-full h-[360px] sm:h-[440px] object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent pointer-events-none" />
-                  <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#10b981] block mb-1">
-                      Lab Verified &amp; Certified
-                    </span>
-                    <p className="font-apricot text-xl font-bold leading-tight">
-                      FSSAI Registered Testing
-                    </p>
-                    <p className="text-xs text-white/80 font-medium mt-0.5">
-                      Batch #HFL-GMG-08/26-01 · 0 Heavy Metals (BLQ)
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Quality Standard Badges */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 border-t border-[#f0e4d2] pt-8 sm:pt-10">
-              <div className={SUB_CARD}>
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1a110a]">FSSAI Accredited</h4>
-                  <span className="text-[10px] font-extrabold text-[#15803d] bg-[#15803d]/10 px-2 py-0.5 rounded-full">✓ Verified</span>
-                </div>
-                <p className="text-xs sm:text-sm leading-relaxed text-[#5c5043] mt-1">
-                  Tested by Herbal Farm Life Care Pvt Ltd (FSSAI Lic. #13320002000438).
-                </p>
-              </div>
-
-              <div className={SUB_CARD}>
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1a110a]">Zero Heavy Metals</h4>
-                  <span className="text-[10px] font-extrabold text-[#15803d] bg-[#15803d]/10 px-2 py-0.5 rounded-full">BLQ Purity</span>
-                </div>
-                <p className="text-xs sm:text-sm leading-relaxed text-[#5c5043] mt-1">
-                  Lead (&lt;0.05 mg/kg), Cadmium (&lt;0.05 mg/kg), Arsenic (&lt;0.05 mg/kg) all Below Limit of Quantification.
-                </p>
-              </div>
-
-              <div className={SUB_CARD}>
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1a110a]">Zero Added Syrups</h4>
-                  <span className="text-[10px] font-extrabold text-[#15803d] bg-[#15803d]/10 px-2 py-0.5 rounded-full">100% Raw</span>
-                </div>
-                <p className="text-xs sm:text-sm leading-relaxed text-[#5c5043] mt-1">
-                  Strictly zero corn, cane, or rice C3/C4 sugar syrups. 100% hive harvest.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ─── CHAPTER 4: BEYOND HONEY: THE NATURAL PHARMACY (DARK SANCTUARY) ─── */}
+        {/* ─── CHAPTER 3: BEYOND HONEY: THE NATURAL PHARMACY (DARK SANCTUARY) ─── */}
         <section className={SECTION_CONTAINER}>
           <div className="flex flex-col gap-8 rounded-[28px] sm:rounded-[40px] lg:rounded-[48px] border border-[#2e1d10] bg-[#120c08] p-6 sm:p-12 lg:p-16 text-white shadow-[0_25px_60px_rgba(0,0,0,0.35)]">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               <div className="lg:col-span-7 flex flex-col gap-5 sm:gap-6">
                 <span className="self-start inline-flex items-center gap-2 rounded-full border border-[#d4a373]/40 bg-[#2a1d13] px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[#d4a373]">
-                  Chapter 04 · Natural Pharmacy
+                  Chapter 03 · Natural Pharmacy
                 </span>
                 <h2 className="font-apricot text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-[#f2e6d5]">
                   Beyond Honey: The Natural Pharmacy.
@@ -624,10 +516,7 @@ export default function OurStoryPage() {
         <AppleLogoReveal />
       </div>
 
-      {/* ════════════════════════════════════════════════════════════ */}
-      {/* 5. INTERACTIVE COA MODAL                                     */}
-      {/* ════════════════════════════════════════════════════════════ */}
-      <CertificateOfAnalysisModal isOpen={isCoaOpen} onClose={() => setIsCoaOpen(false)} />
+      
     </div>
   );
 }
