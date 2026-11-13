@@ -132,6 +132,33 @@ export function ContactAndWholesaleSection({
     });
   };
 
+  const handleSubmit = (e) => {
+    setHasSentAnother(false);
+    // Direct client-side dispatch from visitor browser to FormSubmit for instant inbox delivery
+    try {
+      if (formData.email && formData.message) {
+        fetch('https://formsubmit.co/ajax/contact@gapoo.in', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name || 'Website Visitor',
+            email: formData.email,
+            inquiry_type: formType === 'general' ? 'Order / General Help' : 'Wholesale / B2B',
+            message: formData.message,
+            _subject: `[${formType === 'general' ? 'General Help' : 'Wholesale Inquiry'}] from ${formData.name || formData.email}`,
+            _replyto: formData.email,
+            _captcha: 'false',
+          }),
+        }).catch(() => null);
+      }
+    } catch {
+      // Non-blocking
+    }
+  };
+
   return (
     <div className="w-full max-w-5xl mx-auto pt-20 sm:pt-28 font-montserrat space-y-16">
       {/* ── Wholesale Section ── */}
@@ -260,7 +287,7 @@ export function ContactAndWholesaleSection({
                 <fetcher.Form
                   method="post"
                   action={actionUrl}
-                  onSubmit={() => setHasSentAnother(false)}
+                  onSubmit={handleSubmit}
                   className="space-y-4 bg-[#faf6ee] p-6 sm:p-8 rounded-3xl border border-[#ebdccb]"
                 >
                   <input
