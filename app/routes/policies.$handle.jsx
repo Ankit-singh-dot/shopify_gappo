@@ -54,11 +54,11 @@ export async function loader({params, context}) {
             <li><strong>Quality Discrepancies:</strong> Any verified manufacturing defect or seal imperfection.</li>
             <li><strong>Incorrect Order:</strong> Receiving a different pack tier or quantity than what was ordered.</li>
           </ul>
-          <p>Please reach out to our dedicated care team within <strong>48 hours of delivery</strong> at <a href="mailto:support@gapoo.in" class="text-[#c87a1e] font-semibold underline">support@gapoo.in</a> with your Order ID and clear photos of the damaged items and outer box. Upon review, we will promptly dispatch a <strong>free replacement box at zero extra cost</strong> or issue a <strong>full refund</strong> back to your original payment method.</p>
+          <p>Please reach out to our dedicated care team within <strong>48 hours of delivery</strong> at <a href="mailto:contact@gapoo.in" class="text-[#c87a1e] font-semibold underline">contact@gapoo.in</a> with your Order ID and clear photos of the damaged items and outer box. Upon review, we will promptly dispatch a <strong>free replacement box at zero extra cost</strong> or issue a <strong>full refund</strong> back to your original payment method.</p>
 
 
           <h2>Order Cancellations Prior to Dispatch</h2>
-          <p>If you placed an order by mistake or wish to modify your details, you may cancel free of charge prior to fulfillment dispatch by emailing <a href="mailto:support@gapoo.in" class="text-[#c87a1e] font-semibold underline">support@gapoo.in</a>. Once handoff to our courier partners has occurred, parcels in transit cannot be recalled.</p>
+          <p>If you placed an order by mistake or wish to modify your details, you may cancel free of charge prior to fulfillment dispatch by emailing <a href="mailto:contact@gapoo.in" class="text-[#c87a1e] font-semibold underline">contact@gapoo.in</a>. Once handoff to our courier partners has occurred, parcels in transit cannot be recalled.</p>
         </div>
       `,
     };
@@ -92,7 +92,7 @@ export async function loader({params, context}) {
           </ul>
 
           <h2>Consumable Item Return Policy Reminder</h2>
-          <p>As Gapoo Honey Sticks are unpasteurized, edible food products, <strong>delivered parcels cannot be returned</strong> for health, hygiene, and public safety reasons. However, if your order is damaged, leaking, or crushed in transit, please contact <a href="mailto:support@gapoo.in" class="text-[#c87a1e] font-semibold underline">support@gapoo.in</a> within 48 hours for an immediate free replacement.</p>
+          <p>As Gapoo Honey Sticks are unpasteurized, edible food products, <strong>delivered parcels cannot be returned</strong> for health, hygiene, and public safety reasons. However, if your order is damaged, leaking, or crushed in transit, please contact <a href="mailto:contact@gapoo.in" class="text-[#c87a1e] font-semibold underline">contact@gapoo.in</a> within 48 hours for an immediate free replacement.</p>
         </div>
       `,
     };

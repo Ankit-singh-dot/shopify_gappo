@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useFetcher } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const FAQ_ITEMS = [
@@ -24,7 +25,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'What is your return & replacement policy for consumable honey sticks?',
-    a: 'Because Gapoo Honey Sticks are consumable, edible food items (pure unpasteurized raw honey), we cannot accept physical returns once an order is delivered for food hygiene and health safety reasons. However, your peace of mind is fully guaranteed: if your parcel arrives damaged, leaking, or crushed in courier transit, email support@gapoo.in within 48 hours with photos and we will immediately dispatch a free replacement box or issue a full refund.',
+    a: 'Because Gapoo Honey Sticks are consumable, edible food items (pure unpasteurized raw honey), we cannot accept physical returns once an order is delivered for food hygiene and health safety reasons. However, your peace of mind is fully guaranteed: if your parcel arrives damaged, leaking, or crushed in courier transit, email contact@gapoo.in within 48 hours with photos and we will immediately dispatch a free replacement box or issue a full refund.',
   },
 ];
 
@@ -102,15 +103,33 @@ export function FAQSection({ id = 'faq' }) {
   );
 }
 
-export function ContactAndWholesaleSection({ contactId = 'contact', wholesaleId = 'wholesale' }) {
-  const [submitted, setSubmitted] = useState(false);
+export function ContactAndWholesaleSection({
+  contactId = 'contact',
+  wholesaleId = 'wholesale',
+  actionUrl = '/contact',
+  defaultName = '',
+  defaultEmail = '',
+}) {
+  const fetcher = useFetcher();
   const [formType, setFormType] = useState('general');
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({
+    name: defaultName,
+    email: defaultEmail,
+    message: '',
+  });
+  const [hasSentAnother, setHasSentAnother] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.name || !formData.email) return;
-    setSubmitted(true);
+  const isSubmitting = fetcher.state === 'submitting';
+  const isSubmitted = Boolean(fetcher.data?.success) && !hasSentAnother;
+  const errorMessage = fetcher.data?.error;
+
+  const handleReset = () => {
+    setHasSentAnother(true);
+    setFormData({
+      name: defaultName,
+      email: defaultEmail,
+      message: '',
+    });
   };
 
   return (
@@ -149,10 +168,10 @@ export function ContactAndWholesaleSection({ contactId = 'contact', wholesaleId 
 
             <div className="pt-3 flex flex-wrap items-center gap-4">
               <a
-                href="mailto:wholesale@gapoo.in?subject=Wholesale%20Inquiry%20-%20Gapoo%20Honey%20Sticks"
+                href="mailto:contact@gapoo.in?subject=Wholesale%20Inquiry%20-%20Gapoo%20Honey%20Sticks"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#f5a623] hover:bg-[#d97706] text-[#1a110a] text-xs font-bold tracking-widest uppercase transition-all shadow-md no-underline"
               >
-                <span>Email wholesale@gapoo.in</span>
+                <span>Email contact@gapoo.in</span>
                 <span>↗</span>
               </a>
               <span className="text-xs text-[#a89b8c]">Direct response within 24 business hours.</span>
@@ -188,14 +207,14 @@ export function ContactAndWholesaleSection({ contactId = 'contact', wholesaleId 
               <div className="space-y-4 pt-2 border-t border-[#ebdccb] text-sm">
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider text-[#8b5311] block mb-0.5">Customer Support</span>
-                  <a href="mailto:support@gapoo.in" className="text-[#1a110a] font-semibold hover:text-[#c87a1e] transition-colors">
-                    support@gapoo.in
+                  <a href="mailto:contact@gapoo.in" className="text-[#1a110a] font-semibold hover:text-[#c87a1e] transition-colors">
+                    contact@gapoo.in
                   </a>
                 </div>
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider text-[#8b5311] block mb-0.5">Wholesale &amp; Bulk</span>
-                  <a href="mailto:wholesale@gapoo.in" className="text-[#1a110a] font-semibold hover:text-[#c87a1e] transition-colors">
-                    wholesale@gapoo.in
+                  <a href="mailto:contact@gapoo.in" className="text-[#1a110a] font-semibold hover:text-[#c87a1e] transition-colors">
+                    contact@gapoo.in
                   </a>
                 </div>
                 <div>
@@ -205,26 +224,58 @@ export function ContactAndWholesaleSection({ contactId = 'contact', wholesaleId 
               </div>
             </div>
 
-            {/* Right: Clean Inquiry Form */}
+            {/* Right: Clean Inquiry Form (Directly integrated with Shopify - No Login Required) */}
             <div className="lg:col-span-7">
-              {submitted ? (
-                <div className="h-full flex flex-col items-center justify-center text-center p-8 rounded-3xl bg-[#fcf8f2] border border-[#ebdccb]">
-                  <div className="w-14 h-14 rounded-full bg-[#15803d]/10 text-[#15803d] border border-[#15803d]/20 flex items-center justify-center text-2xl mb-4">
+              {isSubmitted ? (
+                <div className="h-full flex flex-col items-center justify-center text-center p-8 sm:p-10 rounded-3xl bg-[#fcf8f2] border border-[#ebdccb]">
+                  <div className="w-14 h-14 rounded-full bg-[#15803d]/10 text-[#15803d] border border-[#15803d]/20 flex items-center justify-center text-2xl mb-4 font-bold">
                     ✓
                   </div>
-                  <h3 className="font-apricot text-2xl font-bold text-[#1a110a] mb-2">Message Received</h3>
-                  <p className="text-sm text-[#5c5043] max-w-sm">
-                    Thank you, {formData.name}. Our team will review your inquiry and respond to {formData.email} promptly.
+                  <h3 className="font-apricot text-2xl sm:text-3xl font-bold text-[#1a110a] mb-2">Message Received</h3>
+                  <p className="text-sm text-[#5c5043] max-w-sm leading-relaxed">
+                    Thank you{formData.name ? `, ${formData.name}` : ''}. Your inquiry has been dispatched to the Gapoo hive. We will review it and reply to{' '}
+                    <span className="font-semibold text-[#1a110a]">{formData.email || 'your email'}</span> promptly.
                   </p>
+                  <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <a
+                      href={`mailto:contact@gapoo.in?subject=${encodeURIComponent(
+                        `[${formType === 'general' ? 'Order Help' : 'Wholesale Inquiry'}] from ${formData.name || 'Website Visitor'}`
+                      )}&body=${encodeURIComponent(formData.message || '')}`}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#faecc9] hover:bg-[#e5cf9d] border border-[#e5cf9d] text-[#8b5311] text-xs font-bold tracking-wider uppercase transition-all no-underline"
+                    >
+                      <span>Email contact@gapoo.in</span>
+                      <span>↗</span>
+                    </a>
+                    <button
+                      type="button"
+                      onClick={handleReset}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#8b5311] hover:text-[#c87a1e] transition-colors cursor-pointer"
+                    >
+                      <span>Send another message</span>
+                      <span>↺</span>
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4 bg-[#faf6ee] p-6 sm:p-8 rounded-3xl border border-[#ebdccb]">
+                <fetcher.Form
+                  method="post"
+                  action={actionUrl}
+                  onSubmit={() => setHasSentAnother(false)}
+                  className="space-y-4 bg-[#faf6ee] p-6 sm:p-8 rounded-3xl border border-[#ebdccb]"
+                >
+                  <input
+                    type="hidden"
+                    name="inquiryType"
+                    value={formType === 'general' ? 'Order / General Help' : 'Wholesale / B2B'}
+                  />
+
                   <div>
                     <label htmlFor="contact-name" className="text-xs font-bold uppercase tracking-wider text-[#615447] block mb-1.5">
                       Your Name
                     </label>
                     <input
                       id="contact-name"
+                      name="name"
                       type="text"
                       required
                       placeholder="Your name"
@@ -240,6 +291,7 @@ export function ContactAndWholesaleSection({ contactId = 'contact', wholesaleId 
                     </label>
                     <input
                       id="contact-email"
+                      name="email"
                       type="email"
                       required
                       placeholder="you@email.com"
@@ -257,10 +309,10 @@ export function ContactAndWholesaleSection({ contactId = 'contact', wholesaleId 
                       <button
                         type="button"
                         onClick={() => setFormType('general')}
-                        className={`py-2 px-3 rounded-lg border font-semibold transition-colors ${
+                        className={`py-2 px-3 rounded-lg border font-semibold transition-colors cursor-pointer ${
                           formType === 'general'
                             ? 'bg-[#faecc9] border-[#c87a1e] text-[#8b5311]'
-                            : 'bg-white border-[#ebdccb] text-[#736555]'
+                            : 'bg-white border-[#ebdccb] text-[#736555] hover:border-[#c87a1e]/40'
                         }`}
                       >
                         Order / General Help
@@ -268,10 +320,10 @@ export function ContactAndWholesaleSection({ contactId = 'contact', wholesaleId 
                       <button
                         type="button"
                         onClick={() => setFormType('wholesale')}
-                        className={`py-2 px-3 rounded-lg border font-semibold transition-colors ${
+                        className={`py-2 px-3 rounded-lg border font-semibold transition-colors cursor-pointer ${
                           formType === 'wholesale'
                             ? 'bg-[#faecc9] border-[#c87a1e] text-[#8b5311]'
-                            : 'bg-white border-[#ebdccb] text-[#736555]'
+                            : 'bg-white border-[#ebdccb] text-[#736555] hover:border-[#c87a1e]/40'
                         }`}
                       >
                         Wholesale / B2B
@@ -285,6 +337,7 @@ export function ContactAndWholesaleSection({ contactId = 'contact', wholesaleId 
                     </label>
                     <textarea
                       id="contact-message"
+                      name="message"
                       rows={4}
                       required
                       placeholder="How can we help your daily ritual or business?"
@@ -294,13 +347,20 @@ export function ContactAndWholesaleSection({ contactId = 'contact', wholesaleId 
                     />
                   </div>
 
+                  {errorMessage && (
+                    <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700">
+                      {errorMessage}
+                    </div>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#f5a623] to-[#d97706] text-white text-xs font-bold tracking-[0.16em] uppercase shadow-md hover:shadow-lg transition-all"
+                    disabled={isSubmitting}
+                    className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#f5a623] to-[#d97706] hover:from-[#fbbf24] hover:to-[#ea580c] text-white text-xs font-bold tracking-[0.16em] uppercase shadow-md hover:shadow-lg transition-all disabled:opacity-60 cursor-pointer"
                   >
-                    Send Message
+                    {isSubmitting ? 'Sending to Hive...' : 'Send Message'}
                   </button>
-                </form>
+                </fetcher.Form>
               )}
             </div>
           </div>

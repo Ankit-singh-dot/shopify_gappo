@@ -4,6 +4,8 @@ import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { AppleLogoReveal } from '~/components/AppleLogoReveal';
 import { FAQSection, ContactAndWholesaleSection } from '~/components/StoryHelpSections';
 
+export { action } from './contact';
+
 /**
  * @type {Route.MetaFunction}
  */

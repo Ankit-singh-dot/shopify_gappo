@@ -14,6 +14,23 @@ export const meta = () => {
  */
 export const headers = ({actionHeaders}) => actionHeaders;
 
+const CUSTOMER_CREATE_MUTATION = `#graphql
+  mutation CartCustomerCreate($input: CustomerCreateInput!) {
+    customerCreate(input: $input) {
+      customer {
+        id
+        email
+        acceptsMarketing
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`;
+
 /**
  * @param {Route.ActionArgs}
  */
@@ -22,7 +39,18 @@ export async function action({request, context}) {
 
   const formData = await request.formData();
 
-  const {action, inputs} = CartForm.getFormInput(formData);
+  let {action, inputs} = CartForm.getFormInput(formData);
+
+  if (!action && formData.get('action')) {
+    action = String(formData.get('action'));
+    inputs = {
+      buyerIdentity: {
+        email: formData.get('email'),
+      },
+      acceptsMarketing: formData.get('acceptsMarketing') !== 'false',
+      ...inputs,
+    };
+  }
 
   if (!action) {
     throw new Error('No action provided');
@@ -67,6 +95,82 @@ export async function action({request, context}) {
       break;
     }
     case CartForm.ACTIONS.BuyerIdentityUpdate: {
+      const buyerEmail = inputs.buyerIdentity?.email;
+      const acceptsMarketing = inputs.acceptsMarketing !== false;
+
+      // 1. Capture/Update Customer in Shopify with Email Marketing: Subscribed
+      if (buyerEmail) {
+        try {
+          if (context?.storefront?.mutate) {
+            const emailPrefix = buyerEmail.split('@')[0];
+            await context.storefront
+              .mutate(CUSTOMER_CREATE_MUTATION, {
+                variables: {
+                  input: {
+                    email: buyerEmail,
+                    firstName: emailPrefix,
+                    lastName: '',
+                    password: `GapooLead_${Date.now()}_${Math.random().toString(36).slice(2, 8)}!#`,
+                    acceptsMarketing: Boolean(acceptsMarketing),
+                  },
+                },
+              })
+              .catch(() => null);
+          }
+        } catch {
+          // Graceful fallback
+        }
+
+        // 2. Also tag customer and set marketing consent via Admin API if token configured
+        const adminToken = context?.env?.PRIVATE_STOREFRONT_API_TOKEN;
+        const shopDomain =
+          context?.env?.PUBLIC_STORE_DOMAIN || 'ckgcyu-in.myshopify.com';
+        if (adminToken) {
+          try {
+            const searchRes = await fetch(
+              `https://${shopDomain}/admin/api/2024-01/customers/search.json?query=email:${encodeURIComponent(buyerEmail)}`,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Shopify-Access-Token': adminToken,
+                },
+              },
+            );
+            if (searchRes.ok) {
+              const searchJson = await searchRes.json();
+              const cust = searchJson?.customers?.[0];
+              if (cust?.id) {
+                await fetch(
+                  `https://${shopDomain}/admin/api/2024-01/customers/${cust.id}.json`,
+                  {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'X-Shopify-Access-Token': adminToken,
+                    },
+                    body: JSON.stringify({
+                      customer: {
+                        id: cust.id,
+                        tags: `${cust.tags ? cust.tags + ', ' : ''}Email Marketing, Checkout Buyer`,
+                        email_marketing_consent: {
+                          state: acceptsMarketing
+                            ? 'subscribed'
+                            : 'unsubscribed',
+                          opt_in_level: 'single_opt_in',
+                          consent_updated_at: new Date().toISOString(),
+                        },
+                      },
+                    }),
+                  },
+                ).catch(() => null);
+              }
+            }
+          } catch {
+            // non-blocking
+          }
+        }
+      }
+
       result = await cart.updateBuyerIdentity({
         ...inputs.buyerIdentity,
       });

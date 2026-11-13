@@ -1,5 +1,6 @@
 import {useLoaderData} from 'react-router';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {ContactAndWholesaleSection} from '~/components/StoryHelpSections';
 
 /**
  * @type {Route.MetaFunction}
@@ -64,13 +65,24 @@ function loadDeferredData({context}) {
 export default function Page() {
   /** @type {LoaderReturnData} */
   const {page} = useLoaderData();
+  const isContactPage = ['contact', 'support', 'contact-us', 'wholesale'].includes(page.handle);
 
   return (
-    <div className="page">
-      <header>
-        <h1>{page.title}</h1>
+    <div className="page max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <header className="mb-8">
+        <h1 className="font-apricot text-4xl sm:text-5xl font-bold text-[#1a110a]">{page.title}</h1>
       </header>
-      <main dangerouslySetInnerHTML={{__html: page.body}} />
+      {page.body && (
+        <main
+          className="prose prose-amber max-w-none text-[#5c5043] leading-relaxed mb-12"
+          dangerouslySetInnerHTML={{__html: page.body}}
+        />
+      )}
+      {isContactPage && (
+        <div className="mt-8 border-t border-[#ebdccb] pt-8">
+          <ContactAndWholesaleSection actionUrl="/contact" />
+        </div>
+      )}
     </div>
   );
 }

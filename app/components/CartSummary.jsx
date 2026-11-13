@@ -103,6 +103,7 @@ export function CartSummary({cart, layout}) {
       />
       <CartCheckoutActions
         checkoutUrl={cart?.checkoutUrl}
+        buyerIdentity={cart?.buyerIdentity}
         estimatedTotal={estimatedTotal > 0 ? estimatedTotal.toFixed(0) : undefined}
       />
     </div>
@@ -110,24 +111,170 @@ export function CartSummary({cart, layout}) {
 }
 
 /**
- * @param {{checkoutUrl?: string; estimatedTotal?: string}}
+ * @param {{
+ *   checkoutUrl?: string;
+ *   buyerIdentity?: CartApiQueryFragment['buyerIdentity'];
+ *   estimatedTotal?: string;
+ * }}
  */
-function CartCheckoutActions({checkoutUrl, estimatedTotal}) {
+function CartCheckoutActions({checkoutUrl, buyerIdentity, estimatedTotal}) {
   const {close} = useAside();
+  const fetcher = useFetcher();
+  const existingEmail = buyerIdentity?.email || '';
+  const [email, setEmail] = useState(existingEmail);
+  const [acceptsMarketing, setAcceptsMarketing] = useState(true);
+  const [isEditingEmail, setIsEditingEmail] = useState(!existingEmail);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (existingEmail && !email) {
+      setEmail(existingEmail);
+      setIsEditingEmail(false);
+    }
+  }, [existingEmail]);
+
+  // Once buyerIdentity is successfully updated on the server, redirect straight to Shopify Checkout
+  useEffect(() => {
+    if (fetcher.data && checkoutUrl && !fetcher.data?.errors?.length) {
+      window.location.href = checkoutUrl;
+    }
+  }, [fetcher.data, checkoutUrl]);
+
   if (!checkoutUrl) return null;
 
+  const isSubmitting = fetcher.state === 'submitting';
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const cleanEmail = email.trim();
+
+    if (!cleanEmail || !emailRegex.test(cleanEmail)) {
+      setError('Please enter a valid email address to proceed.');
+      return;
+    }
+    setError('');
+
+    // Submit BuyerIdentityUpdate via fetcher to /cart
+    fetcher.submit(
+      {
+        [CartForm.INPUT_NAME]: JSON.stringify({
+          action: CartForm.ACTIONS.BuyerIdentityUpdate,
+          inputs: {
+            buyerIdentity: {
+              email: cleanEmail,
+            },
+            acceptsMarketing,
+          },
+        }),
+        action: CartForm.ACTIONS.BuyerIdentityUpdate,
+        email: cleanEmail,
+        acceptsMarketing: String(acceptsMarketing),
+        redirectTo: checkoutUrl,
+      },
+      {
+        method: 'POST',
+        action: '/cart',
+      },
+    );
+  };
+
   return (
-    <div className="mt-4">
-      <a
-        href={checkoutUrl}
-        target="_self"
-        className="w-full py-3.5 px-6 rounded-full bg-[#18181b] hover:bg-[#27272a] text-white text-sm font-bold tracking-wide shadow-md transition-all hover:scale-[1.02] active:scale-98 text-center flex items-center justify-center gap-2 cursor-pointer no-underline font-montserrat"
-      >
-        <span className="text-amber-50">
-          Continue to Checkout {estimatedTotal ? `· ₹${estimatedTotal}` : ''}
-        </span>
-        <span className="text-amber-50">&rarr;</span>
-      </a>
+    <div className="mt-4 font-montserrat">
+      {existingEmail && !isEditingEmail ? (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between text-xs px-3.5 py-2.5 rounded-xl bg-[#faf6ee] border border-[#ebdccb] text-[#5c5043]">
+            <span className="truncate flex items-center gap-1.5">
+              <span>✉️</span>
+              <span>Checkout as: <strong className="text-[#1a110a]">{existingEmail}</strong></span>
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsEditingEmail(true)}
+              className="text-[#8b5311] hover:text-[#c87a1e] font-semibold underline underline-offset-2 ml-2 shrink-0 cursor-pointer text-[11px]"
+            >
+              Change
+            </button>
+          </div>
+
+          <a
+            href={checkoutUrl}
+            target="_self"
+            className="w-full py-3.5 px-6 rounded-full bg-[#18181b] hover:bg-[#27272a] text-white text-sm font-bold tracking-wide shadow-md transition-all hover:scale-[1.02] active:scale-98 text-center flex items-center justify-center gap-2 cursor-pointer no-underline font-montserrat"
+          >
+            <span className="text-amber-50">
+              Continue to Checkout {estimatedTotal ? `· ₹${estimatedTotal}` : ''}
+            </span>
+            <span className="text-amber-50">&rarr;</span>
+          </a>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="bg-[#faf6ee] p-3.5 sm:p-4 rounded-2xl border border-[#ebdccb] space-y-2.5">
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="checkout-email"
+                className="text-[11px] font-bold uppercase tracking-wider text-[#615447] block"
+              >
+                Enter Email To Proceed
+              </label>
+              {existingEmail && (
+                <button
+                  type="button"
+                  onClick={() => setIsEditingEmail(false)}
+                  className="text-[10px] text-[#736555] hover:text-[#1a110a] underline cursor-pointer"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+
+            <input
+              id="checkout-email"
+              type="email"
+              required
+              autoComplete="email"
+              placeholder="you@email.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (error) setError('');
+              }}
+              className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#ebdccb] text-[#1a110a] placeholder-[#998b7c] focus:outline-none focus:border-[#c87a1e] text-xs font-medium"
+            />
+
+            <label className="flex items-start gap-2 pt-0.5 cursor-pointer text-[11px] text-[#6b5c4d] select-none">
+              <input
+                type="checkbox"
+                checked={acceptsMarketing}
+                onChange={(e) => setAcceptsMarketing(e.target.checked)}
+                className="mt-0.5 rounded border-[#d6c4b2] text-[#c87a1e] focus:ring-[#c87a1e] cursor-pointer"
+              />
+              <span className="leading-snug">
+                Get early updates on wild honey harvests, rituals &amp; exclusive offers
+              </span>
+            </label>
+
+            {error && (
+              <p className="text-[11px] text-red-600 font-semibold pt-0.5">{error}</p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full py-3.5 px-6 rounded-full bg-[#18181b] hover:bg-[#27272a] text-white text-sm font-bold tracking-wide shadow-md transition-all hover:scale-[1.02] active:scale-98 text-center flex items-center justify-center gap-2 cursor-pointer no-underline font-montserrat disabled:opacity-60"
+          >
+            <span className="text-amber-50">
+              {isSubmitting
+                ? 'Preparing Secure Checkout...'
+                : `Continue to Checkout ${estimatedTotal ? `· ₹${estimatedTotal}` : ''}`}
+            </span>
+            <span className="text-amber-50">&rarr;</span>
+          </button>
+        </form>
+      )}
+
       <div className="flex items-center justify-center gap-2 mt-3 text-[11px] text-[#736555] font-montserrat">
         <span className="flex items-center gap-1">
           <svg className="w-3 h-3 text-[#10b981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

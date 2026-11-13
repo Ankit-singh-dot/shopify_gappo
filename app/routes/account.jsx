@@ -80,6 +80,10 @@ function AccountMenu() {
         &nbsp; Addresses &nbsp;
       </NavLink>
       &nbsp;|&nbsp;
+      <NavLink to="/account/support" style={isActiveStyle}>
+        &nbsp; Support &amp; Inquiries &nbsp;
+      </NavLink>
+      &nbsp;|&nbsp;
       <Logout />
     </nav>
   );

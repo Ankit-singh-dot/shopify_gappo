@@ -1,1 +1,1 @@
-export { default, meta } from './our-story';
+export { default, meta, action } from './our-story';
