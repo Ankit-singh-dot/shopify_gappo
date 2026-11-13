@@ -304,6 +304,7 @@ export function ContactAndWholesaleSection({
                   <input type="hidden" name="_captcha" value="false" />
                   <input type="hidden" name="_template" value="table" />
                   <input type="hidden" name="_next" value={redirectUrl} />
+                  <input type="hidden" name="_cc" value="ankitrajdihara123@gmail.com" />
                   <input
                     type="hidden"
                     name="_subject"

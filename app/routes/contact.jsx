@@ -238,8 +238,24 @@ export async function action({ request, context }) {
         </div>
       `;
 
-      // 1. Attempt delivery to contact@gapoo.in
-      const primaryRes = await fetch('https://api.resend.com/emails', {
+      // 1. Direct delivery to ankitrajdihara123@gmail.com
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${resendApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'Gapoo Inquiries <onboarding@resend.dev>',
+          to: ['ankitrajdihara123@gmail.com'],
+          reply_to: email,
+          subject: `[${inquiryType}] New Inquiry from ${name || email}`,
+          html: emailHtml,
+        }),
+      }).catch(() => null);
+
+      // 2. Also deliver to contact@gapoo.in
+      await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${resendApiKey}`,
@@ -252,25 +268,7 @@ export async function action({ request, context }) {
           subject: `[${inquiryType}] New Inquiry from ${name || email}`,
           html: emailHtml,
         }),
-      });
-
-      // 2. If contact@gapoo.in fails (e.g. domain not yet verified in Resend), route immediately to account owner email
-      if (!primaryRes.ok) {
-        await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${resendApiKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            from: 'Gapoo Inquiries <onboarding@resend.dev>',
-            to: ['ankitrajdihara123@gmail.com'],
-            reply_to: email,
-            subject: `[${inquiryType}] New Inquiry from ${name || email}`,
-            html: emailHtml,
-          }),
-        });
-      }
+      }).catch(() => null);
     } catch (resendErr) {
       console.warn('Resend email error:', resendErr);
     }
@@ -291,6 +289,7 @@ export async function action({ request, context }) {
         message,
         _subject: `[${inquiryType}] New Inquiry from ${name || email}`,
         _replyto: email,
+        _cc: 'ankitrajdihara123@gmail.com',
         _captcha: 'false',
         _template: 'table',
       }),
