@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useFetcher } from 'react-router';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const FAQ_ITEMS = [
@@ -110,7 +110,7 @@ export function ContactAndWholesaleSection({
   defaultName = '',
   defaultEmail = '',
 }) {
-  const fetcher = useFetcher();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [formType, setFormType] = useState('general');
   const [formData, setFormData] = useState({
     name: defaultName,
@@ -118,22 +118,52 @@ export function ContactAndWholesaleSection({
     message: '',
   });
   const [hasSentAnother, setHasSentAnother] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [redirectUrl, setRedirectUrl] = useState(`https://gapoo.in/story?sent=true#${contactId}`);
 
-  const isSubmitting = fetcher.state === 'submitting';
-  const isSubmitted = Boolean(fetcher.data?.success) && !hasSentAnother;
-  const errorMessage = fetcher.data?.error;
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('sent', 'true');
+      url.hash = contactId;
+      setRedirectUrl(url.toString());
+    }
+  }, [contactId]);
+
+  const isSubmittedFromUrl = searchParams.get('sent') === 'true';
+  const isSubmitted = isSubmittedFromUrl && !hasSentAnother;
 
   const handleReset = () => {
     setHasSentAnother(true);
+    setIsSubmitting(false);
     setFormData({
       name: defaultName,
       email: defaultEmail,
       message: '',
     });
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('sent');
+    setSearchParams(newParams, { replace: true });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = () => {
+    setIsSubmitting(true);
     setHasSentAnother(false);
+    // Background sync to Shopify Admin Customer Notes and Resend backup
+    try {
+      const payload = new FormData();
+      payload.append('name', formData.name);
+      payload.append('email', formData.email);
+      payload.append('inquiryType', formType === 'general' ? 'Order / General Help' : 'Wholesale / B2B');
+      payload.append('message', formData.message);
+      if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+        navigator.sendBeacon('/contact', payload);
+      } else {
+        fetch('/contact', { method: 'POST', body: payload, keepalive: true }).catch(() => null);
+      }
+    } catch {
+      // Non-blocking
+    }
   };
 
   return (
@@ -261,15 +291,29 @@ export function ContactAndWholesaleSection({
                   </div>
                 </div>
               ) : (
-                <fetcher.Form
-                  method="post"
-                  action={actionUrl}
+                <form
+                  action="https://formsubmit.co/contact@gapoo.in"
+                  method="POST"
                   onSubmit={handleSubmit}
                   className="space-y-4 bg-[#faf6ee] p-6 sm:p-8 rounded-3xl border border-[#ebdccb]"
                 >
+                  {/* Anti-spam honeypot */}
+                  <input type="text" name="_honey" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
+
+                  {/* FormSubmit configurations */}
+                  <input type="hidden" name="_captcha" value="false" />
+                  <input type="hidden" name="_template" value="table" />
+                  <input type="hidden" name="_next" value={redirectUrl} />
                   <input
                     type="hidden"
-                    name="inquiryType"
+                    name="_subject"
+                    value={`[${formType === 'general' ? 'Order Help' : 'Wholesale Inquiry'}] from ${formData.name || formData.email || 'Website Visitor'}`}
+                  />
+                  <input type="hidden" name="_replyto" value={formData.email} />
+
+                  <input
+                    type="hidden"
+                    name="Inquiry Type"
                     value={formType === 'general' ? 'Order / General Help' : 'Wholesale / B2B'}
                   />
 
@@ -351,12 +395,6 @@ export function ContactAndWholesaleSection({
                     />
                   </div>
 
-                  {errorMessage && (
-                    <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700">
-                      {errorMessage}
-                    </div>
-                  )}
-
                   <button
                     type="submit"
                     disabled={isSubmitting}
@@ -364,7 +402,7 @@ export function ContactAndWholesaleSection({
                   >
                     {isSubmitting ? 'Sending to Hive...' : 'Send Message'}
                   </button>
-                </fetcher.Form>
+                </form>
               )}
             </div>
           </div>
