@@ -15,24 +15,6 @@ export const meta = () => {
   ];
 };
 
-const CUSTOMER_CREATE_MUTATION = `#graphql
-  mutation ContactCustomerCreate($input: CustomerCreateInput!) {
-    customerCreate(input: $input) {
-      customer {
-        id
-        email
-        firstName
-        lastName
-      }
-      customerUserErrors {
-        code
-        field
-        message
-      }
-    }
-  }
-`;
-
 let cachedAdminToken = null;
 let cachedAdminTokenExpiry = 0;
 
@@ -89,8 +71,8 @@ async function getAdminToken(env) {
 
 /**
  * Handles guest and customer contact & wholesale inquiry submissions.
- * Automatically captures the lead into Shopify Admin and attaches the message to Customer Notes.
- * No customer login required.
+ * Dispatches inquiry email to contact@gapoo.in and attaches message to Customer Notes.
+ * Does NOT register customer accounts or send account creation emails to visitors.
  *
  * @param {Route.ActionArgs}
  */
@@ -122,43 +104,24 @@ export async function action({ request, context }) {
     context?.env?.PUBLIC_STORE_DOMAIN || 'ckgcyu-in.myshopify.com';
   const adminToken = await getAdminToken(context?.env);
 
-  let customerNumericId = null;
-
-  // 1. Create or register customer lead in Shopify Storefront / Admin
-  try {
-    const nameParts = name ? name.split(' ') : ['Website', 'Visitor'];
-    const firstName = nameParts[0] || 'Website';
-    const lastName = nameParts.slice(1).join(' ') || 'Visitor';
-
-    if (context?.storefront?.mutate) {
-      const res = await context.storefront.mutate(CUSTOMER_CREATE_MUTATION, {
-        variables: {
-          input: {
-            email,
-            firstName,
-            lastName,
-            password: `GapooLead_${Date.now()}_${Math.random().toString(36).slice(2, 8)}!#`,
-          },
-        },
-      });
-
-      const gid = res?.data?.customerCreate?.customer?.id;
-      if (gid) {
-        customerNumericId = gid.split('/').pop();
-      }
-    }
-  } catch (leadErr) {
-    console.warn('Lead capture exception:', leadErr);
-  }
-
-  // 2. Attach the Message & Inquiry Type directly to Customer Notes in Shopify Admin
+  // 1. Silently record/update lead in Shopify Admin (No customer account created, NO emails sent to visitor)
   if (adminToken) {
     try {
-      let targetId = customerNumericId;
-      let existingNote = '';
-      let existingTags = '';
+      const nameParts = name ? name.split(' ') : ['Website', 'Visitor'];
+      const firstName = nameParts[0] || 'Website';
+      const lastName = nameParts.slice(1).join(' ') || 'Visitor';
+      const tag = inquiryType.toLowerCase().includes('wholesale')
+        ? 'Wholesale'
+        : 'General Inquiry';
 
-      // Search customer by email to get their current profile, notes, and tags
+      const dateStr = new Date().toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+      const newEntry = `[${inquiryType}] (${dateStr})\n${message}`;
+
+      // Search if customer already exists by email
       const searchRes = await fetch(
         `https://${shopDomain}/admin/api/2024-01/customers/search.json?query=email:${encodeURIComponent(email)}`,
         {
@@ -171,61 +134,69 @@ export async function action({ request, context }) {
 
       if (searchRes.ok) {
         const searchJson = await searchRes.json();
-        const foundCustomer = searchJson?.customers?.[0];
-        if (foundCustomer) {
-          targetId = foundCustomer.id;
-          existingNote = foundCustomer.note || '';
-          existingTags = foundCustomer.tags || '';
-        }
-      }
+        const found = searchJson?.customers?.[0];
 
-      if (targetId) {
-        const tag = inquiryType.toLowerCase().includes('wholesale')
-          ? 'Wholesale'
-          : 'General Inquiry';
+        if (found?.id) {
+          const existingNote = found.note || '';
+          const existingTags = found.tags || '';
+          const formattedNote = existingNote
+            ? `${newEntry}\n\n---\n${existingNote}`
+            : newEntry;
+          const combinedTags = Array.from(
+            new Set(
+              [
+                ...existingTags.split(',').map((t) => t.trim()),
+                'Inquiry',
+                tag,
+              ].filter(Boolean),
+            ),
+          ).join(', ');
 
-        const dateStr = new Date().toLocaleDateString('en-IN', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
-        });
-        const newEntry = `[${inquiryType}] (${dateStr})\n${message}`;
-        const formattedNote = existingNote ? `${newEntry}\n\n---\n${existingNote}` : newEntry;
-
-        const combinedTags = Array.from(
-          new Set(
-            [
-              ...existingTags.split(',').map((t) => t.trim()),
-              'Inquiry',
-              tag,
-            ].filter(Boolean),
-          ),
-        ).join(', ');
-
-        await fetch(
-          `https://${shopDomain}/admin/api/2024-01/customers/${targetId}.json`,
-          {
-            method: 'PUT',
+          await fetch(
+            `https://${shopDomain}/admin/api/2024-01/customers/${found.id}.json`,
+            {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Shopify-Access-Token': adminToken,
+              },
+              body: JSON.stringify({
+                customer: {
+                  id: found.id,
+                  note: formattedNote,
+                  tags: combinedTags,
+                },
+              }),
+            },
+          );
+        } else {
+          // Create new lead silently via Admin API - send_email_invite: false ensures ZERO emails to visitor
+          await fetch(`https://${shopDomain}/admin/api/2024-01/customers.json`, {
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'X-Shopify-Access-Token': adminToken,
             },
             body: JSON.stringify({
               customer: {
-                id: targetId,
-                note: formattedNote,
-                tags: combinedTags,
+                first_name: firstName,
+                last_name: lastName,
+                email,
+                note: newEntry,
+                tags: `Inquiry, ${tag}`,
+                send_email_invite: false,
+                send_email_welcome: false,
               },
             }),
-          },
-        );
+          });
+        }
       }
-    } catch (noteErr) {
-      console.warn('Shopify Admin Customer Note update:', noteErr);
+    } catch (adminErr) {
+      console.warn('Shopify Admin customer silent sync:', adminErr);
     }
   }
 
-  // 3. Dispatch directly to contact@gapoo.in mailbox (Zero-config, no API key required)
+  // 2. Dispatch directly to contact@gapoo.in mailbox
   try {
     await fetch('https://formsubmit.co/ajax/contact@gapoo.in', {
       method: 'POST',
@@ -242,6 +213,8 @@ export async function action({ request, context }) {
         message,
         _subject: `[${inquiryType}] New Inquiry from ${name || email}`,
         _replyto: email,
+        _captcha: 'false',
+        _template: 'table',
       }),
     });
   } catch (emailErr) {

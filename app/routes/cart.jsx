@@ -14,23 +14,6 @@ export const meta = () => {
  */
 export const headers = ({actionHeaders}) => actionHeaders;
 
-const CUSTOMER_CREATE_MUTATION = `#graphql
-  mutation CartCustomerCreate($input: CustomerCreateInput!) {
-    customerCreate(input: $input) {
-      customer {
-        id
-        email
-        acceptsMarketing
-      }
-      customerUserErrors {
-        code
-        field
-        message
-      }
-    }
-  }
-`;
-
 /**
  * @param {Route.ActionArgs}
  */
@@ -98,30 +81,8 @@ export async function action({request, context}) {
       const buyerEmail = inputs.buyerIdentity?.email;
       const acceptsMarketing = inputs.acceptsMarketing !== false;
 
-      // 1. Capture/Update Customer in Shopify with Email Marketing: Subscribed
+      // 1. Tag customer and set marketing consent silently via Admin API if token configured (No customer account created, no activation emails)
       if (buyerEmail) {
-        try {
-          if (context?.storefront?.mutate) {
-            const emailPrefix = buyerEmail.split('@')[0];
-            await context.storefront
-              .mutate(CUSTOMER_CREATE_MUTATION, {
-                variables: {
-                  input: {
-                    email: buyerEmail,
-                    firstName: emailPrefix,
-                    lastName: '',
-                    password: `GapooLead_${Date.now()}_${Math.random().toString(36).slice(2, 8)}!#`,
-                    acceptsMarketing: Boolean(acceptsMarketing),
-                  },
-                },
-              })
-              .catch(() => null);
-          }
-        } catch {
-          // Graceful fallback
-        }
-
-        // 2. Also tag customer and set marketing consent via Admin API if token configured
         const adminToken = context?.env?.PRIVATE_STOREFRONT_API_TOKEN;
         const shopDomain =
           context?.env?.PUBLIC_STORE_DOMAIN || 'ckgcyu-in.myshopify.com';
